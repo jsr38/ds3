@@ -16,9 +16,10 @@
 
 package nz.co.jsrsolutions.ds3.test;
 
+import nz.co.jsrsolutions.ds3.*;
 
-import org.junit.* ;
-import static org.junit.Assert.* ;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
