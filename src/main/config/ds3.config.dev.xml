@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jsrtk>
+  <applicationConfig>
+    <applicationName>ds3</applicationName>
+    <ds3Config>
+      <eodDataProviders>
+        <eodDataProvider id="eoddata" type="nz.co.jsrsolutions.ds3.EodDataDataProvider">
+          <serviceUrl>http://ws.eoddata.com/data.asmx</serviceUrl>
+          <username>jsr1060</username>
+          <password>frederick_38</password>
+          <timeout>30000</timeout>
+        </eodDataProvider>
+      </eodDataProviders>
+      <eodDataSinks>
+        <eodDataSink id="hdf5" type="nz.co.jsrsolutions.ds3.Hdf5EodDataSink">
+          <filename>eoddata.h5</filename>
+        </eodDataSink>
+      </eodDataSinks>
+    </ds3Config>
+  </applicationConfig>
+</jsrtk>
