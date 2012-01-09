@@ -11,7 +11,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.9</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -41,31 +41,31 @@
     <dependency>
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2</artifactId>
-      <version>1.5</version>
+      <version>1.6.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency> 
       <groupId>org.apache.axis2</groupId> 
       <artifactId>axis2-transport-local</artifactId> 
-      <version>1.5.6</version> 
+      <version>1.6.0</version> 
       <scope>runtime</scope>
     </dependency>
     <dependency> 
       <groupId>org.apache.axis2</groupId> 
       <artifactId>axis2-transport-http</artifactId> 
-      <version>1.5.6</version> 
+      <version>1.6.0</version> 
       <scope>runtime</scope>
     </dependency> 
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-api</artifactId>
-      <version>1.2.12</version>
+      <version>1.2.11</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-impl</artifactId>
-      <version>1.2.12</version>
+      <version>1.2.11</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -86,14 +86,18 @@
       <version>1.6.2</version>
       <scope>compile</scope>
     </dependency>
-<!--
+
+<!-- 
+     HDF Java and native shared objects are built locally
+     and so must be manually registered with Maven
+-->
     <dependency>
       <groupId>org.hdfgroup</groupId>
-      <artifactId>hdf-java</artifactId>
-      <version>2.6.1</version>
+      <artifactId>jhdfobj</artifactId>
+      <version>2.7</version>
       <scope>compile</scope>
     </dependency>
--->
+
 <!--
     <dependency>
       <groupId>org.hdfgroup</groupId>
@@ -115,7 +119,7 @@
       <plugin>
         <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
-        <version>1.5</version>
+        <version>1.6.0</version>
         <configuration>
           <packageName>nz.co.jsrsolutions.ds3</packageName>
           <wsdlFile>src/main/wsdl/eoddata.wsdl</wsdlFile>
@@ -150,6 +154,9 @@
     <resources>
       <resource>
         <directory>src/main/config</directory>
+      </resource>
+      <resource>
+        <directory>src/test/config</directory>
       </resource>
     </resources>
   </build>

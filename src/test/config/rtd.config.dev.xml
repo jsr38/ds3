@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jsrtk>
+  <applicationConfig>
+    <applicationName>rtd</applicationName>
+    <rtdConfig>
+      <eodDataProviders>
+        <eodDataProvider id="eoddata" type="nz.co.jsrsolutions.ds3.EodDataDataProvider">
+          <serviceUrl>http://ws.eoddata.com/data.asmx</serviceUrl>
+          <username>jsr1060</username>
+          <password>frederick_38</password>
+          <timeout>30000</timeout>
+        </eodDataProvider>
+      </eodDataProviders>
+    </rtdConfig>
+  </applicationConfig>
+</jsrtk>

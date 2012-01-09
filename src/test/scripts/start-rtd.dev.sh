@@ -8,12 +8,12 @@
 # previous version not employing HDF Java Object
 #JAVA_OPTS="-Djava.library.path=/jsr/dist/hdf-java-2.7/lib/linux -Dlog4j.debug=false -Dlog4j.configuration=log4j.config.dev.xml -cp target/ds3-1.0-SNAPSHOT-jar-with-dependencies.jar"
 
-JAVA_OPTS="-Dlog4j.debug=false -Dlog4j.configuration=ds3.log4j.config.dev.xml -cp target/ds3-1.0-SNAPSHOT-jar-with-dependencies.jar"
+JAVA_OPTS="-Dlog4j.debug=false -Dlog4j.configuration=rtd.log4j.config.dev.xml -cp target/ds3-1.0-SNAPSHOT-jar-with-dependencies.jar:target/test-classes/"
 
 #JAVA_OPTS="-Djava.library.path=/usr/lib -Dlog4j.debug=false -Dlog4j.configuration=log4j.config.dev.xml -cp target/ds3-1.0-SNAPSHOT-jar-with-dependencies.jar"
 
 #CMDLINE="java $JAVA_OPTS -cp /jsr/dist/ds3/dev/jar/ds3.jar nz.co.jsrsolutions.ds3.DataScraper3"
-CMDLINE="java $JAVA_OPTS nz.co.jsrsolutions.ds3.DataScraper3 -configfile /jsr/dev/ds3/target/classes/ds3.config.dev.xml -provider eoddata -sink hdf5"
+CMDLINE="java $JAVA_OPTS nz.co.jsrsolutions.ds3.test.RetrieveTestData "
 echo $LD_LIBRARY_PATH
 echo $CMDLINE
 

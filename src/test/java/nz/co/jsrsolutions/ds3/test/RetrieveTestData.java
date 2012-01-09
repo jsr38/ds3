@@ -16,8 +16,20 @@
 
 package nz.co.jsrsolutions.ds3.test;
 
-import java.lang.String;
+import nz.co.jsrsolutions.ds3.*;
 
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.lang.String;
+import java.util.Calendar;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axis2.databinding.ADBBean;
+import org.apache.axis2.databinding.ADBException;
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
@@ -33,9 +45,41 @@ final class RetrieveTestData {
 
   private static final String CONFIG_FILENAME = new String("rtd.config.dev.xml");
 
+  private static final String OUTPUT_FILENAME = new String("testdata.xml");
+
   private static final String APPLICATION_CONFIG_ROOT = new String("applicationConfig.rtdConfig");
 
   private static final String EODDATA_PROVIDER_NAME = new String("eoddata");
+
+  private static final String TEST_EXCHANGE = new String("WCE");
+
+  private static final String TEST_SYMBOL = new String("RSF12");
+
+  private static final String XML_NAMESPACE_URI = new String("http://www.jsrsolutions.co.nz/ds3/testdata");
+
+  private static final String XML_PREFIX = new String("td");
+
+  private static final QName EXCHANGE_QNAME = new QName(XML_NAMESPACE_URI, "exchange", XML_PREFIX);
+
+  private static final QName SYMBOL_QNAME = new QName(XML_NAMESPACE_URI, "symbol", XML_PREFIX);
+
+  private static final QName QUOTE_QNAME = new QName(XML_NAMESPACE_URI, "quote", XML_PREFIX);
+
+  private static final String TESTDATA_LOCALNAME = new String("testdata");
+
+  private static final String EXCHANGES_LOCALNAME = new String("exchanges");
+
+  private static final String SYMBOLS_LOCALNAME = new String("symbols");
+
+  private static final String QUOTES_LOCALNAME = new String("quotes");
+
+  private static final String NEWLINE = System.getProperty("line.separator");
+
+  private static final int HISTORY_YEAR_OFFSET = -3;
+
+  private static final int HISTORY_MONTH_OFFSET = -3;
+
+  private static final String DEFAULT_FREQUENCY = new String("d");
 
   private RetrieveTestData() {
 
@@ -47,32 +91,39 @@ final class RetrieveTestData {
 
     try {
 
-	    config.addConfiguration(new XMLConfiguration(Class.getResourceAsStream(CONFIG_FILENAME)));
+	    config.addConfiguration(new XMLConfiguration(RetrieveTestData.class.getClassLoader().getResource(CONFIG_FILENAME)));
 
 	    HierarchicalConfiguration appConfig = config.configurationAt(APPLICATION_CONFIG_ROOT);
 
 	    EodDataProvider eodDataProvider = null;
 
-	    try {
+      OutputStream out = new FileOutputStream(OUTPUT_FILENAME);
+      XMLOutputFactory factory = XMLOutputFactory.newInstance();
+      XMLStreamWriter writer = factory.createXMLStreamWriter(out);
 
-        eodDataProvider = EodDataProviderFactory.create(appConfig, EODDATA_PROVIDER_NAME);
+      eodDataProvider = EodDataProviderFactory.create(appConfig, EODDATA_PROVIDER_NAME);
 
-	    }
-	    catch(EodDataProviderException edpe) {
+      writer.writeStartDocument("utf-8", "1.0");
+      writer.writeCharacters(NEWLINE);
+      writer.writeComment("Test data for running DataScraper unit tests against");
+      writer.writeCharacters(NEWLINE);
 
-        logger.error(edpe.toString());
-        edpe.printStackTrace();
+      writer.setPrefix(XML_PREFIX, XML_NAMESPACE_URI);
 
-	    }
-	    finally {
+      writer.writeStartElement(XML_NAMESPACE_URI, TESTDATA_LOCALNAME);
+      writer.writeNamespace(XML_PREFIX, XML_NAMESPACE_URI);
+      writer.writeCharacters(NEWLINE);
 
-        if (eodDataProvider != null) {
+      serializeExchanges(eodDataProvider, writer);
+      serializeSymbols(eodDataProvider, writer);
+      serializeQuotes(eodDataProvider, writer);
 
-          eodDataProvider.close();
+      writer.writeEndElement();
+      writer.writeCharacters(NEWLINE);
+      writer.writeEndDocument();
+      writer.flush();
+      writer.close();
 
-        }
-          
-	    }
 
     }
     catch(ConfigurationException ce) {
@@ -92,6 +143,126 @@ final class RetrieveTestData {
 
   }
 
+
+  private static void serialize(ADBBean[] beanArray, QName qname, XMLStreamWriter writer) {
+
+    for (ADBBean bean : beanArray) {
+
+      try {
+        bean.serialize(qname, writer);
+        writer.writeCharacters(NEWLINE);
+      }
+      catch (XMLStreamException xse) {
+        logger.error(xse.toString());
+        xse.printStackTrace();
+      }
+
+    }
+
+  }
+
+  private static void serializeExchanges(EodDataProvider eodDataProvider, XMLStreamWriter writer) {
+
+    try {
+      writer.writeStartElement(XML_NAMESPACE_URI, EXCHANGES_LOCALNAME);
+      writer.writeCharacters(NEWLINE);
+      serialize(eodDataProvider.getExchanges(), EXCHANGE_QNAME, writer);
+      writer.writeEndElement();
+      writer.writeCharacters(NEWLINE);
+    }
+    catch (XMLStreamException xse) {
+      logger.error(xse.toString());
+      xse.printStackTrace();
+    }
+    catch(EodDataProviderException edpe) {
+
+      logger.error(edpe.toString());
+      edpe.printStackTrace();
+
+    }
+    finally {
+
+      if (eodDataProvider != null) {
+
+        // eodDataProvider.close();
+
+      }
+          
+    }
+
+
+  }
+
+  private static void serializeSymbols(EodDataProvider eodDataProvider, XMLStreamWriter writer) {
+
+    try {
+      writer.writeStartElement(XML_NAMESPACE_URI, SYMBOLS_LOCALNAME);
+      writer.writeCharacters(NEWLINE);
+      serialize(eodDataProvider.getSymbols(TEST_EXCHANGE), SYMBOL_QNAME, writer);
+      writer.writeEndElement();
+      writer.writeCharacters(NEWLINE);
+    }
+    catch (XMLStreamException xse) {
+      logger.error(xse.toString());
+      xse.printStackTrace();
+    }
+    catch(EodDataProviderException edpe) {
+
+      logger.error(edpe.toString());
+      edpe.printStackTrace();
+
+    }
+    finally {
+
+      if (eodDataProvider != null) {
+
+        // eodDataProvider.close();
+
+      }
+          
+    }
+
+
+  }
+
+  private static void serializeQuotes(EodDataProvider eodDataProvider, XMLStreamWriter writer) {
+
+    try {
+      writer.writeStartElement(XML_NAMESPACE_URI, QUOTES_LOCALNAME);
+      writer.writeCharacters(NEWLINE);
+
+      Calendar startCalendar = Calendar.getInstance();
+      startCalendar.add(Calendar.YEAR, HISTORY_YEAR_OFFSET);
+      //    startCalendar.add(Calendar.MONTH, HISTORY_MONTH_OFFSET);
+
+      Calendar endCalendar = Calendar.getInstance();
+
+      serialize(eodDataProvider.getQuotes(TEST_EXCHANGE, TEST_SYMBOL, startCalendar, endCalendar, DEFAULT_FREQUENCY), QUOTE_QNAME, writer);
+      writer.writeEndElement();
+      writer.writeCharacters(NEWLINE);
+    }
+    catch (XMLStreamException xse) {
+      logger.error(xse.toString());
+      xse.printStackTrace();
+    }
+    catch(EodDataProviderException edpe) {
+
+      logger.error(edpe.toString());
+      edpe.printStackTrace();
+
+    }
+    finally {
+
+      if (eodDataProvider != null) {
+
+        // eodDataProvider.close();
+
+      }
+          
+    }
+
+
+  }
 
 }
 

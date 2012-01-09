@@ -1,32 +1,39 @@
+/* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+
+/*
+ * @(#)EodDataProviderException.java        
+ *
+ * Copyright (c) 2012 JSR Solutions Limited
+ * 4 Viridian Lane, Auckland, 0632.  New Zealand
+ * All rights reserved.
+ *
+ * This software is the confidential and proprietary information of JSR
+ * Solutions Limited. ("Confidential Information").  You shall not
+ * disclose such Confidential Information and shall use it only in
+ * accordance with the terms of the license agreement you entered into
+ * with JSR Solutions Limited.
+ */
 
 package nz.co.jsrsolutions.ds3;
 
 
 import java.lang.String;
 
-class EodDataProviderException extends Exception
-{
+public class EodDataProviderException extends Exception {
+
   private String mistake;
-//----------------------------------------------
-// Default constructor - initializes instance variable to unknown
-  public EodDataProviderException()
-  {
-    super();             // call superclass constructor
+
+  public EodDataProviderException() {
+    super();
     mistake = "unknown";
   }
   
-//-----------------------------------------------
-// Constructor receives some kind of message that is saved in an instance variable.
-  public EodDataProviderException(String err)
-  {
-    super(err);     // call super class constructor
-    mistake = err;  // save message
+  public EodDataProviderException(String err) {
+    super(err);
+    mistake = err;
   }
   
-//------------------------------------------------  
-// public method, callable by exception catcher. It returns the error message.
-  public String getError()
-  {
+  public String getError() {
     return mistake;
   }
 }
