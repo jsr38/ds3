@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <bean id="controller"
+	class="nz.co.jsrsolutions.ds3.DataScraper3Controller"
+	scope="singleton">
+    <constructor-arg ref="eodDataProvider"/>
+    <constructor-arg ref="eodDataSink"/>
+  </bean>
+
+  <bean id="eodDataProvider"
+	class="nz.co.jsrsolutions.ds3.EodDataDataProvider"
+	scope="singleton">
+    <constructor-arg name="url" value="http://ws.eoddata.com/data.asmx"/>
+    <constructor-arg name="username" value="jsr1060"/>
+    <constructor-arg name="password" value="frederick_38"/>
+    <constructor-arg name="timeout" value="60000"/>
+  </bean>
+
+  <bean id="eodDataSink"
+	class="nz.co.jsrsolutions.ds3.Hdf5EodDataSink"
+	scope="singleton">
+    <constructor-arg name="filename" value="eoddata.h5"/>
+  </bean>
+
+</beans>
