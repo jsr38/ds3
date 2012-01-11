@@ -26,20 +26,19 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.configuration.CombinedConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.Logger;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 final class DataScraper3 {
 
   private static final transient Logger logger = Logger.getLogger(DataScraper3.class);
 
-  private static final CombinedConfiguration config = new CombinedConfiguration();
+  private static final String SPRING_CONFIG_PREFIX = new String("service.");
 
-  private static final String APPLICATION_CONFIG_ROOT = new String("applicationConfig.ds3Config");
+  private static final String SPRING_CONFIG_SUFFIX = new String(".xml");
 
   private DataScraper3() {
 
@@ -57,62 +56,16 @@ final class DataScraper3 {
 
       if (commandLine.getOptions().length > 0 && !commandLine.hasOption(CommandLineOptions.HELP)) {
 
-        config.addConfiguration(new XMLConfiguration(commandLine.getOptionValue(CommandLineOptions.CONFIGFILE)));
+        StringBuffer environment = new StringBuffer();
+        environment.append(SPRING_CONFIG_PREFIX);
+        environment.append(commandLine.getOptionValue(CommandLineOptions.ENVIRONMENT));
+        environment.append(SPRING_CONFIG_SUFFIX);
 
-        HierarchicalConfiguration appConfig = config.configurationAt(APPLICATION_CONFIG_ROOT);
+        ApplicationContext context = new ClassPathXmlApplicationContext(environment.toString());
 
-        EodDataProvider eodDataProvider = null;
-        EodDataSink eodDataSink = null;
+        DataScraper3Controller controller = context.getBean("controller", DataScraper3Controller.class);
 
-        try {
-
-          eodDataProvider = EodDataProviderFactory.create(appConfig, commandLine.getOptionValue(CommandLineOptions.PROVIDER));
-          eodDataSink = EodDataSinkFactory.create(appConfig, commandLine.getOptionValue(CommandLineOptions.SINK));
-
-          Context context = new DataScraper3Context();
-          context.put(DataScraper3Context.EODDATAPROVIDER_KEY, eodDataProvider);
-          context.put(DataScraper3Context.EODDATASINK_KEY, eodDataSink);
-
-          // place optional argument values into the context
-          if (commandLine.hasOption(CommandLineOptions.EXCHANGE)) {
-            context.put(DataScraper3Context.EXCHANGE_KEY, commandLine.getOptionValue(CommandLineOptions.EXCHANGE));
-          }
-
-          if (commandLine.hasOption(CommandLineOptions.SYMBOL)) {
-            context.put(DataScraper3Context.SYMBOL_KEY, commandLine.getOptionValue(CommandLineOptions.SYMBOL));
-          }
-
-          Command command = DataScraper3CommandFactory.create(appConfig, commandLine.getOptionValue(CommandLineOptions.COMMAND));
-          command.execute(context);
-
-        }
-        catch(EodDataProviderException edpe) {
-
-          logger.error(edpe.toString());
-          edpe.printStackTrace();
-
-        }
-        catch(EodDataSinkException edse) {
-
-          logger.error(edse.toString()); 
-          edse.printStackTrace();
-
-        }
-        finally {
-
-          if (eodDataProvider != null) {
-
-            //eodDataProvider.close();
-
-          }
-          
-          if (eodDataSink != null) {
-
-            eodDataSink.close();
-
-          }
-        }
-
+        controller.executeCommandLine(commandLine);
       }
       else {
 
@@ -127,12 +80,6 @@ final class DataScraper3 {
 
       logger.error(pe.toString()); 
       pe.printStackTrace();
-
-    }
-    catch(ConfigurationException ce) {
-
-      logger.error(ce.toString()); 
-      ce.printStackTrace();
 
     }
     catch(Exception e) {

@@ -16,6 +16,7 @@
 
 package nz.co.jsrsolutions.ds3.test;
 
+import nz.co.jsrsolutions.ds3.*;
 
 import org.junit.* ;
 import static org.junit.Assert.* ;
@@ -25,6 +26,20 @@ import static org.junit.Assert.* ;
  */
 public class HdfObjectEodDataSinkTest {
 
+  private EodDataSink eodDataSink = null;
+  
+  /**
+   *
+   * 
+   * 
+   */
+  @Before
+  public void setUp() {
+    
+    //    eodDataSink = EodDataSinkFactory.create
+    
+  }
+
   /**
    * Test that when supplied with a known set of exchanges,
    * an identical set of exchanges is written to the HDF5 
@@ -32,6 +47,9 @@ public class HdfObjectEodDataSinkTest {
    */
   @Test
   public void testUpdateExchanges() {
+
+    
+
     assertTrue(false);
   }
 

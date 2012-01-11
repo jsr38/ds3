@@ -17,11 +17,12 @@
 package nz.co.jsrsolutions.ds3;
 
 import java.lang.String;
+import java.util.Calendar;
 
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
-
+import nz.co.jsrsolutions.util.Range;
 /** 
  * 
  * Interface that allows EOD Data to be written to.
@@ -92,9 +93,20 @@ public interface EodDataSink {
    * 
    * @param       the array of exchange data
    * @return      
-   * @exception   EodDataSinkException
-   *              If the exchange data is unable to be written 
    */
-  public void close() throws EodDataSinkException;
+  public void close();
+
+
+  /** 
+   * 
+   * Returns date range of the curent contiguous block
+   * 
+   * 
+   * @param       the exchange
+   * @param       the symbol
+   * @return      an array containing the start date and end date
+   */
+  public Range<Calendar> getRange(String exchange, String symbol) throws EodDataSinkException;
+
 
 }

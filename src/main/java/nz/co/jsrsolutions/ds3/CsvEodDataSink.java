@@ -9,6 +9,7 @@ import java.util.Calendar;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.util.Range;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
@@ -105,8 +106,13 @@ class CsvEodDataSink implements EodDataSink {
     throw new NotImplementedException();
   }
 
-  public void close() throws EodDataSinkException {
+  public void close() {
   
   }
+
+  public Range<Calendar> getRange(String exchange, String symbol) {
+    throw new NotImplementedException();
+  }
+
 
 }

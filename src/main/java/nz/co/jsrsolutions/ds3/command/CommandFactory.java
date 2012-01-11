@@ -1,13 +1,27 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
-package nz.co.jsrsolutions.ds3;
+/*
+ * @(#)CommandFactory.java        
+ *
+ * Copyright (c) 2012 JSR Solutions Limited
+ * 4 Viridian Lane, Auckland, 0632.  New Zealand
+ * All rights reserved.
+ *
+ * This software is the confidential and proprietary information of JSR
+ * Solutions Limited. ("Confidential Information").  You shall not
+ * disclose such Confidential Information and shall use it only in
+ * accordance with the terms of the license agreement you entered into
+ * with JSR Solutions Limited.
+ */
+
+package nz.co.jsrsolutions.ds3.command;
 
 import java.lang.String;
 
 import org.apache.commons.chain.Command;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 
-final class DataScraper3CommandFactory {
+final class CommandFactory {
 
   private static final String LISTEXCHANGES_KEY = new String("listexchanges");
 
@@ -23,7 +37,7 @@ final class DataScraper3CommandFactory {
 
   private static final String UPDATEEXCHANGESYMBOLQUOTES_KEY = new String("updateexchangesymbolquotes");
 
-  public static Command create(HierarchicalConfiguration appConfig, String type) throws DataScraper3Exception {
+  public static Command create(String type) throws DataScraper3Exception {
     
     if (type.compareTo(LISTEXCHANGES_KEY) == 0) {
       

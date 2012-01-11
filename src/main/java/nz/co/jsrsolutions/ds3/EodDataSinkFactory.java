@@ -1,7 +1,7 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * @(#)HdfObjectEodDataSinkTest.java        
+ * @(#)EodDataSinkFactory.java        
  *
  * Copyright (c) 2012 JSR Solutions Limited
  * 4 Viridian Lane, Auckland, 0632.  New Zealand

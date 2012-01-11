@@ -35,7 +35,9 @@ import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.util.Range;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 
 class HdfObjectEodDataSink implements EodDataSink {
@@ -711,7 +713,7 @@ class HdfObjectEodDataSink implements EodDataSink {
 
   }
 
-  public void close() throws EodDataSinkException {
+  public void close() {
 
     Iterator it = symbolGroupHandleMap.entrySet().iterator();
     while (it.hasNext()) {
@@ -773,5 +775,10 @@ class HdfObjectEodDataSink implements EodDataSink {
     }
 
   }
+
+  public Range<Calendar> getRange(String exchange, String symbol) {
+    throw new NotImplementedException();
+  }
+
 
 }

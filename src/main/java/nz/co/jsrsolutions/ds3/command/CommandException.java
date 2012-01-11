@@ -1,7 +1,7 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * @(#)DataScraper3Exception.java        
+ * @(#)CommandException.java        
  *
  * Copyright (c) 2012 JSR Solutions Limited
  * 4 Viridian Lane, Auckland, 0632.  New Zealand
@@ -14,28 +14,25 @@
  * with JSR Solutions Limited.
  */
 
-package nz.co.jsrsolutions.ds3;
+package nz.co.jsrsolutions.ds3.command;
 
 
 import java.lang.String;
 
-class DataScraper3Exception extends Exception {
+class CommandException extends Exception {
+
   private String mistake;
 
-  public DataScraper3Exception() {
+  public CommandException() {
     super();
     mistake = "unknown";
   }
-
-  public DataScraper3Exception(String err) {
+  
+  public CommandException(String err) {
     super(err);
     mistake = err;
   }
   
-  public DataScraper3Exception(Throwable cause) {
-    super(cause);
-  }  
-
   public String getError() {
     return mistake;
   }

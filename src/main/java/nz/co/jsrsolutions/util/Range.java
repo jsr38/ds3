@@ -1,7 +1,7 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * @(#)DataScraper3Exception.java        
+ * @(#)Range.java        
  *
  * Copyright (c) 2012 JSR Solutions Limited
  * 4 Viridian Lane, Auckland, 0632.  New Zealand
@@ -14,30 +14,33 @@
  * with JSR Solutions Limited.
  */
 
-package nz.co.jsrsolutions.ds3;
+package nz.co.jsrsolutions.util;
 
 
-import java.lang.String;
+public class Range<T extends Comparable<T>> {
 
-class DataScraper3Exception extends Exception {
-  private String mistake;
+  protected T lower;
 
-  public DataScraper3Exception() {
-    super();
-    mistake = "unknown";
+  protected T upper;
+
+  public Range(T lower, T upper) {
+
+    if (lower.compareTo(upper) > 0) {
+      throw new IllegalArgumentException("lower element of range must be less than or equal to upper element");
+    }
+
+    this.lower = lower;
+    this.upper = upper;
   }
 
-  public DataScraper3Exception(String err) {
-    super(err);
-    mistake = err;
+  public T getLower() {
+    return lower;
   }
-  
-  public DataScraper3Exception(Throwable cause) {
-    super(cause);
-  }  
 
-  public String getError() {
-    return mistake;
+  public T getUpper() {
+    return upper;
   }
+
+  // TODO: add some proper range functionality
+
 }
-  

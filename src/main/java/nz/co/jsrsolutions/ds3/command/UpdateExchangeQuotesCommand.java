@@ -14,7 +14,7 @@
  * with JSR Solutions Limited.
  */
 
-package nz.co.jsrsolutions.ds3;
+package nz.co.jsrsolutions.ds3.command;
 
 import java.lang.String;
 import java.util.Calendar;

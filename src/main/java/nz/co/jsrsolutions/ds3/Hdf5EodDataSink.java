@@ -1,10 +1,21 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
+/*
+ * @(#)Hdf5EodDataSink.java        
+ *
+ * Copyright (c) 2012 JSR Solutions Limited
+ * 4 Viridian Lane, Auckland, 0632.  New Zealand
+ * All rights reserved.
+ *
+ * This software is the confidential and proprietary information of JSR
+ * Solutions Limited. ("Confidential Information").  You shall not
+ * disclose such Confidential Information and shall use it only in
+ * accordance with the terms of the license agreement you entered into
+ * with JSR Solutions Limited.
+ */
+
 package nz.co.jsrsolutions.ds3;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Calendar;
@@ -20,7 +31,9 @@ import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.util.Range;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 
 class Hdf5EodDataSink implements EodDataSink {
@@ -676,19 +689,19 @@ class Hdf5EodDataSink implements EodDataSink {
     openQuoteDataset(exchange, symbol);
 
     try {
-    int fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
-    long dimensions[] = new long[1];
-    long maxDimensions[] = new long[1];
-    int status = H5.H5Sget_simple_extent_dims(fileDataspaceHandle, dimensions, maxDimensions);
+      int fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
+      long dimensions[] = new long[1];
+      long maxDimensions[] = new long[1];
+      int status = H5.H5Sget_simple_extent_dims(fileDataspaceHandle, dimensions, maxDimensions);
     
-    final byte[] readBuffer = new byte[Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE * (int)dimensions[0]];
+      final byte[] readBuffer = new byte[Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE * (int)dimensions[0]];
 
-    H5.H5Dread(quoteDatasetHandle,
-               HDF5Constants.H5T_NATIVE_INT,
-               HDF5Constants.H5S_ALL,
-               HDF5Constants.H5S_ALL,
-               HDF5Constants.H5P_DEFAULT,
-               readBuffer);
+      H5.H5Dread(quoteDatasetHandle,
+                 HDF5Constants.H5T_NATIVE_INT,
+                 HDF5Constants.H5S_ALL,
+                 HDF5Constants.H5S_ALL,
+                 HDF5Constants.H5P_DEFAULT,
+                 readBuffer);
     }
     catch (HDF5Exception e) {
       throw new EodDataSinkException();
@@ -696,7 +709,7 @@ class Hdf5EodDataSink implements EodDataSink {
 
   }
 
-  public void close() throws EodDataSinkException {
+  public void close() {
 
     Iterator it = symbolGroupHandleMap.entrySet().iterator();
     while (it.hasNext()) {
@@ -757,6 +770,10 @@ class Hdf5EodDataSink implements EodDataSink {
       ex.printStackTrace();
     }
 
+  }
+
+  public Range<Calendar> getRange(String exchange, String symbol) {
+    throw new NotImplementedException();
   }
 
 }
