@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 
 class EodDataProviderMock extends EodDataProviderBase implements EodDataProvider {
 
+  @SuppressWarnings("unused")
   private static final transient Logger logger = Logger.getLogger(EodDataProviderMock.class);
 
   private EXCHANGE[] exchanges;

@@ -42,35 +42,51 @@ final class CommandLineOptions {
 
   static {
     
+    OptionBuilder
+      .withDescription("display help");
     Option help = OptionBuilder
-      .withDescription("display help")
       .create(HELP);
 
+    OptionBuilder
+      .withArgName("env");
+    OptionBuilder
+      .hasArg();
+    OptionBuilder
+      .isRequired(true);
+    OptionBuilder
+      .withDescription("specify environment {dev,qa,prod}");
     Option environment = OptionBuilder
-      .withArgName("env")
-      .hasArg()
-      .isRequired(true)
-      .withDescription("specify environment {dev,qa,prod}")
       .create(ENVIRONMENT);
 
+    OptionBuilder
+      .withArgName("command");
+    OptionBuilder
+      .hasArg();
+    OptionBuilder
+      .withDescription("specify command to execute");
     Option command = OptionBuilder
-      .withArgName("command")
-      .hasArg()
-      .withDescription("specify command to execute")
       .create(COMMAND);
 
+    OptionBuilder
+      .withArgName("exchange");
+    OptionBuilder
+      .hasArg();
+    OptionBuilder
+      .isRequired(false);
+    OptionBuilder
+      .withDescription("specify exchange");
     Option exchange = OptionBuilder
-      .withArgName("exchange")
-      .hasArg()
-      .isRequired(false)
-      .withDescription("specify exchange")
       .create(EXCHANGE);
     
+    OptionBuilder
+      .withArgName("symbol");
+    OptionBuilder
+      .hasArg();
+    OptionBuilder
+      .isRequired(false);
+    OptionBuilder
+      .withDescription("specify symbol");
     Option symbol = OptionBuilder
-      .withArgName("symbol")
-      .hasArg()
-      .isRequired(false)
-      .withDescription("specify symbol")
       .create(SYMBOL);
 
     logger.debug("Registering command line options:");

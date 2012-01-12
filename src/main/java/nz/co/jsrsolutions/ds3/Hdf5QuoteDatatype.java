@@ -1,24 +1,33 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
+/*
+ * @(#)Hdf5QuoteDataType.java        
+ *
+ * Copyright (c) 2012 JSR Solutions Limited
+ * 4 Viridian Lane, Auckland, 0632.  New Zealand
+ * All rights reserved.
+ *
+ * This software is the confidential and proprietary information of JSR
+ * Solutions Limited. ("Confidential Information").  You shall not
+ * disclose such Confidential Information and shall use it only in
+ * accordance with the terms of the license agreement you entered into
+ * with JSR Solutions Limited.
+ */
+
 package nz.co.jsrsolutions.ds3;
 
-import java.lang.System;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import ncsa.hdf.hdf5lib.H5;
 import ncsa.hdf.hdf5lib.HDF5Constants;
 import ncsa.hdf.hdf5lib.HDFNativeData;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
-import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
-
-import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 
 import org.apache.log4j.Logger;
 
 class Hdf5QuoteDatatype {
 
+  @SuppressWarnings("unused")
   private static final transient Logger logger = Logger.getLogger(Hdf5QuoteDatatype.class);
 
   public static final int QUOTE_DATATYPE_SIZE = 40;

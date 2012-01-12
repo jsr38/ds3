@@ -74,6 +74,7 @@ public class RangeTest {
 
     Calendar now = Calendar.getInstance();
     
+    @SuppressWarnings("unused")
     Range<Calendar> dateRange = new Range<Calendar>(now, yesterday);
   }
 

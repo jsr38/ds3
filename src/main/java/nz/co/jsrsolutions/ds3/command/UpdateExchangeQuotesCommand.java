@@ -34,6 +34,7 @@ public class UpdateExchangeQuotesCommand implements Command {
 
   private static final int HISTORY_YEAR_OFFSET = -3;
 
+  @SuppressWarnings("unused")
   private static final int HISTORY_MONTH_OFFSET = -3;
 
   private static final String DEFAULT_FREQUENCY = new String("d");

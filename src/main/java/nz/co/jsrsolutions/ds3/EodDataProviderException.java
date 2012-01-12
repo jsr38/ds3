@@ -21,6 +21,11 @@ import java.lang.String;
 
 public class EodDataProviderException extends Exception {
 
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -8326565082971956329L;
+  
   private String mistake;
 
   public EodDataProviderException() {

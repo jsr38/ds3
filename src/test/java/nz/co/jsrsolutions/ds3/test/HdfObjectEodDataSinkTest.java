@@ -26,6 +26,8 @@ import static org.junit.Assert.* ;
  */
 public class HdfObjectEodDataSinkTest {
 
+
+  @SuppressWarnings("unused")
   private EodDataSink eodDataSink = null;
   
   /**

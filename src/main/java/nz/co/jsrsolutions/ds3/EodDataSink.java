@@ -55,22 +55,6 @@ public interface EodDataSink {
   public void updateExchangeSymbols(String exchange,
                                     SYMBOL[] symbols) throws EodDataSinkException;
 
-  /** 
-   * 
-   * Writes the supplied exchange data to the target where possible.
-   * 
-   * 
-   * @param       the array of exchange data
-   * @return      
-   * @exception   EodDataSinkException
-   *              If the exchange data is unable to be written 
-   */
-  public void updateQuotes(String exchange,
-                           String symbol,
-                           String startDate,
-                           String endDate,
-                           String period,
-                           QUOTE[] quotes) throws EodDataSinkException;
 
   /** 
    * 

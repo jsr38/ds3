@@ -16,10 +16,7 @@
 
 package nz.co.jsrsolutions.ds3.command;
 
-import java.lang.String;
-
 import org.apache.commons.chain.Command;
-import org.apache.commons.configuration.HierarchicalConfiguration;
 
 public final class CommandFactory {
 

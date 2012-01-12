@@ -17,9 +17,6 @@
 package nz.co.jsrsolutions.ds3.command;
 
 import nz.co.jsrsolutions.ds3.EodDataProvider;
-import nz.co.jsrsolutions.ds3.EodDataSink;
-import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
-import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
 
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -34,7 +31,7 @@ public class ListExchangeMonthsCommand implements Command {
     logger.info("Executing: listexchangemonths");
 
     EodDataProvider eodDataProvider = (EodDataProvider)context.get(CommandContext.EODDATAPROVIDER_KEY);
-    EodDataSink eodDataSink = (EodDataSink)context.get(CommandContext.EODDATASINK_KEY);
+    
     String exchange = (String)context.get(CommandContext.EXCHANGE_KEY);
 
     if (exchange == null) {

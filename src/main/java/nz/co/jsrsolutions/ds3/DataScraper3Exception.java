@@ -20,6 +20,11 @@ package nz.co.jsrsolutions.ds3;
 import java.lang.String;
 
 class DataScraper3Exception extends Exception {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 8937665020947322939L;
+  
   private String mistake;
 
   public DataScraper3Exception() {

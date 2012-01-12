@@ -16,8 +16,6 @@
 
 package nz.co.jsrsolutions.ds3;
 
-import java.lang.String;
-
 import nz.co.jsrsolutions.ds3.command.CommandContext;
 import nz.co.jsrsolutions.ds3.command.CommandFactory;
 
@@ -29,6 +27,7 @@ import org.apache.log4j.Logger;
 
 final class DataScraper3Controller {
 
+  @SuppressWarnings("unused")
   private static final transient Logger logger = Logger.getLogger(DataScraper3Controller.class);
 
   private EodDataProvider eodDataProvider;
@@ -48,7 +47,7 @@ final class DataScraper3Controller {
       throw new DataScraper3Exception("No command supplied.");
     }
 
-    Context context = new CommandContext();
+    CommandContext context = new CommandContext();
     context.put(CommandContext.EODDATAPROVIDER_KEY, eodDataProvider);
     context.put(CommandContext.EODDATASINK_KEY, eodDataSink);
 

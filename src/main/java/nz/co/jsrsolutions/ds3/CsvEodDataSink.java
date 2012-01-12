@@ -1,5 +1,19 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
+/*
+ * @(#)CsvEodDataSink.java        
+ *
+ * Copyright (c) 2012 JSR Solutions Limited
+ * 4 Viridian Lane, Auckland, 0632.  New Zealand
+ * All rights reserved.
+ *
+ * This software is the confidential and proprietary information of JSR
+ * Solutions Limited. ("Confidential Information").  You shall not
+ * disclose such Confidential Information and shall use it only in
+ * accordance with the terms of the license agreement you entered into
+ * with JSR Solutions Limited.
+ */
+
 package nz.co.jsrsolutions.ds3;
 
 import java.io.BufferedWriter;
@@ -35,13 +49,10 @@ class CsvEodDataSink implements EodDataSink {
 
   }
 
-  public void updateQuotes(String exchange,
-                           String symbol,
-                           String startDate,
-                           String endDate,
-                           String period,
-                           QUOTE[] quoteArray) throws EodDataSinkException {
-
+  public void updateExchangeSymbolQuotes(String exchange,
+                                         String symbol,
+                                         QUOTE[] quotes) throws EodDataSinkException {
+ 
     try {
 
       StringBuffer filenameBuf = new StringBuffer();
@@ -53,12 +64,12 @@ class CsvEodDataSink implements EodDataSink {
       filenameBuf.append(exchange);
       filenameBuf.append(".");
       filenameBuf.append(symbol);
-      filenameBuf.append(".");
-      filenameBuf.append(startDate);
-      filenameBuf.append("-");
-      filenameBuf.append(endDate);
-      filenameBuf.append(".");
-      filenameBuf.append(period);
+//      filenameBuf.append(".");
+//      filenameBuf.append(startDate);
+//      filenameBuf.append("-");
+//      filenameBuf.append(endDate);
+//      filenameBuf.append(".");
+//      filenameBuf.append(period);
       filenameBuf.append(".csv");
 
 
@@ -73,7 +84,7 @@ class CsvEodDataSink implements EodDataSink {
       FileWriter fileWriter = new FileWriter(filenameBuf.toString());
       BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-      for (DataStub.QUOTE quote : quoteArray) {
+      for (DataStub.QUOTE quote : quotes) {
 
         Calendar calendar = quote.getDateTime();
         bufferedWriter.append(Integer.toString(calendar.get(Calendar.YEAR)));
@@ -97,13 +108,6 @@ class CsvEodDataSink implements EodDataSink {
       throw edpe;
 
     }
-
-  }
-
-  public void updateExchangeSymbolQuotes(String exchange,
-                                         String symbol,
-                                         QUOTE[] quotes) throws EodDataSinkException {
-    throw new NotImplementedException();
   }
 
   public void close() {

@@ -17,21 +17,17 @@
 
 package nz.co.jsrsolutions.ds3;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.lang.Integer;
-import java.lang.String;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import ncsa.hdf.hdf5lib.H5;
 import ncsa.hdf.hdf5lib.HDF5Constants;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
-
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
@@ -134,9 +130,7 @@ class HdfObjectEodDataSink implements EodDataSink {
 
     try {
 
-      //      int datasetHandle = H5.H5Dopen(fileHandle, "/" + EXCHANGE_DATASET_NAME, HDF5Constants.H5P_DEFAULT);
-      // TODO: the following call is deprecated in the latest hdf-java release:
-      exchangeDatasetHandle = H5.H5Dopen(fileHandle, "/" + EXCHANGE_DATASET_NAME);
+      exchangeDatasetHandle = H5.H5Dopen(fileHandle, "/" + EXCHANGE_DATASET_NAME, HDF5Constants.H5P_DEFAULT);
 
       if (exchangeDatasetHandle < 0) {
 
@@ -192,6 +186,7 @@ class HdfObjectEodDataSink implements EodDataSink {
             logger.debug(messageBuffer.toString());
           }
           
+          @SuppressWarnings("unused")
           int status = H5.H5Gclose(groupHandle);
         }
       }
@@ -289,6 +284,7 @@ class HdfObjectEodDataSink implements EodDataSink {
 
       if (symbolGroupHandle >= 0) {
         try {
+          @SuppressWarnings("unused")
           int status = H5.H5Gclose(symbolGroupHandle);
         }
         catch (HDF5LibraryException lex) {
@@ -299,6 +295,7 @@ class HdfObjectEodDataSink implements EodDataSink {
 
     if (exchangeGroupHandle >= 0) {
       try {
+        @SuppressWarnings("unused")
         int status = H5.H5Gclose(exchangeGroupHandle);
       }
       catch (HDF5LibraryException lex) {
@@ -333,6 +330,7 @@ class HdfObjectEodDataSink implements EodDataSink {
     exchangeDatatypeHandle = exchangeDatatype.getFileDatatypeHandle();
 
     int createProperties = H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE);
+    @SuppressWarnings("unused")
     int status = H5.H5Pset_chunk(createProperties, EXCHANGE_DATASET_RANK, dimensions);
 
     if ((fileHandle >= 0)
@@ -343,57 +341,15 @@ class HdfObjectEodDataSink implements EodDataSink {
                                            EXCHANGE_DATASET_NAME,
                                            exchangeDatatypeHandle,
                                            exchangeDataspaceHandle,
-                                           createProperties);
+                                           HDF5Constants.H5P_DEFAULT,
+                                           createProperties,
+                                           HDF5Constants.H5P_DEFAULT);
     }
     else {
       throw new EodDataSinkException("Failed to create exchange dataset from scratch.");
     }
 
     logger.info("Sucessfully created new exchange dataset.");
-
-  }
-
-  public void updateQuotes(String exchange,
-                           String symbol,
-                           String startDate,
-                           String endDate,
-                           String period,
-                           QUOTE[] quotes) throws EodDataSinkException {
-
-    try {
-
-      int exchangeGroupHandle = H5.H5Gopen(fileHandle, exchange, HDF5Constants.H5P_DEFAULT);
-
-      int symbolGroupHandle = H5.H5Gopen(exchangeGroupHandle, symbol, HDF5Constants.H5P_DEFAULT);
-      
-      for (DataStub.QUOTE quote : quotes) {
-
-        /*
-        Calendar calendar = quote.getDateTime();
-        bufferedWriter.append(Integer.toString(calendar.get(Calendar.YEAR)));
-        bufferedWriter.append(String.format("%02d", calendar.get(Calendar.MONTH)));
-        bufferedWriter.append(String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH)));
-        bufferedWriter.append(",");
-        bufferedWriter.append(Double.toString(quote.getClose()));
-        bufferedWriter.newLine();
-        */
-      }
-
-    }
-    catch(HDF5LibraryException lex) {
-
-      lex.printStackTrace();
-
-      StringBuffer messageBuffer = new StringBuffer();
-      messageBuffer.append("Failed to set symbol data for [ ");
-      messageBuffer.append(symbol);
-      messageBuffer.append(" ] on exchange [ ");
-      messageBuffer.append(exchange);
-      messageBuffer.append(" ] ");
-
-      throw new EodDataSinkException(messageBuffer.toString());
-
-    }
 
   }
 
@@ -427,6 +383,7 @@ class HdfObjectEodDataSink implements EodDataSink {
         fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
         long dimensions[] = new long[1];
         long maxDimensions[] = new long[1];
+        @SuppressWarnings("unused")
         int status = H5.H5Sget_simple_extent_dims(fileDataspaceHandle, dimensions, maxDimensions);
         long fileWriteOffset = 0;
 
@@ -575,6 +532,7 @@ class HdfObjectEodDataSink implements EodDataSink {
     quoteMemoryDatatypeHandle = Hdf5QuoteDatatype.getMemoryDatatypeHandle();
 
     int createProperties = H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE);
+    @SuppressWarnings("unused")
     int status = H5.H5Pset_chunk(createProperties, QUOTE_DATASET_RANK, QUOTEDATASET_CHUNK_DIMENSIONS);
 
     if ((fileHandle >= 0)
@@ -586,7 +544,9 @@ class HdfObjectEodDataSink implements EodDataSink {
                                           QUOTE_DATASET_NAME,
                                           quoteFileDatatypeHandle,
                                           quoteDataspaceHandle,
-                                          createProperties);
+                                          HDF5Constants.H5P_DEFAULT,
+                                          createProperties,
+                                          HDF5Constants.H5P_DEFAULT);
       }
       catch (HDF5Exception e) {
         throw e;
@@ -696,6 +656,7 @@ class HdfObjectEodDataSink implements EodDataSink {
     int fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
     long dimensions[] = new long[1];
     long maxDimensions[] = new long[1];
+    @SuppressWarnings("unused")
     int status = H5.H5Sget_simple_extent_dims(fileDataspaceHandle, dimensions, maxDimensions);
     
     final byte[] readBuffer = new byte[Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE * (int)dimensions[0]];
@@ -715,9 +676,9 @@ class HdfObjectEodDataSink implements EodDataSink {
 
   public void close() {
 
-    Iterator it = symbolGroupHandleMap.entrySet().iterator();
+    Iterator<Entry<String, Integer>> it = symbolGroupHandleMap.entrySet().iterator();
     while (it.hasNext()) {
-      Map.Entry kvp = (Map.Entry)it.next();
+      Map.Entry<String,Integer> kvp = (Map.Entry<String,Integer>)it.next();
       try {
         H5.H5Gclose((Integer)kvp.getValue());
       }
@@ -728,7 +689,7 @@ class HdfObjectEodDataSink implements EodDataSink {
 
     it = exchangeGroupHandleMap.entrySet().iterator();
     while (it.hasNext()) {
-      Map.Entry kvp = (Map.Entry)it.next();
+      Map.Entry<String,Integer> kvp = (Map.Entry<String,Integer>)it.next();
       try {
         H5.H5Gclose((Integer)kvp.getValue());
       }

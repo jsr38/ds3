@@ -17,27 +17,21 @@
 package nz.co.jsrsolutions.ds3.test;
 
 import java.io.InputStream;
-import java.lang.Class;
-import java.lang.Integer;
-import java.lang.String;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLInputFactory;
 
-import nz.co.jsrsolutions.ds3.EodDataSink;
-import nz.co.jsrsolutions.ds3.EodDataSinkException;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.ds3.EodDataSink;
+import nz.co.jsrsolutions.ds3.EodDataSinkException;
 import nz.co.jsrsolutions.util.Range;
 
 import org.apache.axis2.databinding.ADBBean;
@@ -54,10 +48,13 @@ class EodDataSinkMock implements EodDataSink {
 
   private static final String XML_PREFIX = new String("td");
 
+  @SuppressWarnings("unused")
   private static final QName EXCHANGE_QNAME = new QName(XML_NAMESPACE_URI, "exchange", XML_PREFIX);
 
+  @SuppressWarnings("unused")
   private static final QName SYMBOL_QNAME = new QName(XML_NAMESPACE_URI, "symbol", XML_PREFIX);
 
+  @SuppressWarnings("unused")
   private static final QName QUOTE_QNAME = new QName(XML_NAMESPACE_URI, "quote", XML_PREFIX);
 
   private static final String TESTDATA_LOCALNAME = new String("testdata");
@@ -68,6 +65,7 @@ class EodDataSinkMock implements EodDataSink {
 
   private static final String QUOTES_LOCALNAME = new String("quotes");
 
+  @SuppressWarnings("unused")
   private static final QName TESTDATA_QNAME = new QName(XML_NAMESPACE_URI, TESTDATA_LOCALNAME, XML_PREFIX);
 
   private static final QName EXCHANGES_QNAME = new QName(XML_NAMESPACE_URI, EXCHANGES_LOCALNAME, XML_PREFIX);
@@ -76,8 +74,10 @@ class EodDataSinkMock implements EodDataSink {
 
   private static final QName QUOTES_QNAME = new QName(XML_NAMESPACE_URI, QUOTES_LOCALNAME, XML_PREFIX);
 
+  @SuppressWarnings("unused")
   private static final String TESTEXCHANGE_ATTRNAME = new String("testExchange");
 
+  @SuppressWarnings("unused")
   private static final String TESTSYMBOL_ATTRNAME = new String("testSymbol");
 
   private String testExchange;
@@ -182,17 +182,20 @@ class EodDataSinkMock implements EodDataSink {
 
   }
 
-  private void deserialiseExchanges() {
+  @SuppressWarnings("unused")
+private void deserialiseExchanges() {
 
     
 
   }
 
-  private void deserialiseSymbols() {
+  @SuppressWarnings("unused")
+private void deserialiseSymbols() {
 
   }
 
-  private void deserialiseQuotes() {
+  @SuppressWarnings("unused")
+private void deserialiseQuotes() {
 
   }
 
@@ -207,18 +210,9 @@ class EodDataSinkMock implements EodDataSink {
 
   }
 
-  private void createExchangeDataset(long dimension) throws EodDataSinkException {
+  @SuppressWarnings("unused")
+private void createExchangeDataset(long dimension) throws EodDataSinkException {
   
-    throw new NotImplementedException();
-  }
-
-  public void updateQuotes(String exchange,
-                           String symbol,
-                           String startDate,
-                           String endDate,
-                           String period,
-                           QUOTE[] quotes) throws EodDataSinkException {
-
     throw new NotImplementedException();
   }
 
@@ -240,6 +234,7 @@ class EodDataSinkMock implements EodDataSink {
     throw new NotImplementedException();
   }
 
+  @SuppressWarnings("unused")
   private void readExchangeSymbolQuotes(String exchange, String symbol) throws EodDataSinkException {
     
 

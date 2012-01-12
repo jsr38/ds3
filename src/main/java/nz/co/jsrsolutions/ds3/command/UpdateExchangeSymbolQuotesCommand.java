@@ -16,13 +16,11 @@
 
 package nz.co.jsrsolutions.ds3.command;
 
-import java.lang.String;
 import java.util.Calendar;
 
+import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.EodDataProvider;
 import nz.co.jsrsolutions.ds3.EodDataSink;
-import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
-import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
 
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -34,6 +32,7 @@ public class UpdateExchangeSymbolQuotesCommand implements Command {
 
   private static final int HISTORY_YEAR_OFFSET = -3;
 
+  @SuppressWarnings("unused")
   private static final int HISTORY_MONTH_OFFSET = -3;
 
   private static final String DEFAULT_FREQUENCY = new String("d");

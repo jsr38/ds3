@@ -21,6 +21,11 @@ import java.lang.String;
 
 class CommandException extends Exception {
 
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -3835579233998111828L;
+
   private String mistake;
 
   public CommandException() {

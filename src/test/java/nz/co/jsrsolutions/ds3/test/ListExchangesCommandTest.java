@@ -44,7 +44,7 @@ public class ListExchangesCommandTest {
 
     try {
 
-      //      command.execute(context);
+      command.execute(context);
 
     } catch (Exception e) {
 

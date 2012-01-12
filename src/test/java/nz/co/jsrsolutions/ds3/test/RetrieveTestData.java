@@ -16,11 +16,8 @@
 
 package nz.co.jsrsolutions.ds3.test;
 
-import nz.co.jsrsolutions.ds3.*;
-
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.lang.String;
 import java.util.Calendar;
 
 import javax.xml.namespace.QName;
@@ -28,8 +25,11 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import nz.co.jsrsolutions.ds3.EodDataProvider;
+import nz.co.jsrsolutions.ds3.EodDataProviderException;
+import nz.co.jsrsolutions.ds3.EodDataProviderFactory;
+
 import org.apache.axis2.databinding.ADBBean;
-import org.apache.axis2.databinding.ADBException;
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
@@ -80,7 +80,8 @@ final class RetrieveTestData {
   private static final String NEWLINE = System.getProperty("line.separator");
 
   private static final int HISTORY_YEAR_OFFSET = -3;
-
+  
+  @SuppressWarnings("unused")
   private static final int HISTORY_MONTH_OFFSET = -3;
 
   private static final String DEFAULT_FREQUENCY = new String("d");

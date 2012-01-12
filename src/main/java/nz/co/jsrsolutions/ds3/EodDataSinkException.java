@@ -20,6 +20,11 @@ package nz.co.jsrsolutions.ds3;
 import java.lang.String;
 
 public class EodDataSinkException extends Exception {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 2538235337093051298L;
+  
   private String mistake;
 
   public EodDataSinkException() {

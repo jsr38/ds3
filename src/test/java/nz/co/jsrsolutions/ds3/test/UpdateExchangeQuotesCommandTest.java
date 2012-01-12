@@ -16,17 +16,14 @@
 
 package nz.co.jsrsolutions.ds3.test;
 
-import nz.co.jsrsolutions.ds3.EodDataSink;
-import nz.co.jsrsolutions.ds3.EodDataProvider;
+import static org.junit.Assert.fail;
 import nz.co.jsrsolutions.ds3.command.CommandContext;
 import nz.co.jsrsolutions.ds3.command.UpdateExchangeQuotesCommand;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
-import org.apache.commons.chain.impl.ContextBase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for UpdateExchangeQuotesCommand.
@@ -54,7 +51,7 @@ public class UpdateExchangeQuotesCommandTest {
       EodDataProviderMock eodDataProvider = new EodDataProviderMock();
       EodDataSinkMock eodDataSink = new EodDataSinkMock();
 
-      Context context = new CommandContext();
+      CommandContext context = new CommandContext();
     
       context.put(CommandContext.EODDATAPROVIDER_KEY, eodDataProvider);
       context.put(CommandContext.EODDATASINK_KEY, eodDataSink);

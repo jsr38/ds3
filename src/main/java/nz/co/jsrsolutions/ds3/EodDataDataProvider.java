@@ -31,12 +31,16 @@ class EodDataDataProvider extends EodDataProviderBase implements EodDataProvider
 
   private static final transient Logger logger = Logger.getLogger(EodDataDataProvider.class);
 
+  @SuppressWarnings("unused")
   private final String url;
   
+  @SuppressWarnings("unused")
   private final String username;
 
+  @SuppressWarnings("unused")
   private final String password;
 
+  @SuppressWarnings("unused")
   private final long timeout;
 
   private final transient DataStub eodDataStub;
