@@ -21,7 +21,7 @@ import java.lang.String;
 import org.apache.commons.chain.Command;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 
-final class CommandFactory {
+public final class CommandFactory {
 
   private static final String LISTEXCHANGES_KEY = new String("listexchanges");
 
@@ -37,7 +37,7 @@ final class CommandFactory {
 
   private static final String UPDATEEXCHANGESYMBOLQUOTES_KEY = new String("updateexchangesymbolquotes");
 
-  public static Command create(String type) throws DataScraper3Exception {
+  public static Command create(String type) throws CommandException {
     
     if (type.compareTo(LISTEXCHANGES_KEY) == 0) {
       
@@ -80,7 +80,7 @@ final class CommandFactory {
       stringBuffer.append("Unknown command [ ");
       stringBuffer.append(type);
       stringBuffer.append(" ] ");
-      throw new DataScraper3Exception(stringBuffer.toString());
+      throw new CommandException(stringBuffer.toString());
 
     }
 

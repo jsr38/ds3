@@ -16,6 +16,8 @@
 
 package nz.co.jsrsolutions.ds3.command;
 
+import nz.co.jsrsolutions.ds3.EodDataProvider;
+import nz.co.jsrsolutions.ds3.EodDataSink;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
 
@@ -31,9 +33,9 @@ public class UpdateExchangeSymbolsCommand implements Command {
 
     logger.info("Executing: updateexchangesymbols");
 
-    EodDataProvider eodDataProvider = (EodDataProvider)context.get(DataScraper3Context.EODDATAPROVIDER_KEY);
-    EodDataSink eodDataSink = (EodDataSink)context.get(DataScraper3Context.EODDATASINK_KEY);
-    String exchange = (String)context.get(DataScraper3Context.EXCHANGE_KEY);
+    EodDataProvider eodDataProvider = (EodDataProvider)context.get(CommandContext.EODDATAPROVIDER_KEY);
+    EodDataSink eodDataSink = (EodDataSink)context.get(CommandContext.EODDATASINK_KEY);
+    String exchange = (String)context.get(CommandContext.EXCHANGE_KEY);
 
     if (exchange == null) {
       throw new CommandException("Must supply --exchange [exchangecode]");

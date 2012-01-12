@@ -16,6 +16,7 @@
 
 package nz.co.jsrsolutions.ds3;
 
+import java.io.File;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Calendar;

@@ -16,6 +16,8 @@
 
 package nz.co.jsrsolutions.ds3.command;
 
+import nz.co.jsrsolutions.ds3.EodDataProvider;
+import nz.co.jsrsolutions.ds3.EodDataSink;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
 
@@ -31,8 +33,8 @@ public class UpdateAllSymbolsCommand implements Command {
 
     logger.info("Executing: updateallsymbols");
 
-    EodDataProvider eodDataProvider = (EodDataProvider)context.get(DataScraper3Context.EODDATAPROVIDER_KEY);
-    EodDataSink eodDataSink = (EodDataSink)context.get(DataScraper3Context.EODDATASINK_KEY);
+    EodDataProvider eodDataProvider = (EodDataProvider)context.get(CommandContext.EODDATAPROVIDER_KEY);
+    EodDataSink eodDataSink = (EodDataSink)context.get(CommandContext.EODDATASINK_KEY);
 
     EXCHANGE[] exchanges = eodDataProvider.getExchanges();
     for (EXCHANGE exchange : exchanges) {

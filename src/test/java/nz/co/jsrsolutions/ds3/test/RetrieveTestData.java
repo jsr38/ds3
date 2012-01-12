@@ -73,6 +73,10 @@ final class RetrieveTestData {
 
   private static final String QUOTES_LOCALNAME = new String("quotes");
 
+  private static final String TESTEXCHANGE_ATTRNAME = new String("testExchange");
+
+  private static final String TESTSYMBOL_ATTRNAME = new String("testSymbol");
+
   private static final String NEWLINE = System.getProperty("line.separator");
 
   private static final int HISTORY_YEAR_OFFSET = -3;
@@ -197,6 +201,7 @@ final class RetrieveTestData {
 
     try {
       writer.writeStartElement(XML_NAMESPACE_URI, SYMBOLS_LOCALNAME);
+      writer.writeAttribute(XML_NAMESPACE_URI, TESTEXCHANGE_ATTRNAME, TEST_EXCHANGE);
       writer.writeCharacters(NEWLINE);
       serialize(eodDataProvider.getSymbols(TEST_EXCHANGE), SYMBOL_QNAME, writer);
       writer.writeEndElement();
@@ -229,6 +234,8 @@ final class RetrieveTestData {
 
     try {
       writer.writeStartElement(XML_NAMESPACE_URI, QUOTES_LOCALNAME);
+      writer.writeAttribute(XML_NAMESPACE_URI, TESTEXCHANGE_ATTRNAME, TEST_EXCHANGE);
+      writer.writeAttribute(XML_NAMESPACE_URI, TESTSYMBOL_ATTRNAME, TEST_SYMBOL);
       writer.writeCharacters(NEWLINE);
 
       Calendar startCalendar = Calendar.getInstance();

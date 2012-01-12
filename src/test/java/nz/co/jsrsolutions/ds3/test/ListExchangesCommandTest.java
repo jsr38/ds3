@@ -16,7 +16,7 @@
 
 package nz.co.jsrsolutions.ds3.test;
 
-import nz.co.jsrsolutions.ds3.*;
+import nz.co.jsrsolutions.ds3.command.ListExchangesCommand;
 
 import org.junit.*;
 import static org.junit.Assert.*;

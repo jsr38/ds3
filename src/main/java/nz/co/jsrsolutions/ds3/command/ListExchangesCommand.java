@@ -18,6 +18,8 @@ package nz.co.jsrsolutions.ds3.command;
 
 import java.lang.System;
 
+import nz.co.jsrsolutions.ds3.EodDataProvider;
+import nz.co.jsrsolutions.ds3.EodDataSink;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 
 import org.apache.commons.chain.Command;
@@ -26,7 +28,7 @@ import org.apache.log4j.Logger;
 
 public class ListExchangesCommand implements Command {
 
-  private static final transient Logger logger = Logger.getLogger(DataScraper3.class);
+  private static final transient Logger logger = Logger.getLogger(ListExchangesCommand.class);
 
   private static final String NEWLINE = System.getProperty("line.separator");
 
@@ -34,7 +36,7 @@ public class ListExchangesCommand implements Command {
 
     logger.info("Executing: listexchanges");
 
-    EodDataProvider eodDataProvider = (EodDataProvider)context.get(DataScraper3Context.EODDATAPROVIDER_KEY);
+    EodDataProvider eodDataProvider = (EodDataProvider)context.get(CommandContext.EODDATAPROVIDER_KEY);
 
     EXCHANGE[] exchanges = eodDataProvider.getExchanges();
 

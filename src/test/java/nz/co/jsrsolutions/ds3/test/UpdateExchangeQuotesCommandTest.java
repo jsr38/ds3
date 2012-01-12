@@ -1,7 +1,7 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * @(#)ListExchangesCommandTest.java        
+ * @(#)UpdateExchangeQuotesCommandTest.java        
  *
  * Copyright (c) 2012 JSR Solutions Limited
  * 4 Viridian Lane, Auckland, 0632.  New Zealand
@@ -16,7 +16,10 @@
 
 package nz.co.jsrsolutions.ds3.test;
 
-import nz.co.jsrsolutions.ds3.*;
+import nz.co.jsrsolutions.ds3.EodDataSink;
+import nz.co.jsrsolutions.ds3.EodDataProvider;
+import nz.co.jsrsolutions.ds3.command.CommandContext;
+import nz.co.jsrsolutions.ds3.command.UpdateExchangeQuotesCommand;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -26,27 +29,46 @@ import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ContextBase;
 
 /**
- * Unit test for ListExchangesCommand.
+ * Unit test for UpdateExchangeQuotesCommand.
  */
-public class ListExchangesCommandTest {
+public class UpdateExchangeQuotesCommandTest {
 
   /**
-   * Test that when supplied with a known set of exchanges,
-   * an identical set of exchanges is written to the HDF5 
-   * file.
+   * Test
+   */
+  @Before
+  public void setUp() {
+
+    
+
+  }
+
+  /**
+   * Test
    */
   @Test
-  public void testListExchangesCommand() {
-
-    Context context = new ContextBase();
-
-    Command command = new ListExchangesCommand();
+  public void testUpdateExchangeQuotesCommand() {
 
     try {
 
-      //      command.execute(context);
+      EodDataProviderMock eodDataProvider = new EodDataProviderMock();
+      EodDataSinkMock eodDataSink = new EodDataSinkMock();
 
-    } catch (Exception e) {
+      Context context = new CommandContext();
+    
+      context.put(CommandContext.EODDATAPROVIDER_KEY, eodDataProvider);
+      context.put(CommandContext.EODDATASINK_KEY, eodDataSink);
+
+      context.put(CommandContext.EXCHANGE_KEY, eodDataSink.getTestExchange());
+      //context.put(CommandContext.SYMBOL_KEY, eodDataSink.getTestSymbol());
+
+
+      Command command = new UpdateExchangeQuotesCommand();
+
+      command.execute(context);
+
+    }
+    catch (Exception e) {
 
       fail(e.getMessage());
 

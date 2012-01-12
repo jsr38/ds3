@@ -18,6 +18,9 @@ package nz.co.jsrsolutions.ds3;
 
 import java.lang.String;
 
+import nz.co.jsrsolutions.ds3.command.CommandContext;
+import nz.co.jsrsolutions.ds3.command.CommandFactory;
+
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.apache.commons.cli.CommandLine;
@@ -45,23 +48,22 @@ final class DataScraper3Controller {
       throw new DataScraper3Exception("No command supplied.");
     }
 
-    Context context = new DataScraper3Context();
-    context.put(DataScraper3Context.EODDATAPROVIDER_KEY, eodDataProvider);
-    context.put(DataScraper3Context.EODDATASINK_KEY, eodDataSink);
+    Context context = new CommandContext();
+    context.put(CommandContext.EODDATAPROVIDER_KEY, eodDataProvider);
+    context.put(CommandContext.EODDATASINK_KEY, eodDataSink);
 
 
     // place optional argument values into the context
     if (commandLine.hasOption(CommandLineOptions.EXCHANGE)) {
-      context.put(DataScraper3Context.EXCHANGE_KEY, commandLine.getOptionValue(CommandLineOptions.EXCHANGE));
+      context.put(CommandContext.EXCHANGE_KEY, commandLine.getOptionValue(CommandLineOptions.EXCHANGE));
     }
 
     if (commandLine.hasOption(CommandLineOptions.SYMBOL)) {
-      context.put(DataScraper3Context.SYMBOL_KEY, commandLine.getOptionValue(CommandLineOptions.SYMBOL));
+      context.put(CommandContext.SYMBOL_KEY, commandLine.getOptionValue(CommandLineOptions.SYMBOL));
     }
 
-    Command command = DataScraper3CommandFactory.create(commandLine.getOptionValue(CommandLineOptions.COMMAND));
-
     try {
+      Command command = CommandFactory.create(commandLine.getOptionValue(CommandLineOptions.COMMAND));
       command.execute(context);
     }
     catch (Exception e) {
