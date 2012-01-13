@@ -32,6 +32,7 @@ import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
 import nz.co.jsrsolutions.ds3.EodDataSink;
 import nz.co.jsrsolutions.ds3.EodDataSinkException;
+import nz.co.jsrsolutions.util.ArrayConverter;
 import nz.co.jsrsolutions.util.Range;
 
 import org.apache.axis2.databinding.ADBBean;
@@ -103,23 +104,22 @@ class EodDataSinkMock implements EodDataSink {
       InputStream testDataStream = EodDataSinkMock.class.getClassLoader().getResourceAsStream(TESTDATA_FILENAME);
       XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(testDataStream);
     
-      while(reader.nextTag() != XMLStreamReader.END_DOCUMENT) {
+      while(reader.next() != XMLStreamReader.END_DOCUMENT) {
       
         if (reader.getEventType() == XMLStreamReader.START_ELEMENT) {
 
           if (reader.getName().equals(EXCHANGES_QNAME)) {
-            exchanges = this.<EXCHANGE, EXCHANGE.Factory>deserialiseTypeArray(reader, EXCHANGE.Factory.class);
-            System.console().writer().println(exchanges.length);
+            exchanges = this.<EXCHANGE, EXCHANGE.Factory>deserialiseTypeArray(reader, EXCHANGE.class, EXCHANGE.Factory.class);
           }
 
           if (reader.getName().equals(SYMBOLS_QNAME)) {
-            symbols = this.<SYMBOL, SYMBOL.Factory>deserialiseTypeArray(reader, SYMBOL.Factory.class);
-            System.console().writer().println(symbols.length);
+            testExchange = reader.getAttributeValue(XML_NAMESPACE_URI, TESTEXCHANGE_ATTRNAME);
+            symbols = this.<SYMBOL, SYMBOL.Factory>deserialiseTypeArray(reader, SYMBOL.class, SYMBOL.Factory.class);
           }
 
           if (reader.getName().equals(QUOTES_QNAME)) {
-            quotes = this.<QUOTE, QUOTE.Factory>deserialiseTypeArray(reader, QUOTE.Factory.class);
-            System.console().writer().println(quotes.length);
+            testSymbol = reader.getAttributeValue(XML_NAMESPACE_URI, TESTSYMBOL_ATTRNAME);
+            quotes = this.<QUOTE, QUOTE.Factory>deserialiseTypeArray(reader, QUOTE.class, QUOTE.Factory.class);
           }
         }
       }
@@ -132,22 +132,30 @@ class EodDataSinkMock implements EodDataSink {
 
   }
 
-  private <T extends ADBBean, F> T[] deserialiseTypeArray(XMLStreamReader reader, Class<F> clzz) {
+  private <T extends ADBBean, F> T[] deserialiseTypeArray(XMLStreamReader reader, Class<T> beanClass, Class<F> factoryClass) {
 
     Method factoryMethod;
-    ArrayList<T> objectArrayList;
+    ArrayList<T> beanArrayList;
 
     try {
 
-      factoryMethod = clzz.getMethod("parse", XMLStreamReader.class);
+      
+      factoryMethod = factoryClass.getMethod("parse", XMLStreamReader.class);
 
-      objectArrayList = new ArrayList<T>();
+      beanArrayList = new ArrayList<T>();
 
-      reader.next();
+      int eventType = reader.nextTag();
       do {
-
-        final T object = (T)factoryMethod.invoke(null, reader);
-        objectArrayList.add(object);
+        
+        Object object = factoryMethod.invoke(null, reader);
+        if (object != null) {
+          @SuppressWarnings("unchecked")
+          final T bean = (T)object;
+          beanArrayList.add(bean);
+        }
+        else {
+          System.out.println("Cast failed!");
+        }
 
       } while (reader.nextTag() != XMLStreamReader.END_ELEMENT);
 
@@ -177,25 +185,8 @@ class EodDataSinkMock implements EodDataSink {
       logger.error(e.toString());
       return null;
     }
-
-    return (T[])objectArrayList.toArray();
-
-  }
-
-  @SuppressWarnings("unused")
-private void deserialiseExchanges() {
-
     
-
-  }
-
-  @SuppressWarnings("unused")
-private void deserialiseSymbols() {
-
-  }
-
-  @SuppressWarnings("unused")
-private void deserialiseQuotes() {
+    return ArrayConverter.convert(beanArrayList.toArray(), beanClass);
 
   }
 

@@ -21,7 +21,6 @@ import nz.co.jsrsolutions.ds3.command.CommandContext;
 import nz.co.jsrsolutions.ds3.command.UpdateExchangeQuotesCommand;
 
 import org.apache.commons.chain.Command;
-import org.apache.commons.chain.Context;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,7 +66,7 @@ public class UpdateExchangeQuotesCommandTest {
     }
     catch (Exception e) {
 
-      fail(e.getMessage());
+      fail(e.toString());
 
     }
 

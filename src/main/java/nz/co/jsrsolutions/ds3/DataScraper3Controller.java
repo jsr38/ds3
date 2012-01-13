@@ -20,7 +20,6 @@ import nz.co.jsrsolutions.ds3.command.CommandContext;
 import nz.co.jsrsolutions.ds3.command.CommandFactory;
 
 import org.apache.commons.chain.Command;
-import org.apache.commons.chain.Context;
 import org.apache.commons.cli.CommandLine;
 import org.apache.log4j.Logger;
 

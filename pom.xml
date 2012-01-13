@@ -160,6 +160,7 @@
           <packageName>nz.co.jsrsolutions.ds3</packageName>
           <wsdlFile>src/main/wsdl/eoddata.wsdl</wsdlFile>
           <databindingName>adb</databindingName>
+          <overWrite>true</overWrite>
         </configuration>
         <executions>
           <execution>
