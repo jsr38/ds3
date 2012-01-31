@@ -75,10 +75,8 @@ class EodDataSinkMock implements EodDataSink {
 
   private static final QName QUOTES_QNAME = new QName(XML_NAMESPACE_URI, QUOTES_LOCALNAME, XML_PREFIX);
 
-  @SuppressWarnings("unused")
   private static final String TESTEXCHANGE_ATTRNAME = new String("testExchange");
 
-  @SuppressWarnings("unused")
   private static final String TESTSYMBOL_ATTRNAME = new String("testSymbol");
 
   private String testExchange;
@@ -144,7 +142,7 @@ class EodDataSinkMock implements EodDataSink {
 
       beanArrayList = new ArrayList<T>();
 
-      int eventType = reader.nextTag();
+      reader.nextTag();
       do {
         
         Object object = factoryMethod.invoke(null, reader);
