@@ -42,12 +42,12 @@ public class RangeTest {
   }
 
   /**
-   * Test that when supplied with a known set of exchanges,
-   * an identical set of exchanges is written to the HDF5 
-   * file.
+   * Test that when supplied with a valid non-null 
+   * ordered pair of Calendar objects, the constructor
+   * returns a valid Range object.
    */
   @Test
-  public void testConstructRetrieveRange() {
+  public void testConstructRetrieveCalendarRange() {
 
     Calendar yesterday = Calendar.getInstance();
     yesterday.add(Calendar.DATE, -1);
@@ -62,12 +62,12 @@ public class RangeTest {
 
 
   /**
-   * Test that when supplied with a known set of exchanges,
-   * an identical set of exchanges is written to the HDF5 
-   * file.
+   * Test that when supplied with a invalid non-null 
+   * ordered pair of Calendar objects, the constructor
+   * throws an IllegalArgumentExcetion.
    */
   @Test(expected=IllegalArgumentException.class)
-  public void testExceptionLowerGreaterThanUpper() {
+  public void testExceptionLowerGreaterThanUpperCalendarRange() {
 
     Calendar yesterday = Calendar.getInstance();
     yesterday.add(Calendar.DATE, -1);
@@ -76,6 +76,100 @@ public class RangeTest {
     
     @SuppressWarnings("unused")
     Range<Calendar> dateRange = new Range<Calendar>(now, yesterday);
+  }
+  
+  /**
+   * Test that when supplied with a valid non-null Range, that
+   * this Range contains, the containsRange() method returns
+   * true.
+   */
+  @Test
+  public void testContainsRangeTrue() {
+
+    Calendar yesterday = Calendar.getInstance();
+    Calendar dayBeforeYesterday = Calendar.getInstance();
+    yesterday.add(Calendar.DATE, -1);
+    dayBeforeYesterday.add(Calendar.DATE, -2);
+    
+    Calendar now = Calendar.getInstance();
+    
+    Range<Calendar> firstRange = new Range<Calendar>(dayBeforeYesterday, now);
+    Range<Calendar> secondRange = new Range<Calendar>(yesterday, now);
+    
+    assertTrue("containsRange should have returned true", firstRange.containsRange(secondRange));
+  }
+  
+  /**
+   * Test that when supplied with a valid non-null Range, that
+   * this Range doesn't contain, the containsRange() method returns
+   * false.
+   */
+  @Test
+  public void testContainsRangeFalse() {
+
+    Calendar yesterday = Calendar.getInstance();
+    Calendar dayBeforeYesterday = Calendar.getInstance();
+    Calendar threeDaysAgo = Calendar.getInstance();
+    
+    yesterday.add(Calendar.DATE, -1);
+    dayBeforeYesterday.add(Calendar.DATE, -2);
+    threeDaysAgo.add(Calendar.DATE, -3);
+    
+    Calendar now = Calendar.getInstance();
+    
+    Range<Calendar> firstRange = new Range<Calendar>(dayBeforeYesterday, now);
+    Range<Calendar> secondRange = new Range<Calendar>(threeDaysAgo, dayBeforeYesterday);
+    
+    assertFalse("containsRange should have returned false", firstRange.containsRange(secondRange));
+  }
+  
+  /**
+   * Test that when supplied with a valid non-null Range, that
+   * this Range overlaps, the overlapsRange() method returns
+   * true.
+   */
+  @Test
+  public void testOverlapsRangeTrue() {
+
+    Calendar tomorrow = Calendar.getInstance();
+    Calendar now = Calendar.getInstance();
+    Calendar yesterday = Calendar.getInstance();
+    Calendar dayBeforeYesterday = Calendar.getInstance();
+    
+    tomorrow.add(Calendar.DATE, 1);
+    yesterday.add(Calendar.DATE, -1);
+    dayBeforeYesterday.add(Calendar.DATE, -2);
+    
+    Range<Calendar> firstRange = new Range<Calendar>(now, tomorrow);
+    Range<Calendar> secondRange = new Range<Calendar>(dayBeforeYesterday, now);
+    
+    assertTrue("overlapsRange should have returned true", firstRange.overlapsRange(secondRange));
+  }
+  
+  /**
+   * Test that when supplied with a valid non-null Range, that
+   * this Range doesn't overlap, the overlapsRange() method returns
+   * false.
+   */
+  @Test
+  public void testOverlapsRangeFalse() {
+
+    
+    Calendar tomorrow = Calendar.getInstance();
+    Calendar now = Calendar.getInstance();
+    Calendar yesterday = Calendar.getInstance();
+    Calendar dayBeforeYesterday = Calendar.getInstance();
+    Calendar threeDaysAgo = Calendar.getInstance();
+    
+    tomorrow.add(Calendar.DATE, 1);
+    yesterday.add(Calendar.DATE, -1);
+    dayBeforeYesterday.add(Calendar.DATE, -2);
+    threeDaysAgo.add(Calendar.DATE, -3);
+    
+    Range<Calendar> firstRange = new Range<Calendar>(now, tomorrow);
+    Range<Calendar> secondRange = new Range<Calendar>(threeDaysAgo, dayBeforeYesterday);
+    
+    assertFalse("overlapsRange should have returned false", firstRange.overlapsRange(secondRange));
   }
 
 }

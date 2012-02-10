@@ -25,6 +25,7 @@ import nz.co.jsrsolutions.ds3.EodDataProviderException;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.util.Range;
 
 import org.apache.log4j.Logger;
 
@@ -34,16 +35,11 @@ class EodDataProviderMock extends EodDataProviderBase implements EodDataProvider
   @SuppressWarnings("unused")
   private static final transient Logger logger = Logger.getLogger(EodDataProviderMock.class);
 
-  private EXCHANGE[] exchanges;
+  private UnitTestData testData = null;
 
-  private SYMBOL[] symbols;
+  public EodDataProviderMock(UnitTestData testData) throws EodDataProviderException {
 
-  private QUOTE[] quotes;
-
-
-  public EodDataProviderMock() throws EodDataProviderException {
-
-    
+    this.testData = testData;
     
 
   }
@@ -51,7 +47,7 @@ class EodDataProviderMock extends EodDataProviderBase implements EodDataProvider
 
   public EXCHANGE[] getExchanges() throws EodDataProviderException {
 
-    return exchanges;
+    return testData.getExchanges();
       
   }
 
@@ -63,7 +59,7 @@ class EodDataProviderMock extends EodDataProviderBase implements EodDataProvider
 
   public SYMBOL[] getSymbols(String exchange) throws EodDataProviderException {
 
-    return symbols;
+    return testData.getSymbols();
 
   }
 
@@ -73,14 +69,22 @@ class EodDataProviderMock extends EodDataProviderBase implements EodDataProvider
                            Calendar endCalendar,
                            String period) throws EodDataProviderException {
 
-    return quotes;
+    return testData.getQuotes();
 
   }
 
   public QUOTE[] getQuotes(String exchange) throws EodDataProviderException {
 
-    return quotes;
+    return testData.getQuotes();
 
+  }
+
+
+  @Override
+  public Range<Calendar> getExchangeDateRange(String exchange)
+      throws EodDataProviderException {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

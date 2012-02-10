@@ -34,7 +34,7 @@ public final class EodDataProviderFactory {
       String password = appConfig.getString("eodDataProviders.eodDataProvider(0).password");
       long timeout = appConfig.getLong("eodDataProviders.eodDataProvider(0).timeout");
       
-      return new EodDataDataProvider(serviceUrl,
+      return new EodDataEodDataProvider(serviceUrl,
 				     username,
 				     password,
 				     timeout);

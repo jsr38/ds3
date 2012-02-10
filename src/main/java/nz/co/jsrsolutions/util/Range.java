@@ -41,6 +41,38 @@ public class Range<T extends Comparable<T>> {
     return upper;
   }
 
-  // TODO: add some proper range functionality
+  public boolean containsRange(Range<T> range) {
+    
+    boolean containsRange = false;
+    
+    if ((range.getLower().compareTo(this.lower) >= 0) 
+        && (range.getUpper().compareTo(this.upper) <= 0)) {
+      
+      containsRange = true;
+    
+    }
+    
+    return containsRange;
+  }
+  
+  public boolean overlapsRange(Range<T> range) {
+    
+    boolean overlapsRange = true;
+    
+    if ((range.getLower().compareTo(this.lower) < 0) 
+        && (range.getUpper().compareTo(this.lower) < 0)) {
+      
+      overlapsRange = false;
+    
+    }
+    else if ((range.getLower().compareTo(this.upper) > 0)) {
+    
+      overlapsRange = false;
+      
+    }
+      
+      
+    return overlapsRange;
+  }
 
 }

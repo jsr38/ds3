@@ -22,6 +22,7 @@ import java.util.Calendar;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.util.Range;
 
 /** 
  * 
@@ -94,5 +95,17 @@ public interface EodDataProvider {
    */
   public QUOTE[] getQuotes(String exchange) throws EodDataProviderException;
 
+  /** 
+   * 
+   * Retrieves the range of dates for which data is available for a given
+   * exchange-symbol 2-tuple
+   * 
+   * 
+   * @param       the exchange
+   * @return      
+   * @exception   EodDataSinkException
+   *              If the exchange data is unable to be written 
+   */
+  public Range<Calendar> getExchangeDateRange(String exchange) throws EodDataProviderException;
 
 }

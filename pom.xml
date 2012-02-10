@@ -150,6 +150,10 @@
     </dependency>
 
   </dependencies>
+  <organization>
+  	<name>JSR Solutions Limited</name>
+  	<url>http://www.jsrsolutions.co.nz/</url>
+  </organization>
   <build>
     <plugins>
       <plugin>

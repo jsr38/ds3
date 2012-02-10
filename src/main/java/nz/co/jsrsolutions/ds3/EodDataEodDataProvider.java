@@ -22,14 +22,15 @@ import java.util.Calendar;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.util.Range;
 
 import org.apache.log4j.Logger;
 
 
 
-class EodDataDataProvider extends EodDataProviderBase implements EodDataProvider {
+class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvider {
 
-  private static final transient Logger logger = Logger.getLogger(EodDataDataProvider.class);
+  private static final transient Logger logger = Logger.getLogger(EodDataEodDataProvider.class);
 
   @SuppressWarnings("unused")
   private final String url;
@@ -48,7 +49,7 @@ class EodDataDataProvider extends EodDataProviderBase implements EodDataProvider
   private final transient String token;
 
 
-  public EodDataDataProvider(String url,
+  public EodDataEodDataProvider(String url,
                              String username,
                              String password,
                              long timeout) throws EodDataProviderException {
@@ -372,6 +373,15 @@ class EodDataDataProvider extends EodDataProviderBase implements EodDataProvider
 
     }
 
+  }
+
+  @Override
+  public Range<Calendar> getExchangeDateRange(String exchange)
+      throws EodDataProviderException {
+    
+    
+    
+    return null;
   }
 
 }

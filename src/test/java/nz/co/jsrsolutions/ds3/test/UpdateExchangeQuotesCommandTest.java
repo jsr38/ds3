@@ -17,6 +17,8 @@
 package nz.co.jsrsolutions.ds3.test;
 
 import static org.junit.Assert.fail;
+import nz.co.jsrsolutions.ds3.EodDataProvider;
+import nz.co.jsrsolutions.ds3.EodDataSink;
 import nz.co.jsrsolutions.ds3.command.CommandContext;
 import nz.co.jsrsolutions.ds3.command.UpdateExchangeQuotesCommand;
 
@@ -43,20 +45,22 @@ public class UpdateExchangeQuotesCommandTest {
    * Test
    */
   @Test
-  public void testUpdateExchangeQuotesCommand() {
+  public void testUpdateExchangeQuotesCommandEmptySink() {
 
     try {
 
-      EodDataProviderMock eodDataProvider = new EodDataProviderMock();
-      EodDataSinkMock eodDataSink = new EodDataSinkMock();
+      UnitTestData testData = new UnitTestData();
+      
+      EodDataProvider eodDataProvider = new EodDataProviderMock(testData);
+      EodDataSink eodDataSink = new EodDataSinkEmptyMock(testData);
 
       CommandContext context = new CommandContext();
     
       context.put(CommandContext.EODDATAPROVIDER_KEY, eodDataProvider);
       context.put(CommandContext.EODDATASINK_KEY, eodDataSink);
 
-      context.put(CommandContext.EXCHANGE_KEY, eodDataSink.getTestExchange());
-      //context.put(CommandContext.SYMBOL_KEY, eodDataSink.getTestSymbol());
+      context.put(CommandContext.EXCHANGE_KEY, testData.getTestExchange());
+      context.put(CommandContext.SYMBOL_KEY, testData.getTestSymbol());
 
 
       Command command = new UpdateExchangeQuotesCommand();
@@ -64,9 +68,9 @@ public class UpdateExchangeQuotesCommandTest {
       command.execute(context);
 
     }
-    catch (Exception e) {
+    catch (Throwable t) {
 
-      fail(e.toString());
+      fail(t.toString());
 
     }
 

@@ -83,14 +83,14 @@ public interface EodDataSink {
 
   /** 
    * 
-   * Returns date range of the curent contiguous block
+   * Returns date range of the current contiguous block
    * 
    * 
    * @param       the exchange
    * @param       the symbol
    * @return      an array containing the start date and end date
    */
-  public Range<Calendar> getRange(String exchange, String symbol) throws EodDataSinkException;
+  public Range<Calendar> getSymbolDateRange(String exchange, String symbol) throws EodDataSinkException;
 
 
 }

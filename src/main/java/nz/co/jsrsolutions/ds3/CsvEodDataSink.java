@@ -114,7 +114,7 @@ class CsvEodDataSink implements EodDataSink {
   
   }
 
-  public Range<Calendar> getRange(String exchange, String symbol) {
+  public Range<Calendar> getSymbolDateRange(String exchange, String symbol) {
     throw new NotImplementedException();
   }
 
