@@ -16,15 +16,18 @@
 
 package nz.co.jsrsolutions.ds3.test;
 
-import java.lang.String;
+import static org.junit.Assert.fail;
+
+import java.util.Arrays;
 import java.util.Calendar;
 
-import nz.co.jsrsolutions.ds3.EodDataProvider;
-import nz.co.jsrsolutions.ds3.EodDataProviderBase;
-import nz.co.jsrsolutions.ds3.EodDataProviderException;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.ds3.EodDataProvider;
+import nz.co.jsrsolutions.ds3.EodDataProviderBase;
+import nz.co.jsrsolutions.ds3.EodDataProviderException;
+import nz.co.jsrsolutions.util.QuoteDateComparator;
 import nz.co.jsrsolutions.util.Range;
 
 import org.apache.log4j.Logger;
@@ -53,7 +56,7 @@ class EodDataProviderMock extends EodDataProviderBase implements EodDataProvider
 
   public int getExchangeMonths(String exchange) throws EodDataProviderException {
 
-    return 3;
+    return 36;
   }
 
 
@@ -69,7 +72,28 @@ class EodDataProviderMock extends EodDataProviderBase implements EodDataProvider
                            Calendar endCalendar,
                            String period) throws EodDataProviderException {
 
-    return testData.getQuotes();
+    final QUOTE key = new QUOTE();
+    key.setDateTime(startCalendar);
+    final QuoteDateComparator comparator = new QuoteDateComparator();
+    int sourceBeginIndex = Arrays.binarySearch(testData.getQuotes(), key, comparator);
+    
+    if (sourceBeginIndex < 0) {
+      sourceBeginIndex = 0;
+    }
+    
+    key.setDateTime(endCalendar);
+    int sourceEndIndex = Arrays.binarySearch(testData.getQuotes(), key, comparator);
+    
+    if (sourceEndIndex < 0) {
+      sourceEndIndex = testData.getQuotes().length - 1;
+    }  
+    final int count = sourceEndIndex - sourceBeginIndex + 1;
+    
+    final QUOTE[] quotes = new QUOTE[count];
+    
+    System.arraycopy(testData.getQuotes(), sourceBeginIndex, quotes, 0, count);
+    
+    return quotes;
 
   }
 

@@ -26,7 +26,7 @@ public class ArrayConverter {
     
     T[] convertedObjects =  (T[]) Array.newInstance(type, objects.length);
  
-    for(int i = 0; i < objects.length; i++) {
+    for(int i = 0; i < objects.length; ++i) {
       convertedObjects[i] = (T)objects[i];
     }
  

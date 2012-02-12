@@ -33,8 +33,7 @@ class EodDataSinkMock implements EodDataSink {
   @SuppressWarnings("unused")
   private static final transient Logger logger = Logger.getLogger(EodDataSinkMock.class);
 
-  @SuppressWarnings("unused")
-  private UnitTestData testData = null;
+  protected UnitTestData testData = null;
   
   EodDataSinkMock(UnitTestData testData) throws EodDataSinkException {
     
@@ -66,7 +65,7 @@ class EodDataSinkMock implements EodDataSink {
 
   }
 
-  private void openQuoteDataset(String exchange, String symbol) throws EodDataSinkException {
+  protected void openQuoteDataset(String exchange, String symbol) throws EodDataSinkException {
 
     throw new NotImplementedException();
   }
@@ -85,7 +84,7 @@ class EodDataSinkMock implements EodDataSink {
   }
 
   @Override
-  public Range<Calendar> getSymbolDateRange(String exchange, String symbol) {
+  public Range<Calendar> getExchangeSymbolDateRange(String exchange, String symbol) {
     throw new NotImplementedException();
   }
 

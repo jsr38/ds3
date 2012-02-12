@@ -90,7 +90,7 @@ public interface EodDataSink {
    * @param       the symbol
    * @return      an array containing the start date and end date
    */
-  public Range<Calendar> getSymbolDateRange(String exchange, String symbol) throws EodDataSinkException;
+  public Range<Calendar> getExchangeSymbolDateRange(String exchange, String symbol) throws EodDataSinkException;
 
 
 }

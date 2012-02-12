@@ -26,14 +26,13 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import nz.co.jsrsolutions.ds3.EodDataSinkException;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.ds3.EodDataSinkException;
 import nz.co.jsrsolutions.util.ArrayConverter;
 
 import org.apache.axis2.databinding.ADBBean;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 
 public class UnitTestData {
@@ -183,12 +182,6 @@ public class UnitTestData {
     
     return ArrayConverter.convert(beanArrayList.toArray(), beanClass);
 
-  }
-
-  @SuppressWarnings("unused")
-  private void createExchangeDataset(long dimension) throws EodDataSinkException {
-  
-    throw new NotImplementedException();
   }
   
   public String getTestExchange() {
