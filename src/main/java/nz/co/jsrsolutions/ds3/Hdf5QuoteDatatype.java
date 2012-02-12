@@ -216,11 +216,40 @@ class Hdf5QuoteDatatype {
 
   static Hdf5QuoteDatatype create(byte[] buffer) {
     
-    Hdf5QuoteDatatype quoteData = new Hdf5QuoteDatatype();
-
+    if (buffer.length != QUOTE_DATATYPE_SIZE) {
+      throw new IllegalArgumentException("supplied buffer must be exactly the dimension of the Hdf5QuoteDatatype size");
+    }
     
+    final Hdf5QuoteDatatype quoteData = new Hdf5QuoteDatatype();
+    
+    quoteData.dateTime[0] = HDFNativeData.byteToLong(buffer, offsets[0]);
+    quoteData.open[0] = HDFNativeData.byteToDouble(buffer, offsets[1]);
+    quoteData.high[0] = HDFNativeData.byteToDouble(buffer, offsets[2]);
+    quoteData.low[0] = HDFNativeData.byteToDouble(buffer, offsets[3]);
+    quoteData.close[0] = HDFNativeData.byteToDouble(buffer, offsets[4]);
 
     return quoteData;
+
+  }
+  
+  static Hdf5QuoteDatatype[] createArray(byte[] buffer) {
+    
+    if (buffer.length % QUOTE_DATATYPE_SIZE != 0) {
+      throw new IllegalArgumentException("supplied buffer must be exactly an integer multiple of the Hdf5QuoteDatatype size");
+    }
+    
+    final int numQuotes = buffer.length / QUOTE_DATATYPE_SIZE;
+    final Hdf5QuoteDatatype[] quotes = new Hdf5QuoteDatatype[numQuotes];
+    final byte[] quoteDataBuffer = new byte[QUOTE_DATATYPE_SIZE];
+    
+    for (int i = 0; i < numQuotes; ++i) {
+      
+      System.arraycopy(buffer, i * QUOTE_DATATYPE_SIZE, quoteDataBuffer, 0, QUOTE_DATATYPE_SIZE);
+      quotes[i] = create(quoteDataBuffer);
+    
+    }
+    
+    return quotes;
 
   }
 
