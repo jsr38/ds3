@@ -16,11 +16,13 @@
 
 package nz.co.jsrsolutions.ds3.command;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.EodDataProvider;
 import nz.co.jsrsolutions.ds3.EodDataSink;
+import nz.co.jsrsolutions.util.Range;
 
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -29,8 +31,6 @@ import org.apache.log4j.Logger;
 public class UpdateExchangeSymbolQuotesCommand implements Command {
 
   private static final transient Logger logger = Logger.getLogger(UpdateExchangeSymbolQuotesCommand.class);
-
-  private static final int HISTORY_YEAR_OFFSET = -3;
 
   @SuppressWarnings("unused")
   private static final int HISTORY_MONTH_OFFSET = -3;
@@ -54,52 +54,70 @@ public class UpdateExchangeSymbolQuotesCommand implements Command {
       throw new CommandException("Must supply --symbol [symbolcode]");
     }
 
-    Calendar startCalendar = Calendar.getInstance();
-    startCalendar.add(Calendar.YEAR, HISTORY_YEAR_OFFSET);
-    //    startCalendar.add(Calendar.MONTH, HISTORY_MONTH_OFFSET);
-
-    Calendar endCalendar = Calendar.getInstance();
+    final int availableMonths = eodDataProvider.getExchangeMonths(exchange);
     
+    final Calendar firstAvailableDateTime = Calendar.getInstance();
+    firstAvailableDateTime.add(Calendar.MONTH, -1 * availableMonths);
 
-    if (logger.isInfoEnabled()) {
+    final Calendar today = Calendar.getInstance();
 
-      StringBuffer logMessageBuffer = new StringBuffer();
-      logMessageBuffer.append(" Attempting to retrieve quotes on [ ");
-      logMessageBuffer.append(exchange);
-      logMessageBuffer.append(" ] between [ ");
-      logMessageBuffer.append(startCalendar.getTime());
-      logMessageBuffer.append(" ] and [ ");
-      logMessageBuffer.append(endCalendar.getTime());
-      logMessageBuffer.append(" ] ");
-      logger.info(logMessageBuffer.toString());
-
-    }
-
+    final Range<Calendar> sinkRange = eodDataSink.getExchangeSymbolDateRange(exchange, symbol);
     
-    if (logger.isInfoEnabled()) {
-
-      StringBuffer logMessageBuffer = new StringBuffer();
-      logMessageBuffer.append(" Attempting to retrieve quotes for symbol [ ");
-      logMessageBuffer.append(symbol);
-      logMessageBuffer.append(" ]  ");
-
-      logger.info(logMessageBuffer.toString());
-
+    final ArrayList<Range<Calendar>> requestRangesList = new ArrayList<Range<Calendar>>(2);
+    
+    if (sinkRange != null) {
+      
+      if (firstAvailableDateTime.compareTo(sinkRange.getLower()) < 0) {
+        
+        final Calendar upper = (Calendar)sinkRange.getLower().clone();
+        upper.add(Calendar.DATE, -1);
+        
+        requestRangesList.add(new Range<Calendar>(firstAvailableDateTime, upper));
+      }
+      
+      if (today.compareTo(sinkRange.getUpper()) > 0) {
+        
+        final Calendar lower = (Calendar)sinkRange.getUpper().clone();
+        lower.add(Calendar.DATE, 1);
+        
+        requestRangesList.add(new Range<Calendar>(lower, today));
+        
+      }
+      
     }
-
-    QUOTE[] quotes = eodDataProvider.getQuotes(exchange,
-                                               symbol,
-                                               startCalendar,
-                                               endCalendar,
-                                               DEFAULT_FREQUENCY);
-
-    if (logger.isInfoEnabled()) {
-      logger.info("Writing to data sink.");
+    else {
+      requestRangesList.add(new Range<Calendar>(firstAvailableDateTime, today));
     }
+    
+    for(Range<Calendar> requestRange : requestRangesList) {
+      
+      if (logger.isInfoEnabled()) {
 
-    eodDataSink.updateExchangeSymbolQuotes(exchange,
-                                           symbol,
-                                           quotes);
+        final StringBuffer logMessageBuffer = new StringBuffer();
+        logMessageBuffer.append(" Attempting to retrieve quotes on [ ");
+        logMessageBuffer.append(exchange);
+        logMessageBuffer.append(" ] for [ ");
+        logMessageBuffer.append(symbol);
+        logMessageBuffer.append(" ] between [ ");
+        logMessageBuffer.append(requestRange.getLower());
+        logMessageBuffer.append(" ] and [ ");
+        logMessageBuffer.append(requestRange.getUpper());
+        logMessageBuffer.append(" ] ");
+        logger.info(logMessageBuffer.toString());
+
+      }
+      
+      final QUOTE[] quotes = eodDataProvider.getQuotes(exchange,
+          symbol,
+          requestRange.getLower(),
+          requestRange.getUpper(),
+          DEFAULT_FREQUENCY);
+
+      eodDataSink.updateExchangeSymbolQuotes(exchange,
+          symbol,
+          quotes);
+      
+    }
 
 
     return false;

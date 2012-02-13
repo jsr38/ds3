@@ -54,36 +54,9 @@ public class UpdateExchangeQuotesCommand implements Command {
 
     final Calendar today = Calendar.getInstance();
     
-
-    if (logger.isInfoEnabled()) {
-
-      StringBuffer logMessageBuffer = new StringBuffer();
-      logMessageBuffer.append(" Attempting to retrieve quotes on [ ");
-      logMessageBuffer.append(exchange);
-      logMessageBuffer.append(" ] between [ ");
-      logMessageBuffer.append(firstAvailableDateTime.getTime());
-      logMessageBuffer.append(" ] and [ ");
-      logMessageBuffer.append(today.getTime());
-      logMessageBuffer.append(" ] ");
-      logger.info(logMessageBuffer.toString());
-
-    }
-
-    
     final SYMBOL[] symbols = eodDataProvider.getSymbols(exchange);
 
     for (SYMBOL symbol : symbols) {
-
-      if (logger.isInfoEnabled()) {
-
-        StringBuffer logMessageBuffer = new StringBuffer();
-        logMessageBuffer.append(" Attempting to retrieve quotes for symbol [ ");
-        logMessageBuffer.append(symbol.getCode());
-        logMessageBuffer.append(" ]  ");
-
-        logger.info(logMessageBuffer.toString());
-
-      }
 
       final Range<Calendar> sinkRange = eodDataSink.getExchangeSymbolDateRange(exchange, symbol.getCode());
       
@@ -114,6 +87,22 @@ public class UpdateExchangeQuotesCommand implements Command {
       }
       
       for(Range<Calendar> requestRange : requestRangesList) {
+        
+        if (logger.isInfoEnabled()) {
+
+          final StringBuffer logMessageBuffer = new StringBuffer();
+          logMessageBuffer.append(" Attempting to retrieve quotes on [ ");
+          logMessageBuffer.append(exchange);
+          logMessageBuffer.append(" ] for [ ");
+          logMessageBuffer.append(symbol);
+          logMessageBuffer.append(" ] between [ ");
+          logMessageBuffer.append(requestRange.getLower());
+          logMessageBuffer.append(" ] and [ ");
+          logMessageBuffer.append(requestRange.getUpper());
+          logMessageBuffer.append(" ] ");
+          logger.info(logMessageBuffer.toString());
+
+        }
         
         final QUOTE[] quotes = eodDataProvider.getQuotes(exchange,
             symbol.getCode(),

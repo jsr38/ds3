@@ -360,12 +360,20 @@ class Hdf5EodDataSink implements EodDataSink {
     }
     
     final Range<Calendar> newRange = new Range<Calendar>(quotes[0].getDateTime(), quotes[quotes.length - 1].getDateTime());
-    if (newRange.overlapsRange(getExchangeSymbolDateRange(exchange, symbol))) {
+    final Range<Calendar> existingRange = getExchangeSymbolDateRange(exchange, symbol);
+    
+    if (newRange.overlapsRange(existingRange)) {
       throw new EodDataSinkException("Supplied quote vector overlaps existing quotes");
     }
+    
+    if (newRange.getUpper().compareTo(existingRange.getLower()) < 0) {
+      throw new EodDataSinkException("Prepending quotes not supported by this EodDataSink implementation");
+    }
 
-    long nWrittenToDataset = 0;
-    Hdf5QuoteDatatype quoteData = new Hdf5QuoteDatatype();
+    // TODO:  write unit tests for this and include a test to ensure
+    // contiguousness 
+    
+    final Hdf5QuoteDatatype quoteData = new Hdf5QuoteDatatype();
 
     openQuoteDataset(exchange, symbol);
 
@@ -375,7 +383,6 @@ class Hdf5EodDataSink implements EodDataSink {
       // Figure out where we should be writing to.
       int memoryDataspaceHandle = -1;
       int fileDataspaceHandle = -1;
-      int scalarQuoteDataspaceHandle = -1;
 
       try {
 
@@ -395,38 +402,23 @@ class Hdf5EodDataSink implements EodDataSink {
           H5.H5Dset_extent(quoteDatasetHandle,
                            new long[] { quotes.length });
 
+          H5.H5Dclose(fileDataspaceHandle);
           fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
 
         }
         else {
 
-          /*          
-          scalarQuoteDataspaceHandle = H5.H5Screate(HDF5Constants.H5S_SCALAR);
-          long fileEndOffset = dimensions[0] - 1;
-          H5.H5Soffset_simple(scalarQuoteDataspaceHandle, new long[] { fileEndOffset });
-          fileWriteOffset = fileEndOffset;
+          // we need to extend the non-empty dataset
           
-          final byte[] readBuffer = new byte[Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE];
+          H5.H5Dset_extent(quoteDatasetHandle,
+              new long[] { quotes.length + dimensions[0] });
 
-          H5.H5Dread(quoteDatasetHandle,
-                     quoteMemoryDatatypeHandle,
-                     scalarQuoteDataspaceHandle,
-                     scalarQuoteDataspaceHandle,
-                     HDF5Constants.H5P_DEFAULT,
-                     readBuffer);
-
-          H5.H5Sclose(scalarQuoteDataspaceHandle);
-          */
-          logger.info("whoop!");
-
-          readExchangeSymbolQuotes(exchange, symbol);
-
+          H5.H5Dclose(fileDataspaceHandle);
+          fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
+          fileWriteOffset = dimensions[0];
         }
 
-        // extend the dataset to accommodate the new data
-
-        // select a hyperslab for the new data to be written to
-        if (fileWriteOffset == 0) {
+ //       if (fileWriteOffset == 0) {
 
           final byte[] writeBuffer = new byte[Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE * quotes.length];
           int i = 0;
@@ -459,10 +451,10 @@ class Hdf5EodDataSink implements EodDataSink {
                                                       new long[] { quotes.length },
                                                       new long[] { quotes.length });
 
-
+          // select a hyperslab for the new data to be written to
           status = H5.H5Sselect_hyperslab(fileDataspaceHandle,
                                           HDF5Constants.H5S_SELECT_SET,
-                                          new long[] { 0 },
+                                          new long[] { fileWriteOffset },
                                           null,
                                           new long[] { quotes.length },
                                           null);
@@ -479,7 +471,7 @@ class Hdf5EodDataSink implements EodDataSink {
                                 writeBuffer);
 
 
-        }
+ //       }
       }
       catch(HDF5Exception ex) {
         ex.printStackTrace();

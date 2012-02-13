@@ -1,7 +1,7 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * @(#)UpdateExchangeQuotesCommandTest.java        
+ * @(#)UpdateExchangeSymbolQuotesCommandTest.java        
  *
  * Copyright (c) 2012 JSR Solutions Limited
  * 4 Viridian Lane, Auckland, 0632.  New Zealand
@@ -20,7 +20,7 @@ import static org.junit.Assert.fail;
 import nz.co.jsrsolutions.ds3.EodDataProvider;
 import nz.co.jsrsolutions.ds3.EodDataSink;
 import nz.co.jsrsolutions.ds3.command.CommandContext;
-import nz.co.jsrsolutions.ds3.command.UpdateExchangeQuotesCommand;
+import nz.co.jsrsolutions.ds3.command.UpdateExchangeSymbolQuotesCommand;
 
 import org.apache.commons.chain.Command;
 import org.junit.Before;
@@ -29,7 +29,7 @@ import org.junit.Test;
 /**
  * Unit test for UpdateExchangeQuotesCommand.
  */
-public class UpdateExchangeQuotesCommandTest {
+public class UpdateExchangeSymbolQuotesCommandTest {
 
   /**
    * Test
@@ -45,7 +45,7 @@ public class UpdateExchangeQuotesCommandTest {
    * Test
    */
   @Test
-  public void testUpdateExchangeQuotesCommand_EmptySink() {
+  public void testUpdateExchangeSymbolQuotesCommand_EmptySink() {
 
     try {
 
@@ -63,7 +63,7 @@ public class UpdateExchangeQuotesCommandTest {
       context.put(CommandContext.SYMBOL_KEY, testData.getTestSymbol());
 
 
-      Command command = new UpdateExchangeQuotesCommand();
+      Command command = new UpdateExchangeSymbolQuotesCommand();
 
       command.execute(context);
 
@@ -80,7 +80,7 @@ public class UpdateExchangeQuotesCommandTest {
    * Test
    */
   @Test
-  public void testUpdateExchangeQuotesCommand_ContainedByAvailableRangeSink() {
+  public void testUpdateExchangeSymbolQuotesCommand_ContainedByAvailableRangeSink() {
 
     try {
 
@@ -97,7 +97,7 @@ public class UpdateExchangeQuotesCommandTest {
       context.put(CommandContext.EXCHANGE_KEY, testData.getTestExchange());
       context.put(CommandContext.SYMBOL_KEY, testData.getTestSymbol());
 
-      Command command = new UpdateExchangeQuotesCommand();
+      Command command = new UpdateExchangeSymbolQuotesCommand();
 
       command.execute(context);
 
