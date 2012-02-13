@@ -2,7 +2,7 @@
 
 # need this because the Java VM isn't looking in the trusted /usr/lib location by default
 # for our locally compiled HDF5 library 
-#export LD_LIBRARY_PATH=/jsr/dist/hdf-java-2.7/lib/linux
+export LD_LIBRARY_PATH=/jsr/dist/hdf-java/lib/linux
 
 #JAVA_OPTS="-Dlog4j.configuration=/jsr/dist/ds3/dev/config/log4j.config.dev.xml"
 # previous version not employing HDF Java Object
