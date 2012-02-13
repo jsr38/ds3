@@ -12,7 +12,7 @@
   </bean>
 
   <bean id="eodDataProvider"
-	class="nz.co.jsrsolutions.ds3.EodDataDataProvider"
+	class="nz.co.jsrsolutions.ds3.EodDataEodDataProvider"
 	scope="singleton">
     <constructor-arg name="url" value="http://ws.eoddata.com/data.asmx"/>
     <constructor-arg name="username" value="jsr1060"/>
