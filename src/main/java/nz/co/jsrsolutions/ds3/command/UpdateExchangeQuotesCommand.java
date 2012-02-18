@@ -96,7 +96,7 @@ public class UpdateExchangeQuotesCommand implements Command {
           logMessageBuffer.append(" Attempting to retrieve quotes on [ ");
           logMessageBuffer.append(exchange);
           logMessageBuffer.append(" ] for [ ");
-          logMessageBuffer.append(symbol);
+          logMessageBuffer.append(symbol.getCode());
           logMessageBuffer.append(" ] between [ ");
           logMessageBuffer.append(requestRange.getLower().getTime().toString());
           logMessageBuffer.append(" ] and [ ");
@@ -106,15 +106,20 @@ public class UpdateExchangeQuotesCommand implements Command {
 
         }
         
-        final QUOTE[] quotes = eodDataProvider.getQuotes(exchange,
-            symbol.getCode(),
-            requestRange.getLower(),
-            requestRange.getUpper(),
-            DEFAULT_FREQUENCY);
+        try {
+          final QUOTE[] quotes = eodDataProvider.getQuotes(exchange,
+              symbol.getCode(),
+              requestRange.getLower(),
+              requestRange.getUpper(),
+              DEFAULT_FREQUENCY);
 
-        eodDataSink.updateExchangeSymbolQuotes(exchange,
-            symbol.getCode(),
-            quotes);
+          eodDataSink.updateExchangeSymbolQuotes(exchange,
+              symbol.getCode(),
+              quotes);
+        }
+        catch (Exception e) {
+          logger.error("Unable to update quotes", e);
+        }
         
       }
     }

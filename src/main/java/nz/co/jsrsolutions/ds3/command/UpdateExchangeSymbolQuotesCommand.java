@@ -32,9 +32,6 @@ public class UpdateExchangeSymbolQuotesCommand implements Command {
 
   private static final transient Logger logger = Logger.getLogger(UpdateExchangeSymbolQuotesCommand.class);
 
-  @SuppressWarnings("unused")
-  private static final int HISTORY_MONTH_OFFSET = -3;
-
   private static final String DEFAULT_FREQUENCY = new String("d");
 
   public boolean execute(Context context) throws Exception {

@@ -667,6 +667,7 @@ class Hdf5EodDataSink implements EodDataSink {
     if (quoteDatasetHandle >= 0) {
       try {
         H5.H5Dclose(quoteDatasetHandle);
+        quoteDatasetHandle = -1;
       }
       catch(Exception ex) {
         ex.printStackTrace();
