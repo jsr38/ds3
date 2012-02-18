@@ -30,6 +30,7 @@ import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.util.ExchangeSymbolKey;
 import nz.co.jsrsolutions.util.Range;
 
 import org.apache.log4j.Logger;
@@ -362,11 +363,13 @@ class Hdf5EodDataSink implements EodDataSink {
     final Range<Calendar> newRange = new Range<Calendar>(quotes[0].getDateTime(), quotes[quotes.length - 1].getDateTime());
     final Range<Calendar> existingRange = getExchangeSymbolDateRange(exchange, symbol);
     
-    if (newRange.overlapsRange(existingRange)) {
+    if (existingRange != null
+        && newRange.overlapsRange(existingRange)) {
       throw new EodDataSinkException("Supplied quote vector overlaps existing quotes");
     }
     
-    if (newRange.getUpper().compareTo(existingRange.getLower()) < 0) {
+    if (existingRange != null
+        && newRange.getUpper().compareTo(existingRange.getLower()) < 0) {
       throw new EodDataSinkException("Prepending quotes not supported by this EodDataSink implementation");
     }
 
@@ -374,8 +377,16 @@ class Hdf5EodDataSink implements EodDataSink {
     // contiguousness 
     
     final Hdf5QuoteDatatype quoteData = new Hdf5QuoteDatatype();
-
+    final ExchangeSymbolKey key = new ExchangeSymbolKey(exchange, symbol);
+    
     openQuoteDataset(exchange, symbol);
+    boolean newlyCreatedDataset = false;
+    
+    if (quoteDatasetHandle < 0) {
+      int symbolGroupHandle = (Integer)symbolGroupHandleMap.get(key.getKey());
+      createQuoteDataset(quotes.length, symbolGroupHandle);
+      newlyCreatedDataset = true;
+    }
 
     if (quoteDatasetHandle >= 0) {
           
@@ -397,23 +408,13 @@ class Hdf5EodDataSink implements EodDataSink {
         int status = H5.H5Sget_simple_extent_dims(fileDataspaceHandle, dimensions, maxDimensions);
         long fileWriteOffset = 0;
 
-        if (dimensions[0] == 0) {
-          // we have a new, empty dataset
-          H5.H5Dset_extent(quoteDatasetHandle,
-                           new long[] { quotes.length });
-
-          H5.H5Dclose(fileDataspaceHandle);
-          fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
-
-        }
-        else {
-
+        if (!newlyCreatedDataset) {
           // we need to extend the non-empty dataset
           
           H5.H5Dset_extent(quoteDatasetHandle,
               new long[] { quotes.length + dimensions[0] });
 
-          H5.H5Dclose(fileDataspaceHandle);
+          H5.H5Sclose(fileDataspaceHandle);
           fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
           fileWriteOffset = dimensions[0];
         }
@@ -472,6 +473,13 @@ class Hdf5EodDataSink implements EodDataSink {
 
 
  //       }
+          if (logger.isInfoEnabled()) {
+            final StringBuffer messageBuffer = new StringBuffer();
+            messageBuffer.append("Wrote [ ");
+            messageBuffer.append(i);
+            messageBuffer.append(" ] quotes to dataset.");
+            logger.info(messageBuffer.toString());
+          }
       }
       catch(HDF5Exception ex) {
         ex.printStackTrace();
@@ -510,18 +518,44 @@ class Hdf5EodDataSink implements EodDataSink {
 
   }
 
-  private void createQuoteDataset(long dimension, int locationHandle) throws HDF5Exception, EodDataSinkException {
+  private void createQuoteDataset(final long dimension, final int locationHandle) throws EodDataSinkException {
   
-    long dimensions[] = { dimension };
-    long maxDimensions[] = { HDF5Constants.H5S_UNLIMITED };
+    final long dimensions[] = { dimension };
+    final long maxDimensions[] = { HDF5Constants.H5S_UNLIMITED };
+    int quoteDataspaceHandle;
     
-    int quoteDataspaceHandle = H5.H5Screate_simple(QUOTE_DATASET_RANK, dimensions, maxDimensions);
+    try {
+
+      quoteDataspaceHandle = H5.H5Screate_simple(QUOTE_DATASET_RANK, dimensions, maxDimensions);
+
+    } catch (HDF5Exception e) {
+      e.printStackTrace();
+      throw new EodDataSinkException(e.toString());
+    }
+    
     quoteFileDatatypeHandle = Hdf5QuoteDatatype.getFileDatatypeHandle();
     quoteMemoryDatatypeHandle = Hdf5QuoteDatatype.getMemoryDatatypeHandle();
+    int createProperties;
+    
+    try {
 
-    int createProperties = H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE);
-    @SuppressWarnings("unused")
-    int status = H5.H5Pset_chunk(createProperties, QUOTE_DATASET_RANK, QUOTEDATASET_CHUNK_DIMENSIONS);
+      createProperties = H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE);
+
+    } catch (HDF5Exception e) {
+      e.printStackTrace();
+      throw new EodDataSinkException(e.toString());
+    }
+   
+    try {
+
+      @SuppressWarnings("unused")
+      int status = H5.H5Pset_chunk(createProperties, QUOTE_DATASET_RANK, QUOTEDATASET_CHUNK_DIMENSIONS);
+
+
+    } catch (HDF5Exception e) {
+      e.printStackTrace();
+      throw new EodDataSinkException(e.toString());
+    }
 
     if ((fileHandle >= 0)
         && (quoteDataspaceHandle >= 0)
@@ -537,10 +571,19 @@ class Hdf5EodDataSink implements EodDataSink {
                                           HDF5Constants.H5P_DEFAULT);
       }
       catch (HDF5Exception e) {
-        throw e;
+        e.printStackTrace();
       }
       finally {
-        H5.H5Sclose(quoteDataspaceHandle);
+        
+        try {
+
+          H5.H5Sclose(quoteDataspaceHandle);
+
+        } catch (HDF5Exception e) {
+          e.printStackTrace();
+          throw new EodDataSinkException(e.toString());
+        }
+
       }
       
     }
@@ -555,6 +598,8 @@ class Hdf5EodDataSink implements EodDataSink {
 
   private void openQuoteDataset(String exchange, String symbol) throws EodDataSinkException {
 
+    closeQuoteDataset();
+    
     Integer exchangeGroupHandle = (Integer)exchangeGroupHandleMap.get(exchange);
     if (exchangeGroupHandle == null) {
       try {
@@ -571,17 +616,14 @@ class Hdf5EodDataSink implements EodDataSink {
         throw e;
       }
     }
-        
-    StringBuffer symbolKeyBuffer = new StringBuffer();
-    symbolKeyBuffer.append(exchange);
-    symbolKeyBuffer.append("-");
-    symbolKeyBuffer.append(symbol);
+    
+    final ExchangeSymbolKey key = new ExchangeSymbolKey(exchange, symbol);
 
-    Integer symbolGroupHandle = (Integer)symbolGroupHandleMap.get(symbolKeyBuffer.toString());
+    Integer symbolGroupHandle = (Integer)symbolGroupHandleMap.get(key.getKey());
     if (symbolGroupHandle == null) {
       try {
         symbolGroupHandle = H5.H5Gopen(exchangeGroupHandle, symbol, HDF5Constants.H5P_DEFAULT);
-        symbolGroupHandleMap.put(symbolKeyBuffer.toString(), symbolGroupHandle);
+        symbolGroupHandleMap.put(key.getKey(), symbolGroupHandle);
       }
       catch (HDF5LibraryException lex) {
         StringBuffer messageBuffer = new StringBuffer();
@@ -601,16 +643,9 @@ class Hdf5EodDataSink implements EodDataSink {
       if (quoteDatasetHandle < 0) {
 
         if (logger.isInfoEnabled()) {
-          logger.info("Failed to open quote dataset... Attempting to create quote dataset from scratch.");
+          logger.info("Failed to open quote dataset...");
         }
 
-        try {
-          createQuoteDataset(0, symbolGroupHandle);
-        }
-        catch (HDF5Exception ex) {
-          ex.printStackTrace();
-          throw new EodDataSinkException("Failed to create quote dataset from scratch.");
-        }
       }
 
 
@@ -620,15 +655,7 @@ class Hdf5EodDataSink implements EodDataSink {
       //      lex.printStackTrace();
 
       if (logger.isInfoEnabled()) {
-        logger.info("Failed to open quote dataset... Attempting to create quote dataset from scratch.");
-      }
-
-      try {
-        createQuoteDataset(0, symbolGroupHandle);
-      }
-      catch (HDF5Exception ex) {
-        ex.printStackTrace();
-        throw new EodDataSinkException("Failed to create quote dataset from scratch.");
+        logger.info("Failed to open quote dataset...");
       }
 
     }
@@ -740,6 +767,9 @@ class Hdf5EodDataSink implements EodDataSink {
   public Range<Calendar> getExchangeSymbolDateRange(String exchange, String symbol) throws EodDataSinkException {
     
     openQuoteDataset(exchange, symbol);
+    if (quoteDatasetHandle < 0) {
+      return null;
+    }
     
     try {
       int fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
@@ -749,27 +779,61 @@ class Hdf5EodDataSink implements EodDataSink {
       @SuppressWarnings("unused")
       int status = H5.H5Sget_simple_extent_dims(fileDataspaceHandle, dimensions, maxDimensions);
       
-      status = H5.H5Sselect_elements(fileDataspaceHandle,
-          HDF5Constants.H5S_SELECT_SET,
-          1,
-          new long[][] { new long[] { 0, 0 }, new long[] { dimensions[0], 0 } });
-    
-      final byte[] readBuffer = new byte[Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE * 2];
+      // TODO: handle the case where we only have a single element
+      if (dimensions[0] > 1) {
 
-      H5.H5Dread(quoteDatasetHandle,
-                 Hdf5QuoteDatatype.getMemoryDatatypeHandle(),
-                 HDF5Constants.H5S_ALL,
-                 HDF5Constants.H5S_SEL_POINTS,
-                 HDF5Constants.H5P_DEFAULT,
-                 readBuffer);
-    
-      Hdf5QuoteDatatype[] quotes = Hdf5QuoteDatatype.createArray(readBuffer);
+//        status = H5.H5Sselect_elements(fileDataspaceHandle,
+//            HDF5Constants.H5S_SELECT_SET,
+//            2,
+//            new long[][] { new long[] { 0, dimensions[0] - 1 } });
+ 
+        final byte[] readBuffer = new byte[Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE];
+
+        int memoryDataspace = H5.H5Screate_simple(1, new long[]{ 1 }, new long[]{ 1 });
+        
+        status = H5.H5Sselect_hyperslab(fileDataspaceHandle,
+            HDF5Constants.H5S_SELECT_SET, new long[] { 0 }, null, new long[] { 1 }, null);
+
+        H5.H5Dread(quoteDatasetHandle,
+                   Hdf5QuoteDatatype.getMemoryDatatypeHandle(),
+                   memoryDataspace,
+                   fileDataspaceHandle,
+                   HDF5Constants.H5P_DEFAULT,
+                   readBuffer);
       
-      return new Range<Calendar>(quotes[0].getDateTime(), quotes[1].getDateTime());
+        Hdf5QuoteDatatype[] quotes = Hdf5QuoteDatatype.createArray(readBuffer);
+        
+        Hdf5QuoteDatatype quote1 = quotes[0];
+        
+        status = H5.H5Sselect_hyperslab(fileDataspaceHandle,
+            HDF5Constants.H5S_SELECT_SET, new long[] { dimensions[0] - 1 }, null, new long[] { 1 }, null);
+
+        H5.H5Dread(quoteDatasetHandle,
+                   Hdf5QuoteDatatype.getMemoryDatatypeHandle(),
+                   memoryDataspace,
+                   fileDataspaceHandle,
+                   HDF5Constants.H5P_DEFAULT,
+                   readBuffer);
+      
+        quotes = Hdf5QuoteDatatype.createArray(readBuffer);
+        
+        Hdf5QuoteDatatype quote2 = quotes[0];
+        
+        H5.H5Sclose(memoryDataspace);
+        
+        return new Range<Calendar>(quote1.getDateTime(), quote2.getDateTime());
+      }
+      else {
+        
+        return null;
+        
+      }
+
     
     }
     catch (HDF5Exception e) {
-      throw new EodDataSinkException();
+      e.printStackTrace();
+      throw new EodDataSinkException("Failed to read from the quote dataset");
     }
    
   }

@@ -16,8 +16,6 @@
 
 package nz.co.jsrsolutions.ds3.test;
 
-import static org.junit.Assert.fail;
-
 import java.util.Arrays;
 import java.util.Calendar;
 

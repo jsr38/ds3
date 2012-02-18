@@ -47,10 +47,12 @@ public class UpdateExchangeQuotesCommand implements Command {
       throw new CommandException("Must supply --exchange [exchangecode]");
     }
 
-    final int availableMonths = eodDataProvider.getExchangeMonths(exchange);
-    
+    final int availableMonths = eodDataProvider.getExchangeMonths(exchange);   
     final Calendar firstAvailableDateTime = Calendar.getInstance();
-    firstAvailableDateTime.add(Calendar.MONTH, -1 * availableMonths);
+    
+    if (availableMonths > 0) {
+      firstAvailableDateTime.add(Calendar.MONTH, -1 * availableMonths);
+    }
 
     final Calendar today = Calendar.getInstance();
     
@@ -96,9 +98,9 @@ public class UpdateExchangeQuotesCommand implements Command {
           logMessageBuffer.append(" ] for [ ");
           logMessageBuffer.append(symbol);
           logMessageBuffer.append(" ] between [ ");
-          logMessageBuffer.append(requestRange.getLower());
+          logMessageBuffer.append(requestRange.getLower().getTime().toString());
           logMessageBuffer.append(" ] and [ ");
-          logMessageBuffer.append(requestRange.getUpper());
+          logMessageBuffer.append(requestRange.getUpper().getTime().toString());
           logMessageBuffer.append(" ] ");
           logger.info(logMessageBuffer.toString());
 

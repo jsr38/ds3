@@ -47,6 +47,8 @@ class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvi
   private final transient DataStub eodDataStub;
 
   private final transient String token;
+  
+  private static final int DEFAULT_MONTHS_HISTORY = 36;
 
 
   public EodDataEodDataProvider(String url,
@@ -169,6 +171,10 @@ class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvi
       String monthsString = exchangeMonthsResponse.getExchangeMonthsResult().getMONTHS();
 
       int months = Integer.parseInt(monthsString);
+      
+      if (months == 0) {
+        months = DEFAULT_MONTHS_HISTORY;
+      }
 
       if (logger.isDebugEnabled()) {
 
