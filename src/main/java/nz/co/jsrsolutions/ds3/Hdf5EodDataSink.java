@@ -822,6 +822,13 @@ class Hdf5EodDataSink implements EodDataSink {
         
         H5.H5Sclose(memoryDataspace);
         
+        final StringBuffer messageBuffer = new StringBuffer();
+        messageBuffer.append("Sink contains data from [ ");
+        messageBuffer.append(quote1.getDateTime().getTime().toString());
+        messageBuffer.append(" ] to [ ");
+        messageBuffer.append(quote2.getDateTime().getTime().toString());
+        logger.info(messageBuffer.toString());
+        
         return new Range<Calendar>(quote1.getDateTime(), quote2.getDateTime());
       }
       else {
