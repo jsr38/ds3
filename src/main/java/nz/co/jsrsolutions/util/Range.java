@@ -26,7 +26,12 @@ public class Range<T extends Comparable<T>> {
   public Range(T lower, T upper) {
 
     if (lower.compareTo(upper) > 0) {
-      throw new IllegalArgumentException("lower element of range must be less than or equal to upper element");
+      final StringBuffer messageBuffer = new StringBuffer();
+      messageBuffer.append("lower element of range [ ");
+      messageBuffer.append(lower.toString());
+      messageBuffer.append(" ] must be less than or equal to upper element [ ");
+      messageBuffer.append(upper.toString());
+      throw new IllegalArgumentException(messageBuffer.toString());
     }
 
     this.lower = lower;

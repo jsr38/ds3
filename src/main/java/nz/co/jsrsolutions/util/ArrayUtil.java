@@ -14,11 +14,11 @@
  * with JSR Solutions Limited.
  */
 
-package nz.co.jsrsolutions.ds3;
+package nz.co.jsrsolutions.util;
 
 import java.util.Arrays;
 
-class Util {
+class ArrayUtil {
 
     public static <T> T[] concat(T[] first, T[] second) {
 
