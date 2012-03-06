@@ -52,6 +52,7 @@ public class UpdateExchangeQuotesCommand implements Command {
     
     if (availableMonths > 0) {
       firstAvailableDateTime.add(Calendar.MONTH, -1 * availableMonths);
+      firstAvailableDateTime.add(Calendar.DATE, 1);
     }
 
     final Calendar today = Calendar.getInstance();
