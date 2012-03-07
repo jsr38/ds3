@@ -30,7 +30,7 @@ class Hdf5QuoteDatatype {
   @SuppressWarnings("unused")
   private static final transient Logger logger = Logger.getLogger(Hdf5QuoteDatatype.class);
 
-  public static final int QUOTE_DATATYPE_SIZE = 40;
+  public static final int QUOTE_DATATYPE_SIZE = 48;
 
   public static final String DATETIME = new String("datetime");
 
@@ -42,29 +42,40 @@ class Hdf5QuoteDatatype {
 
   public static final String CLOSE = new String("close");
 
-  private static final String[] fieldNames = new String[] { DATETIME,
-                                                            OPEN,
-                                                            HIGH,
-                                                            LOW,
-                                                            CLOSE };
+  public static final String VOLUME = new String("volume");
 
-  private static final int[] fileDatatypes = new int[] { HDF5Constants.H5T_UNIX_D64LE,
-                                                         HDF5Constants.H5T_IEEE_F64LE,
-                                                         HDF5Constants.H5T_IEEE_F64LE,
-                                                         HDF5Constants.H5T_IEEE_F64LE,
-                                                         HDF5Constants.H5T_IEEE_F64LE };
+  private static final String[] fieldNames = new String[] {
+    DATETIME,
+    OPEN,
+    HIGH,
+    LOW,
+    CLOSE,
+    VOLUME
+  };
 
-  private static final int[] memoryDatatypes = new int[] { HDF5Constants.H5T_UNIX_D64LE,
-                                                           HDF5Constants.H5T_NATIVE_DOUBLE,
-                                                           HDF5Constants.H5T_NATIVE_DOUBLE,
-                                                           HDF5Constants.H5T_NATIVE_DOUBLE,
-                                                           HDF5Constants.H5T_NATIVE_DOUBLE };
+  private static final int[] fileDatatypes = new int[] {
+    HDF5Constants.H5T_UNIX_D64LE,
+    HDF5Constants.H5T_IEEE_F64LE,
+    HDF5Constants.H5T_IEEE_F64LE,
+    HDF5Constants.H5T_IEEE_F64LE,
+    HDF5Constants.H5T_IEEE_F64LE,
+    HDF5Constants.H5T_IEEE_F64LE
+  };
+
+  private static final int[] memoryDatatypes = new int[] {
+    HDF5Constants.H5T_UNIX_D64LE,
+    HDF5Constants.H5T_NATIVE_DOUBLE,
+    HDF5Constants.H5T_NATIVE_DOUBLE,
+    HDF5Constants.H5T_NATIVE_DOUBLE,
+    HDF5Constants.H5T_NATIVE_DOUBLE,
+    HDF5Constants.H5T_NATIVE_DOUBLE
+};
 
   // The offsets and sizes must eventually be computed from the
   // 'field' data types.  For another day.
-  private static final int[] offsets = new int[] { 0, 8, 16, 24, 32 };
+  private static final int[] offsets = new int[] { 0, 8, 16, 24, 32, 40 };
 
-  private static final int[] sizes = new int[] { 8, 8, 8, 8, 8 };
+  private static final int[] sizes = new int[] { 8, 8, 8, 8, 8, 8 };
 
   private static int[] fileDatatypeHandles = null;
 
@@ -85,6 +96,8 @@ class Hdf5QuoteDatatype {
   private double[] low = new double[1];
 
   private double[] close = new double[1];
+
+  private double[] volume = new double[1];
 
   static {
 
@@ -128,13 +141,15 @@ class Hdf5QuoteDatatype {
                     double open,
                     double high,
                     double low,
-                    double close) throws EodDataSinkException {
+                    double close,
+                    double volume) throws EodDataSinkException {
 
     this.dateTime[0] = dateTime.getTimeInMillis();
     this.open[0] = open;
     this.high[0] = high;
     this.low[0] = low;
     this.close[0] = close;
+    this.volume[0] = volume;
     
   }
 
@@ -162,6 +177,10 @@ class Hdf5QuoteDatatype {
     return close[0];
   }
 
+  double getVolume() {
+    return volume[0];
+  }
+
   void setDateTime(Calendar dateTime) {
     this.dateTime[0] = dateTime.getTimeInMillis();
   }
@@ -180,6 +199,10 @@ class Hdf5QuoteDatatype {
 
   void setClose(double close) {
     this.close[0] = close;
+  }
+
+  void setVolume(double volume) {
+    this.volume[0] = volume;
   }
 
   static int getFileDatatypeHandle() {
@@ -203,12 +226,14 @@ class Hdf5QuoteDatatype {
     byte[] highRecord = HDFNativeData.doubleToByte(0, 1, high);
     byte[] lowRecord = HDFNativeData.doubleToByte(0, 1, low);
     byte[] closeRecord = HDFNativeData.doubleToByte(0, 1, close);
+    byte[] volumeRecord = HDFNativeData.doubleToByte(0, 1, volume);
     
     System.arraycopy(dateTimeRecord, 0, buffer, offsets[0], sizes[0]);
     System.arraycopy(openRecord, 0, buffer, offsets[1], sizes[1]);
     System.arraycopy(highRecord, 0, buffer, offsets[2], sizes[2]);
     System.arraycopy(lowRecord, 0, buffer, offsets[3], sizes[3]);
     System.arraycopy(closeRecord, 0, buffer, offsets[4], sizes[4]);
+    System.arraycopy(volumeRecord, 0, buffer, offsets[5], sizes[5]);
 
     return buffer;
 
@@ -227,6 +252,7 @@ class Hdf5QuoteDatatype {
     quoteData.high[0] = HDFNativeData.byteToDouble(buffer, offsets[2]);
     quoteData.low[0] = HDFNativeData.byteToDouble(buffer, offsets[3]);
     quoteData.close[0] = HDFNativeData.byteToDouble(buffer, offsets[4]);
+    quoteData.volume[0] = HDFNativeData.byteToDouble(buffer, offsets[5]);
 
     return quoteData;
 
