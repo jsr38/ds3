@@ -31,6 +31,7 @@ public class Range<T extends Comparable<T>> {
       messageBuffer.append(lower.toString());
       messageBuffer.append(" ] must be less than or equal to upper element [ ");
       messageBuffer.append(upper.toString());
+      messageBuffer.append(" ]");
       throw new IllegalArgumentException(messageBuffer.toString());
     }
 
