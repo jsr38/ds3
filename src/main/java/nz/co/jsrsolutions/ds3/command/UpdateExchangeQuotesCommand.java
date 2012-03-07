@@ -57,11 +57,12 @@ public class UpdateExchangeQuotesCommand implements Command {
 
     final Calendar today = Calendar.getInstance();
     
-    final SYMBOL[] symbols = eodDataProvider.getSymbols(exchange);
+    //    final SYMBOL[] symbols = eodDataProvider.getSymbols(exchange);
+    final String[] symbols = eodDataSink.readExchangeSymbols(exchange);
 
-    for (SYMBOL symbol : symbols) {
+    for (String symbol : symbols) {
 
-      final Range<Calendar> sinkRange = eodDataSink.getExchangeSymbolDateRange(exchange, symbol.getCode());
+      final Range<Calendar> sinkRange = eodDataSink.readExchangeSymbolDateRange(exchange, symbol);
       
       final ArrayList<Range<Calendar>> requestRangesList = new ArrayList<Range<Calendar>>(2);
       
@@ -97,7 +98,7 @@ public class UpdateExchangeQuotesCommand implements Command {
           logMessageBuffer.append(" Attempting to retrieve quotes on [ ");
           logMessageBuffer.append(exchange);
           logMessageBuffer.append(" ] for [ ");
-          logMessageBuffer.append(symbol.getCode());
+          logMessageBuffer.append(symbol);
           logMessageBuffer.append(" ] between [ ");
           logMessageBuffer.append(requestRange.getLower().getTime().toString());
           logMessageBuffer.append(" ] and [ ");
@@ -109,13 +110,13 @@ public class UpdateExchangeQuotesCommand implements Command {
         
         try {
           final QUOTE[] quotes = eodDataProvider.getQuotes(exchange,
-              symbol.getCode(),
+              symbol,
               requestRange.getLower(),
               requestRange.getUpper(),
               DEFAULT_FREQUENCY);
 
           eodDataSink.updateExchangeSymbolQuotes(exchange,
-              symbol.getCode(),
+              symbol,
               quotes);
         }
         catch (Exception e) {

@@ -18,13 +18,20 @@ package nz.co.jsrsolutions.ds3;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.Map.Entry;
 
 import ncsa.hdf.hdf5lib.H5;
 import ncsa.hdf.hdf5lib.HDF5Constants;
+import ncsa.hdf.hdf5lib.callbacks.H5L_iterate_cb;
+import ncsa.hdf.hdf5lib.callbacks.H5L_iterate_t;
+import ncsa.hdf.hdf5lib.structs.H5L_info_t;
+import ncsa.hdf.hdf5lib.structs.H5O_info_t;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
@@ -34,6 +41,128 @@ import nz.co.jsrsolutions.util.ExchangeSymbolKey;
 import nz.co.jsrsolutions.util.Range;
 
 import org.apache.log4j.Logger;
+
+class H5O {
+  enum H5O_type {
+    H5O_TYPE_UNKNOWN(-1), // Unknown object type
+      H5O_TYPE_GROUP(0), // Object is a group
+      H5O_TYPE_DATASET(1), // Object is a dataset
+      H5O_TYPE_NAMED_DATATYPE(2), // Object is a named data type
+      H5O_TYPE_NTYPES(3); // Number of different object types
+    private static final Map<Integer, H5O_type> lookup = new HashMap<Integer, H5O_type>();
+
+    static {
+      for (H5O_type s : EnumSet.allOf(H5O_type.class))
+        lookup.put(s.getCode(), s);
+    }
+
+    private int code;
+
+    H5O_type(int layout_type) {
+      this.code = layout_type;
+    }
+
+    public int getCode() {
+      return this.code;
+    }
+
+    public static H5O_type get(int code) {
+      return lookup.get(code);
+    }
+  }
+}
+
+class opdata implements H5L_iterate_t {
+  int recurs;
+  opdata prev;
+  long addr;
+}
+
+class H5L_iter_callbackT implements H5L_iterate_cb {
+
+  private List<String> symbols = new Vector<String>();
+
+  public int callback(int group, String name, H5L_info_t info, H5L_iterate_t op_data) {
+
+    H5O_info_t infobuf;
+    int return_val = 0;
+    opdata od = (opdata)op_data; //Type conversion
+    int spaces = 2 * (od.recurs + 1); //Number of white spaces to prepend to output.
+
+    //Get type of the object and display its name and type.
+    // The name of the object is passed to this function by the Library.
+    try{
+      infobuf = H5.H5Oget_info_by_name (group, name, HDF5Constants.H5P_DEFAULT);
+
+      for(int i=0;i<spaces;i++)
+        System.out.print(" "); //Format output.
+      switch (H5O.H5O_type.get(infobuf.type)) {
+      case H5O_TYPE_GROUP:
+        System.out.println("Group: " + name + " { ");
+        // Check group address against linked list of operator
+        // data structures. We will always run the check, as the
+        // reference count cannot be relied upon if there are
+        // symbolic links, and H5Oget_info_by_name always follows
+        // symbolic links. Alternatively we could use H5Lget_info
+        // and never recurse on groups discovered by symbolic
+        // links, however it could still fail if an object's
+        // reference count was manually manipulated with
+        // H5Odecr_refcount.
+        if(group_check(od, infobuf.addr)){
+          for(int i=0;i<spaces;i++)
+            System.out.print(" ");
+          System.out.println("  Warning: Loop detected!");
+        }
+        else {
+          // Initialize new object of type opdata and begin
+          // recursive iteration on the discovered
+          // group. The new opdata is given a pointer to the
+          // current one.
+          symbols.add(name);
+          opdata nextod = new opdata();
+          nextod.recurs = od.recurs + 1;
+          nextod.prev = od;
+          nextod.addr = infobuf.addr;
+          H5L_iterate_cb iter_cb2 = new H5L_iter_callbackT();
+          //          return_val = H5.H5Literate_by_name (group, name, HDF5Constants.H5_INDEX_NAME,
+          //                                    HDF5Constants.H5_ITER_NATIVE, 0L, iter_cb2, nextod,
+          //                                    HDF5Constants.H5P_DEFAULT);
+        }
+        for(int i=0;i<spaces;i++)
+          System.out.print(" ");
+        System.out.println("}");
+        break;
+      case H5O_TYPE_DATASET:
+        System.out.println("Dataset: " + name);
+        break;
+      case H5O_TYPE_NAMED_DATATYPE:
+        System.out.println("Datatype: " + name);
+        break;
+      default:
+        System.out.println("Unknown: " + name);
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+  
+    return return_val;
+  }
+
+  public boolean group_check (opdata od, long target_addr){
+    if (od.addr == target_addr)
+      return true;  //Addresses match 
+    else if (od.recurs==0)
+      return false;  // Root group reached with no matches 
+    else 
+      return group_check(od.prev, target_addr); //Recursively examine the next node  
+  }
+  
+  public String[] getSymbols() {
+    return symbols.<String>toArray(new String[0]);
+  }
+
+}
 
 class Hdf5EodDataSink implements EodDataSink {
 
@@ -361,7 +490,7 @@ class Hdf5EodDataSink implements EodDataSink {
     }
     
     final Range<Calendar> newRange = new Range<Calendar>(quotes[0].getDateTime(), quotes[quotes.length - 1].getDateTime());
-    final Range<Calendar> existingRange = getExchangeSymbolDateRange(exchange, symbol);
+    final Range<Calendar> existingRange = readExchangeSymbolDateRange(exchange, symbol);
     
     if (existingRange != null
         && newRange.overlapsRange(existingRange)) {
@@ -596,7 +725,7 @@ class Hdf5EodDataSink implements EodDataSink {
 
   }
 
-  private void openQuoteDataset(String exchange, String symbol) throws EodDataSinkException {
+  private void openQuoteDataset(String exchange, String symbol) {
 
     closeQuoteDataset();
     
@@ -611,9 +740,8 @@ class Hdf5EodDataSink implements EodDataSink {
         messageBuffer.append("Failed to open exchange group for [ ");
         messageBuffer.append(exchange);
         messageBuffer.append(" ]");
-        EodDataSinkException e = new EodDataSinkException(messageBuffer.toString());
-        e.initCause(lex);
-        throw e;
+        logger.info(messageBuffer.toString());
+        return;
       }
     }
     
@@ -630,9 +758,8 @@ class Hdf5EodDataSink implements EodDataSink {
         messageBuffer.append("Failed to open symbol group for [ ");
         messageBuffer.append(symbol);
         messageBuffer.append(" ]");
-        EodDataSinkException e = new EodDataSinkException(messageBuffer.toString());
-        e.initCause(lex);
-        throw e;
+        logger.info(messageBuffer.toString());
+        return;
       }
     }
       
@@ -662,7 +789,7 @@ class Hdf5EodDataSink implements EodDataSink {
 
   }
 
-  private void closeQuoteDataset() throws EodDataSinkException {
+  private void closeQuoteDataset() {
     
     if (quoteDatasetHandle >= 0) {
       try {
@@ -765,7 +892,7 @@ class Hdf5EodDataSink implements EodDataSink {
 
   }
 
-  public Range<Calendar> getExchangeSymbolDateRange(String exchange, String symbol) throws EodDataSinkException {
+  public Range<Calendar> readExchangeSymbolDateRange(String exchange, String symbol) throws EodDataSinkException {
     
     openQuoteDataset(exchange, symbol);
     if (quoteDatasetHandle < 0) {
@@ -827,6 +954,7 @@ class Hdf5EodDataSink implements EodDataSink {
         messageBuffer.append(quote1.getDateTime().getTime().toString());
         messageBuffer.append(" ] to [ ");
         messageBuffer.append(quote2.getDateTime().getTime().toString());
+        messageBuffer.append(" ]");
         logger.info(messageBuffer.toString());
         
         return new Range<Calendar>(quote1.getDateTime(), quote2.getDateTime());
@@ -844,6 +972,43 @@ class Hdf5EodDataSink implements EodDataSink {
       throw new EodDataSinkException("Failed to read from the quote dataset");
     }
    
+  }
+
+  public String[] readExchangeSymbols(String exchange) throws EodDataSinkException {
+    
+    Integer exchangeGroupHandle = (Integer)exchangeGroupHandleMap.get(exchange);
+    
+    String[] symbols = null;
+
+    if (exchangeGroupHandle == null) {
+      try {
+        exchangeGroupHandle = H5.H5Gopen(fileHandle, exchange, HDF5Constants.H5P_DEFAULT);
+        exchangeGroupHandleMap.put(exchange, exchangeGroupHandle);
+        final H5L_iterate_cb iter_cb = new H5L_iter_callbackT();
+        final opdata od = new opdata();
+        int status = H5.H5Literate(exchangeGroupHandle,
+                                   HDF5Constants.H5_INDEX_NAME,
+                                   HDF5Constants.H5_ITER_NATIVE,
+                                   0L,
+                                   iter_cb,
+                                   od);
+        symbols = ((H5L_iter_callbackT)iter_cb).getSymbols();
+        if (symbols == null || symbols.length <= 0) {
+          throw new EodDataSinkException("Couldn't fnd any sumbols for this exchange.");
+        }
+      }
+      catch (HDF5LibraryException lex) {
+        StringBuffer messageBuffer = new StringBuffer();
+        messageBuffer.append("Failed to iterate over exchange group for [ ");
+        messageBuffer.append(exchange);
+        messageBuffer.append(" ]");
+        EodDataSinkException e = new EodDataSinkException(messageBuffer.toString());
+        e.initCause(lex);
+        throw e;
+      }
+    }
+
+    return symbols;
   }
 
 }
