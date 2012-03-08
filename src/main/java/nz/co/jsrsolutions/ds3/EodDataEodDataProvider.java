@@ -71,8 +71,8 @@ class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvi
       loginRequest.setPassword(password);
 
       // Login
-      DataStub.LoginResponse2 loginResponse2 = eodDataStub.login(loginRequest);
-      DataStub.LOGINRESPONSE loginResponse = loginResponse2.getLoginResult();
+      DataStub.LoginResponse0 loginResponse0 = eodDataStub.login(loginRequest);
+      DataStub.LOGINRESPONSE loginResponse = loginResponse0.getLoginResult();
         
       if (loginResponse == null) {
         throw new EodDataProviderException("Failed to authenticate with EOD Data web service.");
