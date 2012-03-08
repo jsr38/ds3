@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
-import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
 import nz.co.jsrsolutions.ds3.EodDataProvider;
 import nz.co.jsrsolutions.ds3.EodDataSink;
 import nz.co.jsrsolutions.util.Range;

@@ -84,8 +84,17 @@ class EodDataSinkMock implements EodDataSink {
   }
 
   @Override
-  public Range<Calendar> getExchangeSymbolDateRange(String exchange, String symbol) {
-    throw new NotImplementedException();
+  public Range<Calendar> readExchangeSymbolDateRange(String exchange,
+      String symbol) throws EodDataSinkException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public String[] readExchangeSymbols(String exchange)
+      throws EodDataSinkException {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

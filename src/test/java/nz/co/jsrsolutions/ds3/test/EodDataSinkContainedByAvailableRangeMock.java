@@ -59,7 +59,7 @@ public class EodDataSinkContainedByAvailableRangeMock extends EodDataSinkMock {
   }
   
   @Override
-  public Range<Calendar> getExchangeSymbolDateRange(String exchange, String symbol) {
+  public Range<Calendar> readExchangeSymbolDateRange(String exchange, String symbol) {
     
     final QUOTE[] quotes = this.testData.getQuotes();
     
