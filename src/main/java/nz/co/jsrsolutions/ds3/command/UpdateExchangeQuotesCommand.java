@@ -47,20 +47,21 @@ public class UpdateExchangeQuotesCommand implements Command {
       throw new CommandException("Must supply --exchange [exchangecode]");
     }
 
-    final int availableMonths = eodDataProvider.getExchangeMonths(exchange);   
-    final Calendar firstAvailableDateTime = Calendar.getInstance();
-    
-    if (availableMonths > 0) {
-      firstAvailableDateTime.add(Calendar.MONTH, -1 * availableMonths);
-      firstAvailableDateTime.add(Calendar.DATE, 1);
-    }
-
-    final Calendar today = Calendar.getInstance();
+    final int availableMonths = eodDataProvider.getExchangeMonths(exchange);
     
     //    final SYMBOL[] symbols = eodDataProvider.getSymbols(exchange);
     final String[] symbols = eodDataSink.readExchangeSymbols(exchange);
 
     for (String symbol : symbols) {
+
+      final Calendar firstAvailableDateTime = Calendar.getInstance();
+
+      if (availableMonths > 0) {
+        firstAvailableDateTime.add(Calendar.MONTH, -1 * availableMonths);
+        firstAvailableDateTime.add(Calendar.DATE, 1);
+      }
+
+      final Calendar today = Calendar.getInstance();
 
       final Range<Calendar> sinkRange = eodDataSink.readExchangeSymbolDateRange(exchange, symbol);
       
@@ -114,6 +115,10 @@ public class UpdateExchangeQuotesCommand implements Command {
               requestRange.getLower(),
               requestRange.getUpper(),
               DEFAULT_FREQUENCY);
+
+          if (quotes.length == 0) {
+            logger.info("Quote array from provider was empty!");
+          }
 
           eodDataSink.updateExchangeSymbolQuotes(exchange,
               symbol,

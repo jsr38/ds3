@@ -60,7 +60,7 @@ public class UpdateExchangeSymbolQuotesCommand implements Command {
     }
 
     final Calendar today = Calendar.getInstance();
-    final Range<Calendar> sinkRange = eodDataSink.getExchangeSymbolDateRange(exchange, symbol);
+    final Range<Calendar> sinkRange = eodDataSink.readExchangeSymbolDateRange(exchange, symbol);
     final ArrayList<Range<Calendar>> requestRangesList = new ArrayList<Range<Calendar>>(2);
     
     if (sinkRange != null) {
