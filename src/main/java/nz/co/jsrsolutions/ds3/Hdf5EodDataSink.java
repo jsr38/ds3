@@ -567,6 +567,7 @@ class Hdf5EodDataSink implements EodDataSink {
             quoteData.setHigh(quote.getHigh());
             quoteData.setLow(quote.getLow());
             quoteData.setClose(quote.getClose());
+            quoteData.setVolume(quote.getVolume());
 
             System.arraycopy(quoteData.getByteArray(),
                              0,

@@ -32,6 +32,12 @@
       <version>1.2</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-email</artifactId>
+      <version>1.2</version>
+      <scope>compile</scope>
+    </dependency>
 
 <!-- Axis2 dependencies -->
 

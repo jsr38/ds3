@@ -23,7 +23,7 @@
   <bean id="eodDataSink"
 	class="nz.co.jsrsolutions.ds3.Hdf5EodDataSink"
 	scope="singleton">
-    <constructor-arg name="filename" value="eoddata.h5"/>
+    <constructor-arg name="filename" value="/tmp/eoddata.h5"/>
   </bean>
 
 </beans>
