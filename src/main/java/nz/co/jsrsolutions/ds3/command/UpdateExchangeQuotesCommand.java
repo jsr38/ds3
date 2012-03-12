@@ -80,8 +80,11 @@ public class UpdateExchangeQuotesCommand implements Command {
           
           final Calendar lower = (Calendar)sinkRange.getUpper().clone();
           lower.add(Calendar.DATE, 1);
+          // TODO: fix this by observing timezones
+          final Calendar upper = (Calendar)today.clone();
+          upper.add(Calendar.DATE, 1);
           
-          requestRangesList.add(new Range<Calendar>(lower, today));
+          requestRangesList.add(new Range<Calendar>(lower, upper));
           
         }
         
