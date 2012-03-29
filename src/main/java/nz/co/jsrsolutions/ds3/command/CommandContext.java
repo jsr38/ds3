@@ -19,6 +19,7 @@ package nz.co.jsrsolutions.ds3.command;
 
 import nz.co.jsrsolutions.ds3.EodDataProvider;
 import nz.co.jsrsolutions.ds3.EodDataSink;
+import nz.co.jsrsolutions.util.EmailService;
 
 import org.apache.commons.chain.impl.ContextBase;
 
@@ -30,9 +31,11 @@ public class CommandContext extends ContextBase {
   	 */
   	private static final long serialVersionUID = 4691923958838858461L;
 
-public static final String EODDATAPROVIDER_KEY = new String("eoddataprovider");
+  public static final String EODDATAPROVIDER_KEY = new String("eoddataprovider");
 
   public static final String EODDATASINK_KEY = new String("eoddatasink");
+
+  public static final String EMAILSERVICE_KEY = new String("emailservice");
 
   public static final String EXCHANGE_KEY = new String("exchange");
 
@@ -41,6 +44,8 @@ public static final String EODDATAPROVIDER_KEY = new String("eoddataprovider");
   private EodDataProvider eodDataProvider;
 
   private EodDataSink eodDataSink;
+
+  private EmailService emailService;
 
   public EodDataProvider getEodDataProvider() {
     return eodDataProvider;
@@ -56,6 +61,14 @@ public static final String EODDATAPROVIDER_KEY = new String("eoddataprovider");
 
   public void setEodDataSink(EodDataSink eodDataSink) {
     this.eodDataSink = eodDataSink;
+  }
+
+  public EmailService getEmailService() {
+    return emailService;
+  }
+
+  public void setEmailService(EmailService emailService) {
+    this.emailService = emailService;
   }
 
 }

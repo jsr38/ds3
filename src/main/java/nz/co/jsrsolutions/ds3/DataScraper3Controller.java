@@ -18,6 +18,7 @@ package nz.co.jsrsolutions.ds3;
 
 import nz.co.jsrsolutions.ds3.command.CommandContext;
 import nz.co.jsrsolutions.ds3.command.CommandFactory;
+import nz.co.jsrsolutions.util.EmailService;
 
 import org.apache.commons.chain.Command;
 import org.apache.commons.cli.CommandLine;
@@ -33,11 +34,15 @@ final class DataScraper3Controller {
 
   private EodDataSink eodDataSink;
 
+  private EmailService emailService;
+
   public DataScraper3Controller(EodDataProvider eodDataProvider,
-                                EodDataSink eodDataSink) {
+                                EodDataSink     eodDataSink,
+                                EmailService    emailService) {
 
     this.eodDataProvider = eodDataProvider;
     this.eodDataSink = eodDataSink;
+    this.emailService = emailService;
   }
 
   public void executeCommandLine(CommandLine commandLine) throws DataScraper3Exception {
@@ -49,6 +54,7 @@ final class DataScraper3Controller {
     CommandContext context = new CommandContext();
     context.put(CommandContext.EODDATAPROVIDER_KEY, eodDataProvider);
     context.put(CommandContext.EODDATASINK_KEY, eodDataSink);
+    context.put(CommandContext.EMAILSERVICE_KEY, emailService);
 
 
     // place optional argument values into the context

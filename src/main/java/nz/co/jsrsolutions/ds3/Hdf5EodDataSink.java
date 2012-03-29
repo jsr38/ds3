@@ -191,7 +191,7 @@ class Hdf5EodDataSink implements EodDataSink {
   private static final int QUOTE_DATASET_RANK = 1;
 
   // TODO: Investigate this further
-  private static final long[] QUOTEDATASET_CHUNK_DIMENSIONS = new long[] { 300 };
+  private static final long[] QUOTEDATASET_CHUNK_DIMENSIONS = new long[] { 350 };
 
   private final HashMap<String, Integer> exchangeGroupHandleMap = new HashMap<String, Integer>(); 
 
@@ -489,7 +489,8 @@ class Hdf5EodDataSink implements EodDataSink {
       throw new EodDataSinkException("Invalid quote vector.");
     }
     
-    final Range<Calendar> newRange = new Range<Calendar>(quotes[0].getDateTime(), quotes[quotes.length - 1].getDateTime());
+    final Range<Calendar> newRange = new Range<Calendar>(quotes[0].getDateTime(),
+                                                         quotes[quotes.length - 1].getDateTime());
     final Range<Calendar> existingRange = readExchangeSymbolDateRange(exchange, symbol);
     
     if (existingRange != null
@@ -508,11 +509,13 @@ class Hdf5EodDataSink implements EodDataSink {
     final Hdf5QuoteDatatype quoteData = new Hdf5QuoteDatatype();
     final ExchangeSymbolKey key = new ExchangeSymbolKey(exchange, symbol);
     
+    // Try to open the existing dataset
     openQuoteDataset(exchange, symbol);
     boolean newlyCreatedDataset = false;
-    
+    // if we weren't able to,
     if (quoteDatasetHandle < 0) {
       int symbolGroupHandle = (Integer)symbolGroupHandleMap.get(key.getKey());
+      // then create a new dataset
       createQuoteDataset(quotes.length, symbolGroupHandle);
       newlyCreatedDataset = true;
     }
@@ -803,32 +806,6 @@ class Hdf5EodDataSink implements EodDataSink {
     }
   }
   
-  private void readExchangeSymbolQuotes(String exchange, String symbol) throws EodDataSinkException {
-    
-
-    openQuoteDataset(exchange, symbol);
-
-    try {
-      int fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
-      long dimensions[] = new long[1];
-      long maxDimensions[] = new long[1];
-      @SuppressWarnings("unused")
-      int status = H5.H5Sget_simple_extent_dims(fileDataspaceHandle, dimensions, maxDimensions);
-    
-      final byte[] readBuffer = new byte[Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE * (int)dimensions[0]];
-
-      H5.H5Dread(quoteDatasetHandle,
-                 HDF5Constants.H5T_NATIVE_INT,
-                 HDF5Constants.H5S_ALL,
-                 HDF5Constants.H5S_ALL,
-                 HDF5Constants.H5P_DEFAULT,
-                 readBuffer);
-    }
-    catch (HDF5Exception e) {
-      throw new EodDataSinkException();
-    }
-
-  }
 
   public void close() {
 
@@ -910,11 +887,6 @@ class Hdf5EodDataSink implements EodDataSink {
       
       // TODO: handle the case where we only have a single element
       if (dimensions[0] > 1) {
-
-//        status = H5.H5Sselect_elements(fileDataspaceHandle,
-//            HDF5Constants.H5S_SELECT_SET,
-//            2,
-//            new long[][] { new long[] { 0, dimensions[0] - 1 } });
  
         final byte[] readBuffer = new byte[Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE];
 
@@ -949,6 +921,7 @@ class Hdf5EodDataSink implements EodDataSink {
         Hdf5QuoteDatatype quote2 = quotes[0];
         
         H5.H5Sclose(memoryDataspace);
+        H5.H5Sclose(fileDataspace);
         
         final StringBuffer messageBuffer = new StringBuffer();
         messageBuffer.append("Sink contains data from [ ");
