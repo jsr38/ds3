@@ -22,6 +22,7 @@ import java.util.Calendar;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.EodDataProvider;
 import nz.co.jsrsolutions.ds3.EodDataSink;
+import nz.co.jsrsolutions.util.EmailService;
 import nz.co.jsrsolutions.util.Range;
 
 import org.apache.commons.chain.Command;
@@ -37,17 +38,19 @@ public class UpdateExchangeQuotesCommand implements Command {
   public boolean execute(Context context) throws Exception {
 
     logger.info("Executing: updateexchangequotes");
-
+    
     final EodDataProvider eodDataProvider = (EodDataProvider)context.get(CommandContext.EODDATAPROVIDER_KEY);
     final EodDataSink eodDataSink = (EodDataSink)context.get(CommandContext.EODDATASINK_KEY);
+    final EmailService emailService = (EmailService)context.get(CommandContext.EMAILSERVICE_KEY);
     final String exchange = (String)context.get(CommandContext.EXCHANGE_KEY);
 
     if (exchange == null) {
       throw new CommandException("Must supply --exchange [exchangecode]");
     }
 
+    long nQuotesWritten = 0;
+
     final int availableMonths = eodDataProvider.getExchangeMonths(exchange);
-    
     //    final SYMBOL[] symbols = eodDataProvider.getSymbols(exchange);
     final String[] symbols = eodDataSink.readExchangeSymbols(exchange);
 
@@ -58,13 +61,21 @@ public class UpdateExchangeQuotesCommand implements Command {
     
     for (String symbol : symbols) {
 
+      final StringBuffer logMessageBuffer = new StringBuffer();
+      logMessageBuffer.append(" Attempting to retrieve quotes on [ ");
+      logMessageBuffer.append(exchange);
+      logMessageBuffer.append(" ] for [ ");
+      logMessageBuffer.append(symbol);
+      logMessageBuffer.append(" ] ");
+      logger.info(logMessageBuffer.toString());
+      
       final Calendar firstAvailableDateTime = Calendar.getInstance();
-
+    
       if (availableMonths > 0) {
         firstAvailableDateTime.add(Calendar.MONTH, -1 * availableMonths);
         firstAvailableDateTime.add(Calendar.DATE, 1);
       }
-
+    
       final Calendar today = Calendar.getInstance();
 
       final Range<Calendar> sinkRange = eodDataSink.readExchangeSymbolDateRange(exchange, symbol);
@@ -85,8 +96,11 @@ public class UpdateExchangeQuotesCommand implements Command {
           
           final Calendar lower = (Calendar)sinkRange.getUpper().clone();
           lower.add(Calendar.DATE, 1);
+          // TODO: fix this by observing timezones
+          final Calendar upper = (Calendar)today.clone();
+          upper.add(Calendar.DATE, 1);
           
-          requestRangesList.add(new Range<Calendar>(lower, today));
+          requestRangesList.add(new Range<Calendar>(lower, upper));
           
         }
         
@@ -99,7 +113,7 @@ public class UpdateExchangeQuotesCommand implements Command {
         
         if (logger.isInfoEnabled()) {
 
-          final StringBuffer logMessageBuffer = new StringBuffer();
+          logMessageBuffer.setLength(0);
           logMessageBuffer.append(" Attempting to retrieve quotes on [ ");
           logMessageBuffer.append(exchange);
           logMessageBuffer.append(" ] for [ ");
@@ -127,12 +141,31 @@ public class UpdateExchangeQuotesCommand implements Command {
           eodDataSink.updateExchangeSymbolQuotes(exchange,
               symbol,
               quotes);
+
+          nQuotesWritten += quotes.length;
+
         }
         catch (Exception e) {
           logger.error("Unable to update quotes", e);
         }
         
       }
+
+    }
+
+    if (emailService != null) {
+      final StringBuffer subjectBuffer = new StringBuffer();
+      subjectBuffer.append("Updated quotes on ");
+      subjectBuffer.append(exchange);
+
+      final StringBuffer messageBuffer = new StringBuffer();
+      messageBuffer.append("Wrote ");
+      messageBuffer.append(nQuotesWritten);
+      messageBuffer.append(" quotes over ");
+      messageBuffer.append(symbols.length);
+      messageBuffer.append(" symbols ");
+
+      emailService.send(subjectBuffer.toString(), messageBuffer.toString());
     }
 
 
