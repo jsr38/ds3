@@ -20,7 +20,7 @@ import java.lang.String;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
 
-final class EodDataSinkFactory {
+public final class EodDataSinkFactory {
 
   private static final String HDF5_KEY = new String("hdf5");
 

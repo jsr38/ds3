@@ -70,7 +70,7 @@ public class UpdateExchangeQuotesCommandTest {
     }
     catch (Throwable t) {
 
-      fail(t.toString());
+      fail(t.getCause().getMessage());
 
     }
 
@@ -104,7 +104,7 @@ public class UpdateExchangeQuotesCommandTest {
     }
     catch (Throwable t) {
 
-      fail(t.toString());
+      fail(t.getCause().getMessage());
 
     }
 

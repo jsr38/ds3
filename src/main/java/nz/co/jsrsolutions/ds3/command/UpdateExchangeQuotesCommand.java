@@ -51,6 +51,11 @@ public class UpdateExchangeQuotesCommand implements Command {
     //    final SYMBOL[] symbols = eodDataProvider.getSymbols(exchange);
     final String[] symbols = eodDataSink.readExchangeSymbols(exchange);
 
+    if (symbols == null) {
+      logger.info("No symbols associated with this exchange...");
+      return false;
+    }
+    
     for (String symbol : symbols) {
 
       final Calendar firstAvailableDateTime = Calendar.getInstance();

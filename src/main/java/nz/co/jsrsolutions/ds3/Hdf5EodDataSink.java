@@ -164,7 +164,7 @@ class H5L_iter_callbackT implements H5L_iterate_cb {
 
 }
 
-class Hdf5EodDataSink implements EodDataSink {
+public class Hdf5EodDataSink implements EodDataSink {
 
   private static final transient Logger logger = Logger.getLogger(Hdf5EodDataSink.class);
 
@@ -966,6 +966,10 @@ class Hdf5EodDataSink implements EodDataSink {
       }
 
     
+    }
+    catch (HDF5LibraryException e) {
+      e.printStackTrace();
+      throw new EodDataSinkException("Failed to read from the quote dataset");
     }
     catch (HDF5Exception e) {
       e.printStackTrace();

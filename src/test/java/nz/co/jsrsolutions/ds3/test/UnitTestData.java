@@ -85,7 +85,7 @@ public class UnitTestData {
 
   private static final transient Logger logger = Logger.getLogger(UnitTestData.class);
   
-  UnitTestData() throws EodDataSinkException {
+  UnitTestData() {
 
     deserialiseTestData();
 
@@ -123,6 +123,11 @@ public class UnitTestData {
       e.printStackTrace();
       logger.error("Unable to deserialise test data");
     }
+    catch (IllegalArgumentException e) {
+      e.printStackTrace();
+      logger.error("Unable to deserialise test data");
+    }
+    
 
   }
 
