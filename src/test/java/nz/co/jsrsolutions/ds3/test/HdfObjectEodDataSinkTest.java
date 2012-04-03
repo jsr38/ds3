@@ -50,8 +50,6 @@ public class HdfObjectEodDataSinkTest {
   @Test
   public void testUpdateExchanges() {
 
-    
-
     assertTrue(false);
   }
 

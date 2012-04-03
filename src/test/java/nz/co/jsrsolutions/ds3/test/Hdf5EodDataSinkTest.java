@@ -198,13 +198,17 @@ public class Hdf5EodDataSinkTest {
       
       sink = new Hdf5EodDataSink(TEST_FILENAME);
       
+      sink.updateExchanges(testData.getExchanges());
+      sink.updateExchangeSymbols(testData.getTestExchange(),
+            testData.getSymbols());
+      
       sink.updateExchangeSymbolQuotes(testData.getTestExchange(),
           testData.getTestSymbol(),
           testData.getQuotes());
       
-      sink.close();
+      //sink.close();
       
-      sink = new Hdf5EodDataSink(TEST_FILENAME);
+      //sink = new Hdf5EodDataSink(TEST_FILENAME);
          
       testData.getQuotes()[testData.getQuotes().length - 1].getDateTime().add(Calendar.DATE, 1);
       

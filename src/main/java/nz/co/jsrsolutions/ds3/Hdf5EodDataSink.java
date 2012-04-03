@@ -488,40 +488,40 @@ public class Hdf5EodDataSink implements EodDataSink {
     if (quotes == null) {
       throw new EodDataSinkException("Invalid quote vector.");
     }
-    
-    final Range<Calendar> newRange = new Range<Calendar>(quotes[0].getDateTime(),
-                                                         quotes[quotes.length - 1].getDateTime());
-    final Range<Calendar> existingRange = readExchangeSymbolDateRange(exchange, symbol);
-    
-    if (existingRange != null
-        && newRange.overlapsRange(existingRange)) {
-      throw new EodDataSinkException("Supplied quote vector overlaps existing quotes");
-    }
-    
-    if (existingRange != null
-        && newRange.getUpper().compareTo(existingRange.getLower()) < 0) {
-      throw new EodDataSinkException("Prepending quotes not supported by this EodDataSink implementation");
+
+    final Range<Calendar> newRange = new Range<Calendar>(
+        quotes[0].getDateTime(), quotes[quotes.length - 1].getDateTime());
+    final Range<Calendar> existingRange = readExchangeSymbolDateRange(exchange,
+        symbol);
+
+    if (existingRange != null && newRange.overlapsRange(existingRange)) {
+      throw new EodDataSinkException(
+          "Supplied quote vector overlaps existing quotes");
     }
 
-    // TODO:  write unit tests for this and include a test to ensure
-    // contiguousness 
-    
+    if (existingRange != null
+        && newRange.getUpper().compareTo(existingRange.getLower()) < 0) {
+      throw new EodDataSinkException(
+          "Prepending quotes not supported by this EodDataSink implementation");
+    }
+
+    // TODO: write unit tests for this and include a test to ensure
+    // contiguousness
+
     final Hdf5QuoteDatatype quoteData = new Hdf5QuoteDatatype();
     final ExchangeSymbolKey key = new ExchangeSymbolKey(exchange, symbol);
-    
-    // Try to open the existing dataset
-    openQuoteDataset(exchange, symbol);
     boolean newlyCreatedDataset = false;
-    // if we weren't able to,
+    
     if (quoteDatasetHandle < 0) {
-      int symbolGroupHandle = (Integer)symbolGroupHandleMap.get(key.getKey());
+
+      int symbolGroupHandle = (Integer) symbolGroupHandleMap.get(key.getKey());
       // then create a new dataset
       createQuoteDataset(quotes.length, symbolGroupHandle);
       newlyCreatedDataset = true;
     }
 
     if (quoteDatasetHandle >= 0) {
-          
+
       // We now have a valid dataset handle.
       // Figure out where we should be writing to.
       int memoryDataspaceHandle = -1;
@@ -530,107 +530,99 @@ public class Hdf5EodDataSink implements EodDataSink {
       try {
 
         if (quoteMemoryDatatypeHandle == -1) {
-          quoteMemoryDatatypeHandle = Hdf5QuoteDatatype.getMemoryDatatypeHandle();
+          quoteMemoryDatatypeHandle = Hdf5QuoteDatatype
+              .getMemoryDatatypeHandle();
         }
-        
+
         fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
         long dimensions[] = new long[1];
         long maxDimensions[] = new long[1];
-        @SuppressWarnings("unused")
-        int status = H5.H5Sget_simple_extent_dims(fileDataspaceHandle, dimensions, maxDimensions);
         long fileWriteOffset = 0;
+        @SuppressWarnings("unused")
+        int status;
 
         if (!newlyCreatedDataset) {
+
+          status = H5.H5Sget_simple_extent_dims(fileDataspaceHandle,
+              dimensions, maxDimensions);
+
           // we need to extend the non-empty dataset
-          
-          H5.H5Dset_extent(quoteDatasetHandle,
-              new long[] { quotes.length + dimensions[0] });
+          H5.H5Dset_extent(quoteDatasetHandle, new long[] { quotes.length
+              + dimensions[0] });
 
           H5.H5Sclose(fileDataspaceHandle);
           fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
           fileWriteOffset = dimensions[0];
         }
 
- //       if (fileWriteOffset == 0) {
+        final byte[] writeBuffer = new byte[Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE
+            * quotes.length];
+        int i = 0;
 
-          final byte[] writeBuffer = new byte[Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE * quotes.length];
-          int i = 0;
+        for (QUOTE quote : quotes) {
 
-          for (QUOTE quote : quotes) {
-
-            if (logger.isDebugEnabled()) {
-              StringBuffer messageBuffer = new StringBuffer();
-              messageBuffer.append("Attempting to write quote: ");
-              messageBuffer.append(QuoteHelper.toString(quote));
-              logger.debug(messageBuffer.toString());
-            }
-
-            quoteData.setDateTime(quote.getDateTime());
-            quoteData.setOpen(quote.getOpen());
-            quoteData.setHigh(quote.getHigh());
-            quoteData.setLow(quote.getLow());
-            quoteData.setClose(quote.getClose());
-            quoteData.setVolume(quote.getVolume());
-
-            System.arraycopy(quoteData.getByteArray(),
-                             0,
-                             writeBuffer,
-                             Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE * i,
-                             Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE);
-
-            ++i;
+          if (logger.isDebugEnabled()) {
+            StringBuffer messageBuffer = new StringBuffer();
+            messageBuffer.append("Attempting to write quote: ");
+            messageBuffer.append(QuoteHelper.toString(quote));
+            logger.debug(messageBuffer.toString());
           }
 
-          memoryDataspaceHandle = H5.H5Screate_simple(QUOTE_DATASET_RANK,
-                                                      new long[] { quotes.length },
-                                                      new long[] { quotes.length });
+          quoteData.setDateTime(quote.getDateTime());
+          quoteData.setOpen(quote.getOpen());
+          quoteData.setHigh(quote.getHigh());
+          quoteData.setLow(quote.getLow());
+          quoteData.setClose(quote.getClose());
+          quoteData.setVolume(quote.getVolume());
 
-          // select a hyperslab for the new data to be written to
-          status = H5.H5Sselect_hyperslab(fileDataspaceHandle,
-                                          HDF5Constants.H5S_SELECT_SET,
-                                          new long[] { fileWriteOffset },
-                                          null,
-                                          new long[] { quotes.length },
-                                          null);
+          System.arraycopy(quoteData.getByteArray(), 0, writeBuffer,
+              Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE * i,
+              Hdf5QuoteDatatype.QUOTE_DATATYPE_SIZE);
 
-          // write the data
-          status  = H5.H5Dwrite(quoteDatasetHandle,
-                                quoteMemoryDatatypeHandle,
-                                //                                memoryDataspaceHandle,
-                                HDF5Constants.H5S_ALL,
-                                //                                fileDataspaceHandle,
-                                HDF5Constants.H5S_ALL,
-                                //                                HDF5Constants.H5S_ALL,
-                                HDF5Constants.H5P_DEFAULT,
-                                writeBuffer);
+          ++i;
+        }
 
+        memoryDataspaceHandle = H5.H5Screate_simple(QUOTE_DATASET_RANK,
+            new long[] { quotes.length }, new long[] { quotes.length });
 
- //       }
-          if (logger.isInfoEnabled()) {
-            final StringBuffer messageBuffer = new StringBuffer();
-            messageBuffer.append("Wrote [ ");
-            messageBuffer.append(i);
-            messageBuffer.append(" ] quotes to dataset.");
-            logger.info(messageBuffer.toString());
-          }
-      }
-      catch(HDF5Exception ex) {
+        // select a hyperslab for the new data to be written to
+        status = H5.H5Sselect_hyperslab(fileDataspaceHandle,
+            HDF5Constants.H5S_SELECT_SET, new long[] { fileWriteOffset }, null,
+            new long[] { quotes.length }, null);
+
+        // write the data
+        status = H5.H5Dwrite(quoteDatasetHandle, quoteMemoryDatatypeHandle,
+            memoryDataspaceHandle,
+            //HDF5Constants.H5S_ALL,
+            fileDataspaceHandle,
+            //HDF5Constants.H5S_ALL,
+            // HDF5Constants.H5S_ALL,
+            HDF5Constants.H5P_DEFAULT, writeBuffer);
+
+        if (logger.isInfoEnabled()) {
+          final StringBuffer messageBuffer = new StringBuffer();
+          messageBuffer.append("Wrote [ ");
+          messageBuffer.append(i);
+          messageBuffer.append(" ] quotes to dataset.");
+          logger.info(messageBuffer.toString());
+        }
+      } catch (HDF5Exception ex) {
         ex.printStackTrace();
-        EodDataSinkException e = new EodDataSinkException("Failed to write to file dataset.");
+        EodDataSinkException e = new EodDataSinkException(
+            "Failed to write to file dataset.");
         e.initCause(ex);
         throw e;
-      }
-      finally {
+      } finally {
 
         if (logger.isDebugEnabled()) {
-          logger.debug("Closing memory dataspace, file dataspace and quote dataset...");
+          logger
+              .debug("Closing memory dataspace, file dataspace and quote dataset...");
         }
 
         if (memoryDataspaceHandle >= 0) {
           try {
             H5.H5Sclose(memoryDataspaceHandle);
-          }
-          catch(Exception ex) {
+          } catch (Exception ex) {
             ex.printStackTrace();
           }
         }
@@ -638,8 +630,7 @@ public class Hdf5EodDataSink implements EodDataSink {
         if (fileDataspaceHandle >= 0) {
           try {
             H5.H5Sclose(fileDataspaceHandle);
-          }
-          catch(Exception ex) {
+          } catch (Exception ex) {
             ex.printStackTrace();
           }
         }
@@ -667,7 +658,7 @@ public class Hdf5EodDataSink implements EodDataSink {
     }
     
     quoteFileDatatypeHandle = Hdf5QuoteDatatype.getFileDatatypeHandle();
-    quoteMemoryDatatypeHandle = Hdf5QuoteDatatype.getMemoryDatatypeHandle();
+    
     int createProperties;
     
     try {
@@ -839,6 +830,13 @@ public class Hdf5EodDataSink implements EodDataSink {
         ex.printStackTrace();
       }
     }
+    
+    try {
+      Hdf5QuoteDatatype.close();
+    } 
+    catch (EodDataSinkException e) {
+      e.printStackTrace();
+    }
 
     if (fileHandle >= 0) {
       try {
@@ -921,7 +919,6 @@ public class Hdf5EodDataSink implements EodDataSink {
         Hdf5QuoteDatatype quote2 = quotes[0];
         
         H5.H5Sclose(memoryDataspace);
-        H5.H5Sclose(fileDataspace);
         
         final StringBuffer messageBuffer = new StringBuffer();
         messageBuffer.append("Sink contains data from [ ");
@@ -972,7 +969,7 @@ public class Hdf5EodDataSink implements EodDataSink {
                                    od);
         symbols = ((H5L_iter_callbackT)iter_cb).getSymbols();
         if (symbols == null || symbols.length <= 0) {
-          throw new EodDataSinkException("Couldn't fnd any sumbols for this exchange.");
+          throw new EodDataSinkException("Couldn't find any symbols for this exchange.");
         }
       }
       catch (HDF5LibraryException lex) {

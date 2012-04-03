@@ -84,6 +84,8 @@ class Hdf5QuoteDatatype {
   private static int quoteFileDatatypeHandle = -1;
 
   private static int quoteMemoryDatatypeHandle = -1;
+  
+  private static boolean active = false;
 
   private long[] dateTime = new long[1];
 
@@ -98,41 +100,6 @@ class Hdf5QuoteDatatype {
   private double[] close = new double[1];
 
   private double[] volume = new double[1];
-
-  static {
-
-    try {
-      fileDatatypeHandles = new int[fileDatatypes.length];
-      quoteFileDatatypeHandle = H5.H5Tcreate(HDF5Constants.H5T_COMPOUND, QUOTE_DATATYPE_SIZE);
-
-      int i = 0;
-
-      for (int type : fileDatatypes) {
-
-        fileDatatypeHandles[i] = H5.H5Tcopy(type);
-        H5.H5Tinsert(quoteFileDatatypeHandle, fieldNames[i], offsets[i], fileDatatypeHandles[i]);
-        ++i;
-
-      }
-
-      memoryDatatypeHandles = new int[memoryDatatypes.length];
-      quoteMemoryDatatypeHandle = H5.H5Tcreate(HDF5Constants.H5T_COMPOUND, QUOTE_DATATYPE_SIZE);
-
-      i = 0;
-
-      for (int type : memoryDatatypes) {
-
-        memoryDatatypeHandles[i] = H5.H5Tcopy(type);
-        H5.H5Tinsert(quoteMemoryDatatypeHandle, fieldNames[i], offsets[i], memoryDatatypeHandles[i]);
-        ++i;
-
-      }
-    }
-    catch (HDF5Exception ex) {
-      ex.printStackTrace();
-    }
- 
-  }
 
   Hdf5QuoteDatatype() {
   }
@@ -153,6 +120,48 @@ class Hdf5QuoteDatatype {
     
   }
 
+  static void initDatatypeHandles() {
+
+    try {
+      
+      fileDatatypeHandles = new int[fileDatatypes.length];
+      quoteFileDatatypeHandle = H5.H5Tcreate(HDF5Constants.H5T_COMPOUND,
+          QUOTE_DATATYPE_SIZE);
+
+      int i = 0;
+
+      for (int type : fileDatatypes) {
+
+        fileDatatypeHandles[i] = H5.H5Tcopy(type);
+        H5.H5Tinsert(quoteFileDatatypeHandle, fieldNames[i], offsets[i],
+            fileDatatypeHandles[i]);
+        ++i;
+
+      }
+
+      memoryDatatypeHandles = new int[memoryDatatypes.length];
+      quoteMemoryDatatypeHandle = H5.H5Tcreate(HDF5Constants.H5T_COMPOUND,
+          QUOTE_DATATYPE_SIZE);
+
+      i = 0;
+
+      for (int type : memoryDatatypes) {
+
+        memoryDatatypeHandles[i] = H5.H5Tcopy(type);
+        H5.H5Tinsert(quoteMemoryDatatypeHandle, fieldNames[i], offsets[i],
+            memoryDatatypeHandles[i]);
+        ++i;
+
+      }
+
+      active = true;
+    }
+    catch (HDF5Exception ex) {
+      ex.printStackTrace();
+    }
+ 
+  }
+  
   Calendar getDateTime() {
 
     Calendar calendar = Calendar.getInstance();
@@ -207,12 +216,18 @@ class Hdf5QuoteDatatype {
 
   static int getFileDatatypeHandle() {
     
+    if (!active) {
+      initDatatypeHandles();
+    }
     return quoteFileDatatypeHandle;
 
   }
 
   static int getMemoryDatatypeHandle() {
     
+    if (!active) {
+      initDatatypeHandles();
+    }
     return quoteMemoryDatatypeHandle;
 
   }
@@ -281,49 +296,49 @@ class Hdf5QuoteDatatype {
 
   static void close() throws EodDataSinkException {
 
-    for (int fileDatatypeHandle : fileDatatypeHandles) {
+    if (active) {
+      for (int fileDatatypeHandle : fileDatatypeHandles) {
+        try {
+
+          H5.H5Tclose(fileDatatypeHandle);
+
+        } catch (HDF5Exception ex) {
+          ex.printStackTrace();
+          throw new EodDataSinkException("Failed to close file data type.");
+        }
+      }
+
+      for (int memoryDatatypeHandle : memoryDatatypeHandles) {
+        try {
+
+          H5.H5Tclose(memoryDatatypeHandle);
+
+        } catch (HDF5Exception ex) {
+          ex.printStackTrace();
+          throw new EodDataSinkException("Failed to close memory data type.");
+        }
+      }
+
       try {
 
-        H5.H5Tclose(fileDatatypeHandle);
+        H5.H5Tclose(quoteFileDatatypeHandle);
 
-      }
-      catch (HDF5Exception ex) {
+      } catch (HDF5Exception ex) {
         ex.printStackTrace();
-        throw new EodDataSinkException("Failed to close file data type.");
+        throw new EodDataSinkException("Failed to close quote file datatype.");
       }
-    }
 
-    for (int memoryDatatypeHandle : memoryDatatypeHandles) {
       try {
 
-        H5.H5Tclose(memoryDatatypeHandle);
+        H5.H5Tclose(quoteMemoryDatatypeHandle);
 
-      }
-      catch (HDF5Exception ex) {
+      } catch (HDF5Exception ex) {
         ex.printStackTrace();
-        throw new EodDataSinkException("Failed to close memory data type.");
+        throw new EodDataSinkException("Failed to close quote memory datatype.");
       }
     }
-
-    try {
-
-      H5.H5Tclose(quoteFileDatatypeHandle);
-
-    }
-    catch (HDF5Exception ex) {
-      ex.printStackTrace();
-      throw new EodDataSinkException("Failed to close quote file datatype.");
-    }
-
-    try {
-
-      H5.H5Tclose(quoteMemoryDatatypeHandle);
-
-    }
-    catch (HDF5Exception ex) {
-      ex.printStackTrace();
-      throw new EodDataSinkException("Failed to close quote memory datatype.");
-    }
+    
+    active = false;
     
   }
 
