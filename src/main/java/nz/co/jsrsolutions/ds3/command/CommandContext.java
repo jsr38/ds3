@@ -26,10 +26,10 @@ import org.apache.commons.chain.impl.ContextBase;
 
 public class CommandContext extends ContextBase {
 
-    /**
+  /**
   	 * 
   	 */
-  	private static final long serialVersionUID = 4691923958838858461L;
+  private static final long serialVersionUID = 4691923958838858461L;
 
   public static final String EODDATAPROVIDER_KEY = new String("eoddataprovider");
 

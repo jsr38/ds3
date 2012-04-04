@@ -37,57 +37,43 @@ final class CommandLineOptions {
   public static final String EXCHANGE = new String("exchange");
 
   public static final String SYMBOL = new String("symbol");
+  
+  public static final String SCHEDULED = new String("scheduled");
 
   public static final Options Options = new Options();
 
   static {
     
-    OptionBuilder
-      .withDescription("display help");
-    Option help = OptionBuilder
-      .create(HELP);
+    OptionBuilder.withDescription("display help");
+    Option help = OptionBuilder.create(HELP);
 
-    OptionBuilder
-      .withArgName("env");
-    OptionBuilder
-      .hasArg();
-    OptionBuilder
-      .isRequired(true);
-    OptionBuilder
-      .withDescription("specify environment {dev,qa,prod}");
-    Option environment = OptionBuilder
-      .create(ENVIRONMENT);
+    OptionBuilder.withArgName("env");
+    OptionBuilder.hasArg();
+    OptionBuilder.isRequired(true);
+    OptionBuilder.withDescription("specify environment {dev,qa,prod}");
+    Option environment = OptionBuilder.create(ENVIRONMENT);
 
-    OptionBuilder
-      .withArgName("command");
-    OptionBuilder
-      .hasArg();
-    OptionBuilder
-      .withDescription("specify command to execute");
-    Option command = OptionBuilder
-      .create(COMMAND);
+    OptionBuilder.withArgName("command");
+    OptionBuilder.hasArg();
+    OptionBuilder.withDescription("specify command to execute");
+    Option command = OptionBuilder.create(COMMAND);
 
-    OptionBuilder
-      .withArgName("exchange");
-    OptionBuilder
-      .hasArg();
-    OptionBuilder
-      .isRequired(false);
-    OptionBuilder
-      .withDescription("specify exchange");
-    Option exchange = OptionBuilder
-      .create(EXCHANGE);
+    OptionBuilder.withArgName("exchange");
+    OptionBuilder.hasArg();
+    OptionBuilder.isRequired(false);
+    OptionBuilder.withDescription("specify exchange");
+    Option exchange = OptionBuilder.create(EXCHANGE);
+
+    OptionBuilder.withArgName("symbol");
+    OptionBuilder.hasArg();
+    OptionBuilder.isRequired(false);
+    OptionBuilder.withDescription("specify symbol");
+    Option symbol = OptionBuilder.create(SYMBOL);
     
-    OptionBuilder
-      .withArgName("symbol");
-    OptionBuilder
-      .hasArg();
-    OptionBuilder
-      .isRequired(false);
-    OptionBuilder
-      .withDescription("specify symbol");
-    Option symbol = OptionBuilder
-      .create(SYMBOL);
+    OptionBuilder.withArgName("scheduled");
+    OptionBuilder.isRequired(false);
+    OptionBuilder.withDescription("automatic scheduling");
+    Option scheduled = OptionBuilder.create(SCHEDULED);
 
     logger.debug("Registering command line options:");
     logger.debug(help.toString());
@@ -95,12 +81,15 @@ final class CommandLineOptions {
     logger.debug(command.toString());
     logger.debug(exchange.toString());
     logger.debug(symbol.toString());
+    logger.debug(scheduled.toString());
         
     Options.addOption(help);
     Options.addOption(environment);
     Options.addOption(command);
     Options.addOption(exchange);
     Options.addOption(symbol);
+    Options.addOption(scheduled);
+    
 
   }
 

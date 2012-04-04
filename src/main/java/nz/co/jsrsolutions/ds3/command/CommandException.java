@@ -38,6 +38,10 @@ class CommandException extends Exception {
     mistake = err;
   }
   
+  public CommandException(Throwable cause) {
+    super(cause);
+  }  
+  
   public String getError() {
     return mistake;
   }

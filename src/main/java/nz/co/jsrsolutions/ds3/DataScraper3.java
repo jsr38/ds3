@@ -57,9 +57,17 @@ final class DataScraper3 {
 
         ApplicationContext context = new ClassPathXmlApplicationContext(environment.toString());
 
-        DataScraper3Controller controller = context.getBean("controller", DataScraper3Controller.class);
-
-        controller.executeCommandLine(commandLine);
+        if (commandLine.hasOption(CommandLineOptions.SCHEDULED)) {
+          
+          // start the scheduler...?
+          
+          
+        }
+        else {
+          DataScraper3Controller controller = context.getBean("controller",
+              DataScraper3Controller.class);
+          controller.executeCommandLine(commandLine);
+        }
       }
       else {
 
