@@ -84,9 +84,6 @@ final class DataScraper3Controller implements ApplicationContextAware {
     catch (Exception e) {
       throw new DataScraper3Exception(e);
     }
-    finally {
-      eodDataSink.close();
-    }
 
   }
   
