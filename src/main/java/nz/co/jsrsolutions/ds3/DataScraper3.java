@@ -67,7 +67,12 @@ final class DataScraper3 {
           
           Scheduler scheduler = context.getBean(SCHEDULER_BEAN_ID, Scheduler.class);
           scheduler.start();
-          
+       
+          Object lock = new Object();
+          synchronized (lock) {
+              lock.wait();  
+          }
+
         }
         else {
           DataScraper3Controller controller = context.getBean(CONTROLLER_BEAN_ID,
