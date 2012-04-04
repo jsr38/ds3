@@ -23,8 +23,6 @@ import nz.co.jsrsolutions.util.EmailService;
 import org.apache.commons.chain.Command;
 import org.apache.commons.cli.CommandLine;
 import org.apache.log4j.Logger;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -35,10 +33,9 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 @ManagedResource(objectName = "bean:name=controller", description = "ds3 controller MBean", log = true, logFile = "jmx.log", currencyTimeLimit = 15, persistPolicy = "OnUpdate", persistPeriod = 200, persistLocation = "foo", persistName = "bar")
 final public class DataScraper3Controller implements ApplicationContextAware {
 
+  @SuppressWarnings("unused")
   private static final transient Logger logger = Logger
       .getLogger(DataScraper3Controller.class);
-
-  private static final String SCHEDULER_BEAN_ID = new String("scheduler");
 
   private EodDataProvider eodDataProvider;
 
