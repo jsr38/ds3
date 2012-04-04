@@ -16,8 +16,6 @@
 
 package nz.co.jsrsolutions.ds3;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 
 
 class DataScraper3Constants {

@@ -372,7 +372,6 @@ class HdfObjectEodDataSink implements EodDataSink {
       // Figure out where we should be writing to.
       int memoryDataspaceHandle = -1;
       int fileDataspaceHandle = -1;
-      int scalarQuoteDataspaceHandle = -1;
 
       try {
 

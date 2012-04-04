@@ -22,6 +22,7 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
+import org.quartz.Scheduler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -33,6 +34,10 @@ final class DataScraper3 {
   private static final String SPRING_CONFIG_PREFIX = new String("service.");
 
   private static final String SPRING_CONFIG_SUFFIX = new String(".xml");
+  
+  private static final String SCHEDULER_BEAN_ID = new String("scheduler");
+
+  private static final String CONTROLLER_BEAN_ID = new String("controller");
 
   private DataScraper3() {
 
@@ -55,19 +60,22 @@ final class DataScraper3 {
         environment.append(commandLine.getOptionValue(CommandLineOptions.ENVIRONMENT));
         environment.append(SPRING_CONFIG_SUFFIX);
 
-        ApplicationContext context = new ClassPathXmlApplicationContext(environment.toString());
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(environment.toString());
+        context.registerShutdownHook();
 
         if (commandLine.hasOption(CommandLineOptions.SCHEDULED)) {
           
-          // start the scheduler...?
-          
+          Scheduler scheduler = context.getBean(SCHEDULER_BEAN_ID, Scheduler.class);
+          scheduler.start();
           
         }
         else {
-          DataScraper3Controller controller = context.getBean("controller",
+          DataScraper3Controller controller = context.getBean(CONTROLLER_BEAN_ID,
               DataScraper3Controller.class);
           controller.executeCommandLine(commandLine);
         }
+        
+        context.close();
       }
       else {
 

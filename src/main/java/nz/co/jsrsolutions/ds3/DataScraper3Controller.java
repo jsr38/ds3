@@ -23,18 +23,29 @@ import nz.co.jsrsolutions.util.EmailService;
 import org.apache.commons.chain.Command;
 import org.apache.commons.cli.CommandLine;
 import org.apache.log4j.Logger;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 
-final class DataScraper3Controller {
+final class DataScraper3Controller implements ApplicationContextAware {
 
-  @SuppressWarnings("unused")
   private static final transient Logger logger = Logger.getLogger(DataScraper3Controller.class);
 
+  private static final String SCHEDULER_BEAN_ID = new String("scheduler");
+  
   private EodDataProvider eodDataProvider;
 
   private EodDataSink eodDataSink;
 
   private EmailService emailService;
+  
+  private ApplicationContext appContext;
 
   public DataScraper3Controller(EodDataProvider eodDataProvider,
                                 EodDataSink     eodDataSink,
@@ -77,9 +88,27 @@ final class DataScraper3Controller {
       eodDataSink.close();
     }
 
+  }
+  
+  @ManagedOperation(description="Kill the service")
+  public void shutdown() {
+    
+    Scheduler scheduler = this.appContext.getBean(SCHEDULER_BEAN_ID, Scheduler.class);
+    try {
+      scheduler.shutdown();
+      ((ConfigurableApplicationContext)this.appContext).close();
+    }
+    catch (SchedulerException e) {
+      logger.error(e.getMessage());
+    }
+  }
 
-
-
+  @Override
+  public void setApplicationContext(ApplicationContext ctx)
+      throws BeansException {
+    
+      this.appContext = ctx;
+    
   }
 
 }

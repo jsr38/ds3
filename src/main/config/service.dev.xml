@@ -4,12 +4,13 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	<bean id="scheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
 				<ref bean="eodESTTrigger" />
 				<ref bean="eodNZSTTrigger" />
-	<!--  		<ref bean="eodGMTTrigger" />    -->
+				<!-- <ref bean="eodGMTTrigger" /> -->
 			</list>
 		</property>
 		<property name="schedulerContextAsMap">
@@ -19,11 +20,15 @@
 				<entry key="emailService" value-ref="emailService" />
 			</map>
 		</property>
+		<property name="autoStartup">
+			<value>false</value>
+		</property>
 	</bean>
 
-	<bean id="eodESTTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="eodESTTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
-			<ref bean="updateCBOTJob" />
+			<ref bean="updateWCEJob" />
 		</property>
 		<property name="cronExpression">
 			<value>0 0 18 ? * MON-FRI</value>
@@ -34,7 +39,8 @@
 		</property>
 	</bean>
 
-	<bean id="eodNZSTTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean id="eodNZSTTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
 			<ref bean="updateNZXJob" />
 		</property>
@@ -47,7 +53,8 @@
 		</property>
 	</bean>
 
-	<bean name="updateASXJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean name="updateASXJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
 		<property name="jobDataAsMap">
@@ -58,7 +65,8 @@
 		</property>
 	</bean>
 
-	<bean name="updateNZXJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<bean name="updateNZXJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
 		<property name="jobDataAsMap">
@@ -69,21 +77,33 @@
 		</property>
 	</bean>
 
+	<bean name="updateWCEJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="command" value="updateexchangequotes" />
+				<entry key="exchange" value="WCE" />
+			</map>
+		</property>
+	</bean>
+
 	<bean id="timeZoneEST" class="java.util.TimeZone" factory-method="getTimeZone">
 		<constructor-arg>
-			America/Chicago
+			<value>America/Chicago</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="timeZoneGMT" class="java.util.TimeZone" factory-method="getTimeZone">
 		<constructor-arg>
-			UK/London
+			<value>UK/London</value>
 		</constructor-arg>
 	</bean>
 
 	<bean id="timeZoneNZST" class="java.util.TimeZone" factory-method="getTimeZone">
 		<constructor-arg>
-			New_Zealand/Wellington
+			<value>New_Zealand/Wellington</value>
 		</constructor-arg>
 	</bean>
 
@@ -104,7 +124,8 @@
 	</bean>
 
 	<bean id="eodDataSink" class="nz.co.jsrsolutions.ds3.Hdf5EodDataSink"
-		scope="singleton">
+		scope="singleton"
+		destroy-method="destroy">
 		<constructor-arg name="filename" value="/tmp/eoddata.h5" />
 	</bean>
 

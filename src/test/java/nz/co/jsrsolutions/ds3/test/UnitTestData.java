@@ -29,7 +29,6 @@ import javax.xml.stream.XMLStreamReader;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
-import nz.co.jsrsolutions.ds3.EodDataSinkException;
 import nz.co.jsrsolutions.util.ArrayConverter;
 
 import org.apache.axis2.databinding.ADBBean;

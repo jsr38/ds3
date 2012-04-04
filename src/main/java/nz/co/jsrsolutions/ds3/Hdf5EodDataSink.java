@@ -41,6 +41,7 @@ import nz.co.jsrsolutions.util.ExchangeSymbolKey;
 import nz.co.jsrsolutions.util.Range;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.DisposableBean;
 
 class H5O {
   enum H5O_type {
@@ -164,7 +165,7 @@ class H5L_iter_callbackT implements H5L_iterate_cb {
 
 }
 
-public class Hdf5EodDataSink implements EodDataSink {
+public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
 
   private static final transient Logger logger = Logger.getLogger(Hdf5EodDataSink.class);
 
@@ -961,6 +962,7 @@ public class Hdf5EodDataSink implements EodDataSink {
         exchangeGroupHandleMap.put(exchange, exchangeGroupHandle);
         final H5L_iterate_cb iter_cb = new H5L_iter_callbackT();
         final opdata od = new opdata();
+        @SuppressWarnings("unused")
         int status = H5.H5Literate(exchangeGroupHandle,
                                    HDF5Constants.H5_INDEX_NAME,
                                    HDF5Constants.H5_ITER_NATIVE,
@@ -984,6 +986,13 @@ public class Hdf5EodDataSink implements EodDataSink {
     }
 
     return symbols;
+  }
+
+  @Override
+  public void destroy() throws Exception {
+    
+    close();
+    
   }
 
 }
