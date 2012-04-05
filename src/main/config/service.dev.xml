@@ -4,13 +4,19 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+
+	<!--  Scheduling related beans -->
+
 	<bean id="scheduler"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="eodESTTrigger" />
-				<ref bean="eodNZSTTrigger" />
-				<!-- <ref bean="eodGMTTrigger" /> -->
+				<ref bean="eodCBOTTrigger" />
+				<ref bean="eodCFETrigger" />
+				<ref bean="eodCMETrigger" />
+				<ref bean="eodWCETrigger" />
+				<ref bean="eodNZXTrigger" />
+				<ref bean="eodLSETrigger" />
 			</list>
 		</property>
 		<property name="schedulerContextAsMap">
@@ -25,7 +31,51 @@
 		</property>
 	</bean>
 
-	<bean id="eodESTTrigger"
+	<!-- Triggers -->
+
+	<bean id="eodCBOTTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="updateCBOTJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 18 ? * MON-FRI</value>
+		</property>
+
+		<property name="timeZone">
+			<ref bean="timeZoneCDT" />
+		</property>
+	</bean>
+
+	<bean id="eodCFETrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="updateCFEJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 18 ? * MON-FRI</value>
+		</property>
+
+		<property name="timeZone">
+			<ref bean="timeZoneCDT" />
+		</property>
+	</bean>
+
+	<bean id="eodCMETrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="updateCMEJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 18 ? * MON-FRI</value>
+		</property>
+
+		<property name="timeZone">
+			<ref bean="timeZoneCDT" />
+		</property>
+	</bean>
+
+	<bean id="eodWCETrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
 			<ref bean="updateWCEJob" />
@@ -35,11 +85,11 @@
 		</property>
 
 		<property name="timeZone">
-			<ref bean="timeZoneEST" />
+			<ref bean="timeZoneCDT" />
 		</property>
 	</bean>
 
-	<bean id="eodNZSTTrigger"
+	<bean id="eodNZXTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
 			<ref bean="updateNZXJob" />
@@ -50,6 +100,72 @@
 
 		<property name="timeZone">
 			<ref bean="timeZoneNZST" />
+		</property>
+	</bean>
+
+	<bean id="eodLSETrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="updateLSEJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 18 ? * MON-FRI</value>
+		</property>
+
+		<property name="timeZone">
+			<ref bean="timeZoneGMT" />
+		</property>
+	</bean>
+
+	<!-- JobDetails -->
+
+	<!-- Central Time -->
+	<bean name="updateCBOTJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="command" value="updateexchangequotes" />
+				<entry key="exchange" value="CBOT" />
+			</map>
+		</property>
+	</bean>
+
+	<bean name="updateCFEJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="command" value="updateexchangequotes" />
+				<entry key="exchange" value="CFE" />
+			</map>
+		</property>
+	</bean>
+
+	<bean name="updateCMEJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="command" value="updateexchangequotes" />
+				<entry key="exchange" value="CME" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- Eastern Time -->
+	<bean name="updateWCEJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="command" value="updateexchangequotes" />
+				<entry key="exchange" value="WCE" />
+			</map>
 		</property>
 	</bean>
 
@@ -77,19 +193,27 @@
 		</property>
 	</bean>
 
-	<bean name="updateWCEJob"
+	<bean name="updateLSEJob"
 		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
 		<property name="jobClass"
 			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="command" value="updateexchangequotes" />
-				<entry key="exchange" value="WCE" />
+				<entry key="exchange" value="LSE" />
 			</map>
 		</property>
 	</bean>
 
+	<!-- Timezones -->
+
 	<bean id="timeZoneEST" class="java.util.TimeZone" factory-method="getTimeZone">
+		<constructor-arg>
+			<value>America/New_York</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="timeZoneCDT" class="java.util.TimeZone" factory-method="getTimeZone">
 		<constructor-arg>
 			<value>America/Chicago</value>
 		</constructor-arg>
@@ -106,6 +230,8 @@
 			<value>New_Zealand/Wellington</value>
 		</constructor-arg>
 	</bean>
+
+	<!--  -->
 
 	<bean id="controller" class="nz.co.jsrsolutions.ds3.DataScraper3Controller"
 		scope="singleton" lazy-init="false">
