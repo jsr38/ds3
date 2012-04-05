@@ -90,7 +90,7 @@ final public class DataScraper3Controller implements ApplicationContextAware {
   public void shutdown() {
 
     ((ConfigurableApplicationContext) this.appContext).close();
-    System.exit(-1);
+    System.exit(0);
   }
 
   @Override
