@@ -1,7 +1,7 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * @(#)EodDataSinkException.java        
+ * @(#)EodDataProviderException.java        
  *
  * Copyright (c) 2012 JSR Solutions Limited
  * 4 Viridian Lane, Auckland, 0632.  New Zealand
@@ -14,25 +14,26 @@
  * with JSR Solutions Limited.
  */
 
-package nz.co.jsrsolutions.ds3;
+package nz.co.jsrsolutions.ds3.provider;
 
 
 import java.lang.String;
 
-public class EodDataSinkException extends Exception {
+public class EodDataProviderException extends Exception {
+
   /**
    * 
    */
-  private static final long serialVersionUID = 2538235337093051298L;
+  private static final long serialVersionUID = -8326565082971956329L;
   
   private String mistake;
 
-  public EodDataSinkException() {
+  public EodDataProviderException() {
     super();
     mistake = "unknown";
   }
   
-  public EodDataSinkException(String err) {
+  public EodDataProviderException(String err) {
     super(err);
     mistake = err;
   }

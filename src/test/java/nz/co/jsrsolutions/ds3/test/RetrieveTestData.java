@@ -25,9 +25,9 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import nz.co.jsrsolutions.ds3.EodDataProvider;
-import nz.co.jsrsolutions.ds3.EodDataProviderException;
-import nz.co.jsrsolutions.ds3.EodDataProviderFactory;
+import nz.co.jsrsolutions.ds3.provider.EodDataProvider;
+import nz.co.jsrsolutions.ds3.provider.EodDataProviderException;
+import nz.co.jsrsolutions.ds3.provider.EodDataProviderFactory;
 
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.commons.configuration.CombinedConfiguration;

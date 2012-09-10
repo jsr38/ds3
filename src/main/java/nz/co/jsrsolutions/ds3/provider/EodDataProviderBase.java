@@ -1,7 +1,7 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * @(#)Hdf5Exchange.java        
+ * @(#)EodDataProviderBase.java        
  *
  * Copyright (c) 2012 JSR Solutions Limited
  * 4 Viridian Lane, Auckland, 0632.  New Zealand
@@ -14,17 +14,10 @@
  * with JSR Solutions Limited.
  */
 
-package nz.co.jsrsolutions.ds3;
+package nz.co.jsrsolutions.ds3.provider;
 
-import org.apache.log4j.Logger;
+public abstract class EodDataProviderBase {
 
-class Hdf5Exchange extends Hdf5ExchangeDatatype {
 
-  @SuppressWarnings("unused")
-  private static final transient Logger logger = Logger.getLogger(Hdf5Exchange.class);
-
-  Hdf5Exchange() throws EodDataSinkException {
-  }
-  
 
 }

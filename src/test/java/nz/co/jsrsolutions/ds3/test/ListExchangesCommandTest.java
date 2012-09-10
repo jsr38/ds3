@@ -17,10 +17,10 @@
 package nz.co.jsrsolutions.ds3.test;
 
 import static org.junit.Assert.fail;
-import nz.co.jsrsolutions.ds3.EodDataProvider;
-import nz.co.jsrsolutions.ds3.EodDataSink;
+import nz.co.jsrsolutions.ds3.sink.EodDataSink;
 import nz.co.jsrsolutions.ds3.command.CommandContext;
 import nz.co.jsrsolutions.ds3.command.ListExchangesCommand;
+import nz.co.jsrsolutions.ds3.provider.EodDataProvider;
 
 import org.apache.commons.chain.Command;
 import org.junit.Test;

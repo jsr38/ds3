@@ -22,9 +22,9 @@ import java.util.Calendar;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
-import nz.co.jsrsolutions.ds3.EodDataProvider;
-import nz.co.jsrsolutions.ds3.EodDataProviderBase;
-import nz.co.jsrsolutions.ds3.EodDataProviderException;
+import nz.co.jsrsolutions.ds3.provider.EodDataProvider;
+import nz.co.jsrsolutions.ds3.provider.EodDataProviderBase;
+import nz.co.jsrsolutions.ds3.provider.EodDataProviderException;
 import nz.co.jsrsolutions.util.QuoteDateComparator;
 import nz.co.jsrsolutions.util.Range;
 

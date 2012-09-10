@@ -25,9 +25,9 @@ import java.util.Comparator;
 
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
-import nz.co.jsrsolutions.ds3.EodDataSink;
-import nz.co.jsrsolutions.ds3.EodDataSinkException;
-import nz.co.jsrsolutions.ds3.Hdf5EodDataSink;
+import nz.co.jsrsolutions.ds3.sink.EodDataSinkException;
+import nz.co.jsrsolutions.ds3.sink.Hdf5EodDataSink;
+import nz.co.jsrsolutions.ds3.sink.EodDataSink;
 import nz.co.jsrsolutions.util.Range;
 
 import org.junit.After;

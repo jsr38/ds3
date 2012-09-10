@@ -19,8 +19,8 @@ package nz.co.jsrsolutions.ds3.test;
 
 import java.util.Calendar;
 
-import nz.co.jsrsolutions.ds3.EodDataSinkException;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
+import nz.co.jsrsolutions.ds3.sink.EodDataSinkException;
 import nz.co.jsrsolutions.util.Range;
 
 public class EodDataSinkEmptyMock extends EodDataSinkMock {

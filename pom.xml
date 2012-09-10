@@ -44,19 +44,19 @@
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2</artifactId>
-			<version>1.6.0</version>
+			<version>1.6.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-transport-local</artifactId>
-			<version>1.6.0</version>
+			<version>1.6.2</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-transport-http</artifactId>
-			<version>1.6.0</version>
+			<version>1.6.2</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -195,18 +195,55 @@
 			<plugin>
 				<groupId>org.apache.axis2</groupId>
 				<artifactId>axis2-wsdl2code-maven-plugin</artifactId>
-				<version>1.6.0</version>
-				<configuration>
-					<packageName>nz.co.jsrsolutions.ds3</packageName>
-					<wsdlFile>src/main/wsdl/eoddata.wsdl</wsdlFile>
-					<databindingName>adb</databindingName>
-					<overWrite>true</overWrite>
-				</configuration>
+				<version>1.6.2</version>
 				<executions>
 					<execution>
+						<id>execution-xignite-energy</id>
 						<goals>
 							<goal>wsdl2code</goal>
 						</goals>
+						<configuration>
+							<packageName>nz.co.jsrsolutions.ds3</packageName>
+							<wsdlFile>src/main/wsdl/xEnergy.wsdl</wsdlFile>
+							<databindingName>adb</databindingName>
+							<overWrite>true</overWrite>
+						</configuration>
+					</execution>
+					<execution>
+						<id>execution-xignite-metals</id>
+						<goals>
+							<goal>wsdl2code</goal>
+						</goals>
+						<configuration>
+							<packageName>nz.co.jsrsolutions.ds3</packageName>
+							<wsdlFile>src/main/wsdl/xMetals.wsdl</wsdlFile>
+							<databindingName>adb</databindingName>
+							<overWrite>true</overWrite>
+						</configuration>
+					</execution>
+					<execution>
+						<id>execution-xignite-interbanks</id>
+						<goals>
+							<goal>wsdl2code</goal>
+						</goals>
+						<configuration>
+							<packageName>nz.co.jsrsolutions.ds3</packageName>
+							<wsdlFile>src/main/wsdl/xInterBanks.wsdl</wsdlFile>
+							<databindingName>adb</databindingName>
+							<overWrite>true</overWrite>
+						</configuration>
+					</execution>
+					<execution>
+						<id>execution-eoddata-all</id>
+						<goals>
+							<goal>wsdl2code</goal>
+						</goals>
+						<configuration>
+							<packageName>nz.co.jsrsolutions.ds3</packageName>
+							<wsdlFile>src/main/wsdl/eoddata.wsdl</wsdlFile>
+							<databindingName>adb</databindingName>
+							<overWrite>true</overWrite>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

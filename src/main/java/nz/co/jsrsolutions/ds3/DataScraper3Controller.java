@@ -18,6 +18,8 @@ package nz.co.jsrsolutions.ds3;
 
 import nz.co.jsrsolutions.ds3.command.CommandContext;
 import nz.co.jsrsolutions.ds3.command.CommandFactory;
+import nz.co.jsrsolutions.ds3.provider.EodDataProvider;
+import nz.co.jsrsolutions.ds3.sink.EodDataSink;
 import nz.co.jsrsolutions.util.EmailService;
 
 import org.apache.commons.chain.Command;

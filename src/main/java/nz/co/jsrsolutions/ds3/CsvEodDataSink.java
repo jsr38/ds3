@@ -23,6 +23,8 @@ import java.util.Calendar;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.ds3.sink.EodDataSink;
+import nz.co.jsrsolutions.ds3.sink.EodDataSinkException;
 import nz.co.jsrsolutions.util.Range;
 
 import org.apache.commons.lang.NotImplementedException;

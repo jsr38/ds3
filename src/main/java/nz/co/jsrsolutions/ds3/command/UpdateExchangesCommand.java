@@ -16,9 +16,9 @@
 
 package nz.co.jsrsolutions.ds3.command;
 
-import nz.co.jsrsolutions.ds3.EodDataProvider;
-import nz.co.jsrsolutions.ds3.EodDataSink;
+import nz.co.jsrsolutions.ds3.sink.EodDataSink;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
+import nz.co.jsrsolutions.ds3.provider.EodDataProvider;
 
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;

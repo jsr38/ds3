@@ -1,7 +1,7 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * @(#)EodDataSink.java        
+ * @(#)EodDataProvider.java        
  *
  * Copyright (c) 2012 JSR Solutions Limited
  * 4 Viridian Lane, Auckland, 0632.  New Zealand
@@ -14,21 +14,24 @@
  * with JSR Solutions Limited.
  */
 
-package nz.co.jsrsolutions.ds3;
+package nz.co.jsrsolutions.ds3.provider;
 
 import java.lang.String;
 import java.util.Calendar;
 
+import nz.co.jsrsolutions.ds3.DataStub;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
-import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
+import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.ds3.sink.EodDataSinkException;
 import nz.co.jsrsolutions.util.Range;
+
 /** 
  * 
- * Interface that allows EOD Data to be written to.
+ * Interface implemented by providers of EOD Data
  * 
  */ 
-public interface EodDataSink {
+public interface EodDataProvider {
 
   /** 
    * 
@@ -39,68 +42,72 @@ public interface EodDataSink {
    * @return      
    * @exception   EodDataSinkException
    *              If the exchange data is unable to be written 
-   */ 
-  public void updateExchanges(EXCHANGE[] exchanges) throws EodDataSinkException;
-
-  /** 
-   * 
-   * Writes the supplied exchange data to the target where possible.
-   * 
-   * 
-   * @param       the array of exchange data
-   * @return      
-   * @exception   EodDataSinkException
-   *              If the exchange data is unable to be written 
-   */ 
-  public void updateExchangeSymbols(String exchange,
-                                    SYMBOL[] symbols) throws EodDataSinkException;
-
-
-  /** 
-   * 
-   * Writes the supplied exchange data to the target where possible.
-   * 
-   * 
-   * @param       the array of exchange data
-   * @return      
-   * @exception   EodDataSinkException
-   *              If the exchange data is unable to be written 
-   */ 
-  public void updateExchangeSymbolQuotes(String exchange,
-                                         String symbol,
-                                         QUOTE[] quotes) throws EodDataSinkException;
-
-  /** 
-   * 
-   * Writes the supplied exchange data to the target where possible.
-   * 
-   * 
-   * @param       the array of exchange data
-   * @return      
    */
-  public void close();
-
+  public EXCHANGE[] getExchanges() throws EodDataProviderException;
 
   /** 
    * 
-   * Returns date range of the current contiguous block
+   * Writes the supplied exchange data to the target where possible.
+   * 
+   * 
+   * @param       the array of exchange data
+   * @return      
+   * @exception   EodDataSinkException
+   *              If the exchange data is unable to be written 
+   */
+  public int getExchangeMonths(String exchange) throws EodDataProviderException;
+
+  /** 
+   * 
+   * Writes the supplied exchange data to the target where possible.
+   * 
+   * 
+   * @param       the array of exchange data
+   * @return      
+   * @exception   EodDataSinkException
+   *              If the exchange data is unable to be written 
+   */
+  public SYMBOL[] getSymbols(String exchange) throws EodDataProviderException;
+
+  /** 
+   * 
+   * Writes the supplied exchange data to the target where possible.
+   * 
+   * 
+   * @param       the array of exchange data
+   * @return      
+   * @exception   EodDataSinkException
+   *              If the exchange data is unable to be written 
+   */
+  public QUOTE[] getQuotes(String exchange,
+                           String symbol,
+                           Calendar startCalendar,
+                           Calendar endCalendar,
+                           String period) throws EodDataProviderException;
+
+  /** 
+   * 
+   * Writes the supplied exchange data to the target where possible.
+   * 
+   * 
+   * @param       the array of exchange data
+   * @return      
+   * @exception   EodDataSinkException
+   *              If the exchange data is unable to be written 
+   */
+  public QUOTE[] getQuotes(String exchange) throws EodDataProviderException;
+
+  /** 
+   * 
+   * Retrieves the range of dates for which data is available for a given
+   * exchange-symbol 2-tuple
    * 
    * 
    * @param       the exchange
-   * @param       the symbol
-   * @return      an array containing the start date and end date
+   * @return      
+   * @exception   EodDataSinkException
+   *              If the exchange data is unable to be written 
    */
-  public Range<Calendar> readExchangeSymbolDateRange(String exchange, String symbol) throws EodDataSinkException;
-
-
-  /**
-   *
-   * Returns all the symbols currently associated with this exchange
-   *
-   *
-   * @param       the exchange
-   * @return      an array of symbol names
-   */
-  public String[] readExchangeSymbols(String exchange) throws EodDataSinkException;
+  public Range<Calendar> getExchangeDateRange(String exchange) throws EodDataProviderException;
 
 }

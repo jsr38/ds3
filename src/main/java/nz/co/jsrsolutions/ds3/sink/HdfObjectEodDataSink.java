@@ -15,7 +15,7 @@
  */
 
 
-package nz.co.jsrsolutions.ds3;
+package nz.co.jsrsolutions.ds3.sink;
 
 import java.io.File;
 import java.util.Calendar;
@@ -28,6 +28,8 @@ import ncsa.hdf.hdf5lib.H5;
 import ncsa.hdf.hdf5lib.HDF5Constants;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
+import nz.co.jsrsolutions.ds3.DataStub;
+import nz.co.jsrsolutions.ds3.QuoteHelper;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;

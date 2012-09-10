@@ -23,7 +23,7 @@ import static org.junit.Assert.fail;
 import java.util.Calendar;
 
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
-import nz.co.jsrsolutions.ds3.EodDataSinkException;
+import nz.co.jsrsolutions.ds3.sink.EodDataSinkException;
 import nz.co.jsrsolutions.util.Range;
 
 public class EodDataSinkContainedByAvailableRangeMock extends EodDataSinkMock {

@@ -17,6 +17,7 @@
 package nz.co.jsrsolutions.ds3.test;
 
 import nz.co.jsrsolutions.ds3.*;
+import nz.co.jsrsolutions.ds3.sink.EodDataSink;
 
 import org.junit.* ;
 import static org.junit.Assert.* ;
