@@ -300,6 +300,7 @@
 					<systemPropertyVariables>
 						<log4j.debug>false</log4j.debug>
 						<log4j.configuration>ds3.log4j.config.dev.xml</log4j.configuration>
+						<java.library.path>/jsr/dist/hdf-java/lib/linux</java.library.path>
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>
