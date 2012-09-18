@@ -239,8 +239,9 @@
 		<constructor-arg ref="eodDataSink" />
 		<constructor-arg ref="emailService" />
 	</bean>
-<!-- 
-	<bean id="eodDataProvider" class="nz.co.jsrsolutions.ds3.EodDataEodDataProvider"
+
+<!-- EOD provider -->
+	<bean id="eodDataProvider" class="nz.co.jsrsolutions.ds3.provider.EodDataEodDataProvider"
 		scope="singleton">
 		<constructor-arg name="url"
 			value="http://ws.eoddata.com/data.asmx" />
@@ -248,7 +249,8 @@
 		<constructor-arg name="password" value="frederick_38" />
 		<constructor-arg name="timeout" value="60000" />
 	</bean>
- -->
+<!-- Xignite provider -->
+<!--
  	<bean id="eodDataProvider" class="nz.co.jsrsolutions.ds3.provider.XigniteEodDataProvider"
 		scope="singleton">
 		<constructor-arg name="url" value="http://www.xignite.com/xEnergy.asmx" />
@@ -256,10 +258,10 @@
 		<constructor-arg name="password" value="frederick_38" />
 		<constructor-arg name="timeout" value="60000" />
 	</bean>
-	
+-->	
 	<bean id="eodDataSink" class="nz.co.jsrsolutions.ds3.sink.Hdf5EodDataSink"
 		scope="singleton" destroy-method="destroy">
-		<constructor-arg name="filename" value="/tmp/eoddata.h5" />
+		<constructor-arg name="filename" value="/home/jsr/projects/jsr/eoddata.h5" />
 	</bean>
 
 	<bean id="emailService" class="nz.co.jsrsolutions.util.EmailService"

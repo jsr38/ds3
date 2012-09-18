@@ -15,9 +15,9 @@
     </layout>
   </appender>
   <appender name="dailyrollingfile" class="org.apache.log4j.DailyRollingFileAppender">
-    <param name="File" value="/tmp/ds3-debug.log" />
+    <param name="File" value="/home/jsr/projects/jsr/ds3-debug.log" />
       <param name="Append" value="true" />
-      <param name="Threshold" value="DEBUG"/>
+      <param name="Threshold" value="INFO"/>
       <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{ISO8601} %t %-5p %c{2} - %m%n"/>
     </layout>
