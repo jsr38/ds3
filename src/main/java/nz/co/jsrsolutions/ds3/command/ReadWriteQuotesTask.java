@@ -16,19 +16,46 @@
 
 package nz.co.jsrsolutions.ds3.command;
 
-import java.lang.Runnable;
 import java.util.Calendar;
+
+import org.apache.log4j.Logger;
+
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.provider.EodDataProvider;
+import nz.co.jsrsolutions.ds3.provider.EodDataProviderException;
 import nz.co.jsrsolutions.ds3.sink.EodDataSink;
+import nz.co.jsrsolutions.ds3.sink.EodDataSinkException;
 
 
 public class ReadWriteQuotesTask implements Runnable {
 
-    public ReadWriteQuotesTask(String exchange,
+  private static final transient Logger logger = Logger.getLogger(ReadWriteQuotesTask.class);
+  
+  private final EodDataProvider _eodDataProvider;
+  private final EodDataSink _eodDataSink;
+  
+    private final String _exchange;
+    private final String _symbol;
+    private final Calendar _lower;
+    private final Calendar _upper;
+    private long _nQuotesWritten;
+
+    private static final String DEFAULT_FREQUENCY = new String("d");
+    
+    public ReadWriteQuotesTask(
+            EodDataProvider eodDataProvider,
+            EodDataSink eodDataSink,
+             String exchange,
 			       String symbol,
 			       Calendar lower,
 			       Calendar upper) {
+      _eodDataProvider = eodDataProvider;
+      _eodDataSink = eodDataSink;
+      _exchange = exchange;
+      _symbol = symbol;
+      _lower = lower;
+      _upper = upper;
+      _nQuotesWritten = 0;
     }
 
               public void run() {
@@ -36,25 +63,33 @@ public class ReadWriteQuotesTask implements Runnable {
                 // simulate a long-running task
                 try {
 
-          final QUOTE[] quotes = eodDataProvider.getQuotes(exchange,
-              symbol,
-              requestRange.getLower(),
-              requestRange.getUpper(),
+          final QUOTE[] quotes = _eodDataProvider.getQuotes(_exchange,
+              _symbol,
+              _lower,
+              _upper,
               DEFAULT_FREQUENCY);
 
           if (quotes.length == 0) {
 	      //            logger.info("Quote array from provider was empty!");
           }
 
-          eodDataSink.updateExchangeSymbolQuotes(exchange,
-              symbol,
+          _eodDataSink.updateExchangeSymbolQuotes(_exchange,
+              _symbol,
               quotes);
 
-          nQuotesWritten += quotes.length;
+          _nQuotesWritten = quotes.length;
 
-                } catch (InterruptedException ex) {
+                } catch (EodDataProviderException e) {
+                  logger.error("Provider exception: ", e);
+                } catch (EodDataSinkException e) {
+                  // TODO Auto-generated catch block
+                  logger.error("Sink exception: ", e);
                 }
               }
-            
-
+             
+              public long getQuotesWritten()
+              {
+                return _nQuotesWritten;
+              }
 }
+            

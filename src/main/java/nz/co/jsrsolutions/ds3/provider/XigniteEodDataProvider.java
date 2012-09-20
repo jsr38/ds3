@@ -362,7 +362,7 @@ class XigniteEodDataProvider extends EodDataProviderBase implements
         quotes[i].setHigh(quote.getHigh());
         quotes[i].setLow(quote.getLow());
         quotes[i].setClose(quote.getLast());
-        quotes[i].setVolume(Long.parseLong(String.format("%f0", quote.getVolume())));
+        quotes[i].setVolume((long)quote.getVolume());
         
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");

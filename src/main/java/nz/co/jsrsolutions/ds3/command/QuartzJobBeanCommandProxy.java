@@ -16,6 +16,8 @@
 
 package nz.co.jsrsolutions.ds3.command;
 
+import java.util.concurrent.ExecutorService;
+
 import nz.co.jsrsolutions.ds3.sink.EodDataSink;
 import nz.co.jsrsolutions.ds3.provider.EodDataProvider;
 import nz.co.jsrsolutions.util.EmailService;
@@ -36,6 +38,12 @@ public class QuartzJobBeanCommandProxy extends QuartzJobBean {
   private EodDataProvider eodDataProvider;
   
   private EmailService emailService;
+  
+  private ExecutorService _executorService;
+  
+  public void setExecutorService(ExecutorService executorService) {
+    _executorService = executorService;
+  }
   
   public void setEmailService(EmailService emailService) {
     this.emailService = emailService;
@@ -72,7 +80,7 @@ public class QuartzJobBeanCommandProxy extends QuartzJobBean {
     context.put(CommandContext.EXCHANGE_KEY, exchange);
 
     try {
-      Command cmd = CommandFactory.create(command);
+      Command cmd = CommandFactory.create(command, _executorService);
       cmd.execute(context);
     }
     catch (Exception e) {

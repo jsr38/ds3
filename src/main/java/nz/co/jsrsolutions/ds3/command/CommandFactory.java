@@ -16,6 +16,9 @@
 
 package nz.co.jsrsolutions.ds3.command;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+
 import org.apache.commons.chain.Command;
 
 public final class CommandFactory {
@@ -34,7 +37,7 @@ public final class CommandFactory {
 
   private static final String UPDATEEXCHANGESYMBOLQUOTES_KEY = new String("updateexchangesymbolquotes");
 
-  public static Command create(String type) throws CommandException {
+  public static Command create(String type, ExecutorService executorService) throws CommandException {
     
     if (type.compareTo(LISTEXCHANGES_KEY) == 0) {
       
@@ -63,7 +66,7 @@ public final class CommandFactory {
     }
     else if (type.compareTo(UPDATEEXCHANGEQUOTES_KEY) == 0) {
       
-      return new UpdateExchangeQuotesCommand();
+      return new UpdateExchangeQuotesCommand(executorService);
 
     }
     else if (type.compareTo(UPDATEEXCHANGESYMBOLQUOTES_KEY) == 0) {

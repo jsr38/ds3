@@ -234,7 +234,7 @@
 <!-- -->
 
 <bean id="threadPoolExecutor" class="java.util.concurrent.ThreadPoolExecutor" init-method="prestartCoreThread"> 
-  <constructor-arg index="0" type="int" value="16"/><!--Minimum Thread--> 
+  <constructor-arg index="0" type="int" value="8"/><!--Minimum Thread--> 
   <constructor-arg index="1" type="int" value="256"/> <!--Maximum Thread--> 
   <constructor-arg index="2" type="long" value="1"/><!--Thread lifespan--> 
   <constructor-arg index="3" type="java.util.concurrent.TimeUnit" ><!--Time Unit--> 
@@ -245,7 +245,7 @@
     </bean> 
   </constructor-arg> 
   <constructor-arg index="4" type="java.util.concurrent.BlockingQueue"><!--workQueue--> 
-    <bean class="java.util.concurrent.SynchronousQueue"/> 
+    <bean class="java.util.concurrent.LinkedBlockingQueue"/> 
   </constructor-arg> 
 </bean>
 
@@ -256,6 +256,7 @@
 		<constructor-arg ref="eodDataProvider" />
 		<constructor-arg ref="eodDataSink" />
 		<constructor-arg ref="emailService" />
+		<constructor-arg ref="threadPoolExecutor" />
 	</bean>
 
 <!-- EOD provider -->

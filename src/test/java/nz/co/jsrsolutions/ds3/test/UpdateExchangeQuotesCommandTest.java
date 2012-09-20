@@ -17,6 +17,9 @@
 package nz.co.jsrsolutions.ds3.test;
 
 import static org.junit.Assert.fail;
+
+import java.util.concurrent.Executors;
+
 import nz.co.jsrsolutions.ds3.sink.EodDataSink;
 import nz.co.jsrsolutions.ds3.command.CommandContext;
 import nz.co.jsrsolutions.ds3.command.UpdateExchangeQuotesCommand;
@@ -63,7 +66,7 @@ public class UpdateExchangeQuotesCommandTest {
       context.put(CommandContext.SYMBOL_KEY, testData.getTestSymbol());
 
 
-      Command command = new UpdateExchangeQuotesCommand();
+      Command command = new UpdateExchangeQuotesCommand(Executors.newSingleThreadExecutor());
 
       command.execute(context);
 
@@ -97,7 +100,7 @@ public class UpdateExchangeQuotesCommandTest {
       context.put(CommandContext.EXCHANGE_KEY, testData.getTestExchange());
       context.put(CommandContext.SYMBOL_KEY, testData.getTestSymbol());
 
-      Command command = new UpdateExchangeQuotesCommand();
+      Command command = new UpdateExchangeQuotesCommand(Executors.newSingleThreadExecutor());
 
       command.execute(context);
 

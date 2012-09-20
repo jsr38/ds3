@@ -16,6 +16,9 @@
 
 package nz.co.jsrsolutions.ds3;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+
 import nz.co.jsrsolutions.ds3.command.CommandContext;
 import nz.co.jsrsolutions.ds3.command.CommandFactory;
 import nz.co.jsrsolutions.ds3.provider.EodDataProvider;
@@ -39,6 +42,8 @@ final public class DataScraper3Controller implements ApplicationContextAware {
   private static final transient Logger logger = Logger
       .getLogger(DataScraper3Controller.class);
 
+  private static final String THREADPOOL_BEAN_ID = new String("threadPoolExecutor");
+  
   private EodDataProvider eodDataProvider;
 
   private EodDataSink eodDataSink;
@@ -47,12 +52,15 @@ final public class DataScraper3Controller implements ApplicationContextAware {
 
   private ApplicationContext appContext;
 
+  private ExecutorService _executorService;
+  
   public DataScraper3Controller(EodDataProvider eodDataProvider,
-      EodDataSink eodDataSink, EmailService emailService) {
+      EodDataSink eodDataSink, EmailService emailService, ExecutorService executorService) {
 
     this.eodDataProvider = eodDataProvider;
     this.eodDataSink = eodDataSink;
     this.emailService = emailService;
+    _executorService = executorService;
   }
 
   public void executeCommandLine(CommandLine commandLine)
@@ -66,7 +74,7 @@ final public class DataScraper3Controller implements ApplicationContextAware {
     context.put(CommandContext.EODDATAPROVIDER_KEY, eodDataProvider);
     context.put(CommandContext.EODDATASINK_KEY, eodDataSink);
     context.put(CommandContext.EMAILSERVICE_KEY, emailService);
-
+    //context.put(CommandContext.)
     // place optional argument values into the context
     if (commandLine.hasOption(CommandLineOptions.EXCHANGE)) {
       context.put(CommandContext.EXCHANGE_KEY,
@@ -80,7 +88,7 @@ final public class DataScraper3Controller implements ApplicationContextAware {
 
     try {
       Command command = CommandFactory.create(commandLine
-          .getOptionValue(CommandLineOptions.COMMAND));
+          .getOptionValue(CommandLineOptions.COMMAND), (ThreadPoolExecutor)appContext.getBean(THREADPOOL_BEAN_ID));
       command.execute(context);
     } catch (Exception e) {
       throw new DataScraper3Exception(e);
