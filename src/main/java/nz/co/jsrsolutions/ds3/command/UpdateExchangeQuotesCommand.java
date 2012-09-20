@@ -18,6 +18,7 @@ package nz.co.jsrsolutions.ds3.command;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.provider.EodDataProvider;
@@ -34,6 +35,8 @@ public class UpdateExchangeQuotesCommand implements Command {
   private static final transient Logger logger = Logger.getLogger(UpdateExchangeQuotesCommand.class);
 
   private static final String DEFAULT_FREQUENCY = new String("d");
+
+  private static final String THREADPOOL_BEAN_ID = new String("threadPoolExecutor");
 
   public boolean execute(Context context) throws Exception {
 
@@ -126,23 +129,14 @@ public class UpdateExchangeQuotesCommand implements Command {
           logger.info(logMessageBuffer.toString());
 
         }
+
         
         try {
-          final QUOTE[] quotes = eodDataProvider.getQuotes(exchange,
-              symbol,
-              requestRange.getLower(),
-              requestRange.getUpper(),
-              DEFAULT_FREQUENCY);
 
-          if (quotes.length == 0) {
-            logger.info("Quote array from provider was empty!");
-          }
+          ThreadPoolExecutor threadPoolExecutor = context.getBean(THREADPOOL_BEAN_ID, ThreadPoolExecutor.class);
 
-          eodDataSink.updateExchangeSymbolQuotes(exchange,
-              symbol,
-              quotes);
+          threadPoolExecutor.execute(new ReadWriteQuotesTask());
 
-          nQuotesWritten += quotes.length;
 
         }
         catch (Exception e) {
