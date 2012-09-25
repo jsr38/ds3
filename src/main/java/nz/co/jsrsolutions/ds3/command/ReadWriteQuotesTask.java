@@ -17,7 +17,7 @@
 package nz.co.jsrsolutions.ds3.command;
 
 import java.util.Calendar;
-
+import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
@@ -27,7 +27,7 @@ import nz.co.jsrsolutions.ds3.sink.EodDataSink;
 import nz.co.jsrsolutions.ds3.sink.EodDataSinkException;
 
 
-public class ReadWriteQuotesTask implements Runnable {
+public class ReadWriteQuotesTask implements Callable<Long> {
 
   private static final transient Logger logger = Logger.getLogger(ReadWriteQuotesTask.class);
   
@@ -58,9 +58,16 @@ public class ReadWriteQuotesTask implements Runnable {
       _nQuotesWritten = 0;
     }
 
-              public void run() {
+              public Long call() {
 
-                // simulate a long-running task
+      final StringBuffer logMessageBuffer = new StringBuffer();
+      logMessageBuffer.append(" Attempting to retrieve quotes on [ ");
+      logMessageBuffer.append(_exchange);
+      logMessageBuffer.append(" ] for [ ");
+      logMessageBuffer.append(_symbol);
+      logMessageBuffer.append(" ] ");
+      logger.info(logMessageBuffer.toString());
+
                 try {
 
           final QUOTE[] quotes = _eodDataProvider.getQuotes(_exchange,
@@ -79,12 +86,15 @@ public class ReadWriteQuotesTask implements Runnable {
 
           _nQuotesWritten = quotes.length;
 
+
+
                 } catch (EodDataProviderException e) {
                   logger.error("Provider exception: ", e);
                 } catch (EodDataSinkException e) {
                   // TODO Auto-generated catch block
                   logger.error("Sink exception: ", e);
                 }
+          return new Long(_nQuotesWritten);
               }
              
               public long getQuotesWritten()

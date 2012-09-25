@@ -92,14 +92,13 @@ final class DataScraper3 {
     }
     catch(ParseException pe) {
 
-      logger.error(pe.toString()); 
-      pe.printStackTrace();
+      logger.error(pe); 
 
     }
     catch(Exception e) {
 
-      logger.error(e.toString()); 
-      e.printStackTrace();
+      logger.error(e); 
+
 
     }
 

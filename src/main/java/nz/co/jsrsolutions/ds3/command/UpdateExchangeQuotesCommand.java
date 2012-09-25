@@ -16,10 +16,12 @@
 
 package nz.co.jsrsolutions.ds3.command;
 
+import java.lang.InterruptedException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -72,17 +74,9 @@ public class UpdateExchangeQuotesCommand implements Command {
       return false;
     }
 
-    Collection<Future<?>> futures = new LinkedList<Future<?>>();
+    Collection<Future<Long>> futures = new LinkedList<Future<Long>>();
     
     for (String symbol : symbols) {
-
-      final StringBuffer logMessageBuffer = new StringBuffer();
-      logMessageBuffer.append(" Attempting to retrieve quotes on [ ");
-      logMessageBuffer.append(exchange);
-      logMessageBuffer.append(" ] for [ ");
-      logMessageBuffer.append(symbol);
-      logMessageBuffer.append(" ] ");
-      logger.info(logMessageBuffer.toString());
 
       final Calendar firstAvailableDateTime = Calendar.getInstance();
 
@@ -131,6 +125,7 @@ public class UpdateExchangeQuotesCommand implements Command {
 
         if (logger.isInfoEnabled()) {
 
+          StringBuffer logMessageBuffer = new StringBuffer();
           logMessageBuffer.setLength(0);
           logMessageBuffer.append(" Attempting to retrieve quotes on [ ");
           logMessageBuffer.append(exchange);
@@ -152,15 +147,21 @@ public class UpdateExchangeQuotesCommand implements Command {
               requestRange.getUpper())));
  
         } catch (Exception e) {
-          logger.error("Unable to update quotes", e);
+          logger.error("Task submission failed", e);
         }
 
       }
 
     }
 
-    for (Future<?> future : futures) {
-      future.get();
+    for (Future<Long> future : futures) {
+      try {
+        nQuotesWritten += future.get();
+      } catch (ExecutionException e) {
+        logger.error("Execution exception: ", e);
+      } catch (InterruptedException e) {
+        logger.error("Interrupted exception: ", e);
+      }
     }
     
     if (emailService != null) {
