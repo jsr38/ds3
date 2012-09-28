@@ -261,7 +261,7 @@ class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvi
     }
   }
 
-  public QUOTE[] getQuotes(String exchange,
+  public synchronized QUOTE[] getQuotes(String exchange,
                            String symbol,
                            Calendar startCalendar,
                            Calendar endCalendar,
