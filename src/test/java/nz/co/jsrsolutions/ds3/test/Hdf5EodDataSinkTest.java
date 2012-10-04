@@ -17,6 +17,8 @@
 package nz.co.jsrsolutions.ds3.test;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 
 import java.io.File;
 import java.util.Arrays;
@@ -72,7 +74,7 @@ public class Hdf5EodDataSinkTest {
       
     }
     catch (EodDataSinkException e) {
-      assertTrue(false);
+      fail(e.toString());
     }
     finally {
       if (sink != null) {
@@ -120,7 +122,7 @@ public class Hdf5EodDataSinkTest {
       
     }
     catch (EodDataSinkException e) {
-      assertTrue(false);
+      fail(e.toString());
     }
     finally {
       if (sink != null) {
@@ -164,7 +166,7 @@ public class Hdf5EodDataSinkTest {
       
     }
     catch (EodDataSinkException e) {
-      assertTrue(false);
+      fail(e.toString());
     }
     finally {
       if (sink != null) {
@@ -224,7 +226,7 @@ public class Hdf5EodDataSinkTest {
       
     }
     catch (EodDataSinkException e) {
-      assertTrue(false);
+      fail(e.toString());
     }
     finally {
       if (sink != null) {

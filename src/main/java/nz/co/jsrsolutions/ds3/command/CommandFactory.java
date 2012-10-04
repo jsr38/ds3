@@ -17,7 +17,6 @@
 package nz.co.jsrsolutions.ds3.command;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.chain.Command;
 

@@ -20,8 +20,6 @@ import ncsa.hdf.hdf5lib.H5;
 import ncsa.hdf.hdf5lib.HDF5Constants;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
-
-import nz.co.jsrsolutions.ds3.DataStub;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 
 import org.apache.log4j.Logger;

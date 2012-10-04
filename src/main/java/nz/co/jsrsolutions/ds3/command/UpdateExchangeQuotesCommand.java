@@ -39,8 +39,6 @@ public class UpdateExchangeQuotesCommand implements Command {
   private static final transient Logger logger = Logger
       .getLogger(UpdateExchangeQuotesCommand.class);
 
-  private static final String DEFAULT_FREQUENCY = new String("d");
-
   private final ExecutorService _executorService;
 
   public UpdateExchangeQuotesCommand(ExecutorService executorService) {

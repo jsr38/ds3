@@ -874,6 +874,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
         int memoryDataspace = H5.H5Screate_simple(1, new long[] { 1 },
             new long[] { 1 });
 
+        // selects the first element
         status = H5.H5Sselect_hyperslab(fileDataspaceHandle,
             HDF5Constants.H5S_SELECT_SET, new long[] { 0 }, null,
             new long[] { 1 }, null);
@@ -885,7 +886,8 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
         Hdf5QuoteDatatype[] quotes = Hdf5QuoteDatatype.createArray(readBuffer);
 
         Hdf5QuoteDatatype quote1 = quotes[0];
-
+        
+        //selects the final element
         status = H5.H5Sselect_hyperslab(fileDataspaceHandle,
             HDF5Constants.H5S_SELECT_SET, new long[] { dimensions[0] - 1 },
             null, new long[] { 1 }, null);

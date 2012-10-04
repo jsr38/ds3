@@ -17,7 +17,6 @@
 package nz.co.jsrsolutions.ds3;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import nz.co.jsrsolutions.ds3.command.CommandContext;
 import nz.co.jsrsolutions.ds3.command.CommandFactory;
@@ -42,24 +41,24 @@ final public class DataScraper3Controller implements ApplicationContextAware {
   private static final transient Logger logger = Logger
       .getLogger(DataScraper3Controller.class);
 
-  private static final String THREADPOOL_BEAN_ID = new String("threadPoolExecutor");
+//  private static final String THREADPOOL_BEAN_ID = new String("threadPoolExecutor");
   
-  private EodDataProvider eodDataProvider;
+  private EodDataProvider _eodDataProvider;
 
-  private EodDataSink eodDataSink;
+  private EodDataSink _eodDataSink;
 
-  private EmailService emailService;
+  private EmailService _emailService;
 
-  private ApplicationContext appContext;
+  private ApplicationContext _appContext;
 
   private ExecutorService _executorService;
   
   public DataScraper3Controller(EodDataProvider eodDataProvider,
       EodDataSink eodDataSink, EmailService emailService, ExecutorService executorService) {
 
-    this.eodDataProvider = eodDataProvider;
-    this.eodDataSink = eodDataSink;
-    this.emailService = emailService;
+    _eodDataProvider = eodDataProvider;
+    _eodDataSink = eodDataSink;
+    _emailService = emailService;
     _executorService = executorService;
   }
 
@@ -71,9 +70,9 @@ final public class DataScraper3Controller implements ApplicationContextAware {
     }
 
     CommandContext context = new CommandContext();
-    context.put(CommandContext.EODDATAPROVIDER_KEY, eodDataProvider);
-    context.put(CommandContext.EODDATASINK_KEY, eodDataSink);
-    context.put(CommandContext.EMAILSERVICE_KEY, emailService);
+    context.put(CommandContext.EODDATAPROVIDER_KEY, _eodDataProvider);
+    context.put(CommandContext.EODDATASINK_KEY, _eodDataSink);
+    context.put(CommandContext.EMAILSERVICE_KEY, _emailService);
     //context.put(CommandContext.)
     // place optional argument values into the context
     if (commandLine.hasOption(CommandLineOptions.EXCHANGE)) {
@@ -87,8 +86,9 @@ final public class DataScraper3Controller implements ApplicationContextAware {
     }
 
     try {
+      // (ThreadPoolExecutor)_appContext.getBean(THREADPOOL_BEAN_ID)
       Command command = CommandFactory.create(commandLine
-          .getOptionValue(CommandLineOptions.COMMAND), (ThreadPoolExecutor)appContext.getBean(THREADPOOL_BEAN_ID));
+          .getOptionValue(CommandLineOptions.COMMAND), _executorService);
       command.execute(context);
     } catch (Exception e) {
       throw new DataScraper3Exception(e);
@@ -99,7 +99,7 @@ final public class DataScraper3Controller implements ApplicationContextAware {
   @ManagedOperation(description = "Kill the service")
   public void shutdown() {
 
-    ((ConfigurableApplicationContext) this.appContext).close();
+    ((ConfigurableApplicationContext) this._appContext).close();
     System.exit(0);
   }
 
@@ -107,7 +107,7 @@ final public class DataScraper3Controller implements ApplicationContextAware {
   public void setApplicationContext(ApplicationContext ctx)
       throws BeansException {
 
-    this.appContext = ctx;
+    this._appContext = ctx;
 
   }
 
