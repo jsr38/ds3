@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+  <appender name="console" class="org.apache.log4j.ConsoleAppender"> 
+    <param name="Target" value="System.out"/> 
+    <layout class="org.apache.log4j.PatternLayout"> 
+      <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/> 
+    </layout> 
+  </appender> 
+  <appender name="CA" class="org.apache.log4j.ConsoleAppender">
+    <param name="Threshold" value="INFO"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%-4r [%t] %-5p %c %x - %m%n" />
+    </layout>
+  </appender>
+  <appender name="dailyrollingfile" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="/home/jsr/projects/jsr/ds3-debug.log" />
+      <param name="Append" value="true" />
+      <param name="Threshold" value="INFO"/>
+      <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{ISO8601} %t %-5p %c{2} - %m%n"/>
+    </layout>
+  </appender>
+  <logger name="org.apache">
+    <level value="info"/>
+  </logger>
+  <logger name="org.apache.commons.configuration">
+    <level value="info"/>
+  </logger>
+  <logger name="httpclient.wire">
+    <level value="info"/>
+  </logger>
+  <root> 
+    <priority value="debug" />
+    <appender-ref ref="CA" />
+    <appender-ref ref="dailyrollingfile" />
+  </root>
+  
+</log4j:configuration>
