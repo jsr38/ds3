@@ -297,7 +297,7 @@ class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvi
       }
 
       if (response.getQUOTES() == null) {
-        throw new EodDataProviderException("Failed to retrieve quotes");
+        logger.debug("Failed to retrieve quotes");
       }        
 
       DataStub.QUOTE[] quotes = response.getQUOTES().getQUOTE();

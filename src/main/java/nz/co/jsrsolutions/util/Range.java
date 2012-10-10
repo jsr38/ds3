@@ -16,6 +16,8 @@
 
 package nz.co.jsrsolutions.util;
 
+import java.util.Calendar;
+
 
 public class Range<T extends Comparable<T>> {
 
@@ -28,9 +30,13 @@ public class Range<T extends Comparable<T>> {
     if (lower.compareTo(upper) > 0) {
       final StringBuffer messageBuffer = new StringBuffer();
       messageBuffer.append("lower element of range [ ");
-      messageBuffer.append(lower.toString());
+        messageBuffer.append(lower.toString());
+
       messageBuffer.append(" ] must be less than or equal to upper element [ ");
-      messageBuffer.append(upper.toString());
+
+        messageBuffer.append(upper.toString());
+
+
       messageBuffer.append(" ]");
       throw new IllegalArgumentException(messageBuffer.toString());
     }
