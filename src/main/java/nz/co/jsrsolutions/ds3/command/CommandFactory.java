@@ -34,6 +34,8 @@ public final class CommandFactory {
 
   private static final String UPDATEEXCHANGEQUOTES_KEY = new String("updateexchangequotes");
 
+  private static final String GETEXCHANGESYMBOLQUOTES_KEY = new String("getexchangesymbolquotes");
+  
   private static final String UPDATEEXCHANGESYMBOLQUOTES_KEY = new String("updateexchangesymbolquotes");
 
   public static Command create(String type, ExecutorService executorService) throws CommandException {
@@ -71,6 +73,11 @@ public final class CommandFactory {
     else if (type.compareTo(UPDATEEXCHANGESYMBOLQUOTES_KEY) == 0) {
       
       return new UpdateExchangeSymbolQuotesCommand();
+
+    }
+    else if (type.compareTo(GETEXCHANGESYMBOLQUOTES_KEY) == 0) {
+      
+      return new GetExchangeSymbolQuotesCommand();
 
     }
     else {

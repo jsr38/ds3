@@ -83,14 +83,14 @@ public class UpdateExchangeQuotesCommandTest {
    * Test
    */
   @Test
-  public void testUpdateExchangeQuotesCommand_ContainedByAvailableRangeSink() {
+  public void testUpdateExchangeQuotesCommand_OneDayOrLessAvailable() {
 
     try {
 
       UnitTestData testData = new UnitTestData();
       
-      EodDataProvider eodDataProvider = new EodDataProviderMock(testData);
-      EodDataSink eodDataSink = new EodDataSinkContainedByAvailableRangeMock(testData);
+      EodDataProvider eodDataProvider = new EodDataProviderOneDayAvailableMock(testData);
+      EodDataSink eodDataSink = new EodDataSinkFirstElementLessThanOneDayAfterFirstAvailable(testData);
 
       CommandContext context = new CommandContext();
     
@@ -110,6 +110,8 @@ public class UpdateExchangeQuotesCommandTest {
       fail(t.getCause().getMessage());
 
     }
+    
+    
 
   }
 

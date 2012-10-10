@@ -23,22 +23,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import ncsa.hdf.hdf5lib.H5;
 import ncsa.hdf.hdf5lib.HDF5Constants;
 import ncsa.hdf.hdf5lib.callbacks.H5L_iterate_cb;
 import ncsa.hdf.hdf5lib.callbacks.H5L_iterate_t;
-import ncsa.hdf.hdf5lib.structs.H5L_info_t;
-import ncsa.hdf.hdf5lib.structs.H5O_info_t;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
-import nz.co.jsrsolutions.ds3.DataStub;
-import nz.co.jsrsolutions.ds3.QuoteHelper;
+import ncsa.hdf.hdf5lib.structs.H5L_info_t;
+import ncsa.hdf.hdf5lib.structs.H5O_info_t;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
+import nz.co.jsrsolutions.ds3.QuoteHelper;
 import nz.co.jsrsolutions.util.ExchangeSymbolKey;
 import nz.co.jsrsolutions.util.Range;
 

@@ -16,27 +16,12 @@
 
 package nz.co.jsrsolutions.ds3.provider;
 
-import java.lang.String;
 import java.util.Calendar;
 
 import nz.co.jsrsolutions.ds3.DataStub;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
-import nz.co.jsrsolutions.ds3.DataStub.ExchangeList;
-import nz.co.jsrsolutions.ds3.DataStub.ExchangeListResponse;
-import nz.co.jsrsolutions.ds3.DataStub.ExchangeMonths;
-import nz.co.jsrsolutions.ds3.DataStub.ExchangeMonthsResponse;
-import nz.co.jsrsolutions.ds3.DataStub.LOGINRESPONSE;
-import nz.co.jsrsolutions.ds3.DataStub.Login;
-import nz.co.jsrsolutions.ds3.DataStub.LoginResponse0;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
-import nz.co.jsrsolutions.ds3.DataStub.QuoteList;
-import nz.co.jsrsolutions.ds3.DataStub.QuoteListResponse;
-import nz.co.jsrsolutions.ds3.DataStub.RESPONSE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
-import nz.co.jsrsolutions.ds3.DataStub.SymbolHistoryPeriodByDateRange;
-import nz.co.jsrsolutions.ds3.DataStub.SymbolHistoryPeriodByDateRangeResponse;
-import nz.co.jsrsolutions.ds3.DataStub.SymbolList;
-import nz.co.jsrsolutions.ds3.DataStub.SymbolListResponse;
 import nz.co.jsrsolutions.util.Range;
 
 import org.apache.log4j.Logger;
@@ -298,6 +283,7 @@ class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvi
 
       if (response.getQUOTES() == null) {
         logger.debug("Failed to retrieve quotes");
+        return null;
       }        
 
       DataStub.QUOTE[] quotes = response.getQUOTES().getQUOTE();

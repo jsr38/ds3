@@ -69,8 +69,9 @@ public class ReadWriteQuotesTask implements Callable<Long> {
       final QUOTE[] quotes = _eodDataProvider.getQuotes(_exchange, _symbol,
           _lower, _upper, DEFAULT_FREQUENCY);
 
-      if (quotes.length == 0) {
-        // logger.info("Quote array from provider was empty!");
+      if (quotes == null || quotes.length == 0) {
+        logger.info("Quote array from provider was empty!");
+        return new Long(0);
       }
 
       _eodDataSink.updateExchangeSymbolQuotes(_exchange, _symbol, quotes);

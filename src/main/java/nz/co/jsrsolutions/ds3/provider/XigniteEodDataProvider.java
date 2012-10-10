@@ -410,10 +410,6 @@ class XigniteEodDataProvider extends EodDataProviderBase implements
 
       DataStub.QUOTE[] quotes = new DataStub.QUOTE[2];
 
-      if (quotes == null) {
-        throw new EodDataProviderException("Failed to retrieve quotes");
-      }
-
       if (logger.isDebugEnabled()) {
         for (QUOTE quote : quotes) {
           StringBuffer messageBuffer = new StringBuffer();

@@ -111,6 +111,11 @@ public class UpdateExchangeSymbolQuotesCommand implements Command {
           requestRange.getUpper(),
           DEFAULT_FREQUENCY);
 
+      if (quotes == null || quotes.length == 0) {
+        logger.info("Quote array from provider was empty!");
+        return false;
+      }
+      
       eodDataSink.updateExchangeSymbolQuotes(exchange,
           symbol,
           quotes);

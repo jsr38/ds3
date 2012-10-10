@@ -95,11 +95,18 @@ public class UpdateExchangeQuotesCommand implements Command {
 
         if (firstAvailableDateTime.compareTo(sinkRange.getLower()) < 0) {
 
+          // In this implementation we can't ask for this!
+          
+   /*      
           final Calendar upper = (Calendar) sinkRange.getLower().clone();
           upper.add(Calendar.DATE, -1);
-
+          final Calendar lower = (firstAvailableDateTime.compareTo(upper) < 0) ? firstAvailableDateTime : upper;
+          
           requestRangesList.add(new Range<Calendar>(firstAvailableDateTime,
               upper));
+             
+          // TODO: implement prepend in Hd5 Sink
+*/          
         }
 
         if (today.compareTo(sinkRange.getUpper()) > 0) {
@@ -108,6 +115,7 @@ public class UpdateExchangeQuotesCommand implements Command {
           lower.add(Calendar.DATE, 1);
           // TODO: fix this by observing timezones
           final Calendar upper = (Calendar) today.clone();
+          // cheat for now with upper bound on today (anywhere in the world!)
           upper.add(Calendar.DATE, 1);
 
           requestRangesList.add(new Range<Calendar>(lower, upper));

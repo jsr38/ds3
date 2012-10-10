@@ -16,10 +16,8 @@
 
 package nz.co.jsrsolutions.ds3.provider;
 
-import java.lang.String;
 import java.util.Calendar;
 
-import nz.co.jsrsolutions.ds3.DataStub;
 import nz.co.jsrsolutions.ds3.DataStub.EXCHANGE;
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
