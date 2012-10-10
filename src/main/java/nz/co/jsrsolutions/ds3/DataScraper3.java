@@ -76,10 +76,18 @@ final class DataScraper3 {
         else {
           DataScraper3Controller controller = context.getBean(CONTROLLER_BEAN_ID,
               DataScraper3Controller.class);
-          controller.executeCommandLine(commandLine);
+          try {
+            controller.executeCommandLine(commandLine);
+          }
+          catch (DataScraper3Exception ds3e) {
+            logger.error(ds3e); 
+            logger.error(ds3e.getCause());
+          }
+          finally {
+            context.close();
+          }
         }
         
-        context.close();
       }
       else {
 
