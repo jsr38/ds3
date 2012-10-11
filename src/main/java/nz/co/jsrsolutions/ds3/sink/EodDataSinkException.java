@@ -37,6 +37,10 @@ public class EodDataSinkException extends Exception {
     mistake = err;
   }
   
+  public EodDataSinkException(Throwable cause) {
+    super(cause);
+  }  
+  
   public String getError() {
     return mistake;
   }

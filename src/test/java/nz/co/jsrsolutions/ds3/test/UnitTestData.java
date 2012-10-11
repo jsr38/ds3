@@ -119,11 +119,11 @@ public class UnitTestData {
 
     }
     catch (XMLStreamException e) {
-      e.printStackTrace();
+      logger.error(e);
       logger.error("Unable to deserialise test data");
     }
     catch (IllegalArgumentException e) {
-      e.printStackTrace();
+      logger.error(e);
       logger.error("Unable to deserialise test data");
     }
     
@@ -159,28 +159,23 @@ public class UnitTestData {
 
     }
     catch (NoSuchMethodException e) {
-      e.printStackTrace();
       logger.error(e.toString());
       return null;
     }
     catch (SecurityException e) {
-      e.printStackTrace();
-      logger.error(e.toString());
+      logger.error(e);
       return null;
     }
     catch (XMLStreamException e) {
-      e.printStackTrace();
-      logger.error(e.toString());
+      logger.error(e);
       return null;
     }
     catch (IllegalAccessException e) {
-      e.printStackTrace();
-      logger.error(e.toString());
+      logger.error(e);
       return null;
     }
     catch (InvocationTargetException e) {
-      e.printStackTrace();
-      logger.error(e.toString());
+      logger.error(e);
       return null;
     }
     

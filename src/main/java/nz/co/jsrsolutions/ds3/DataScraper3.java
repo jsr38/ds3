@@ -43,7 +43,7 @@ final class DataScraper3 {
   }
 
   public static void main(String[] args) {
-
+    
     logger.info("Starting application [ ds3 ] ..."); 
 
     try {

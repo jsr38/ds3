@@ -157,7 +157,7 @@ class Hdf5QuoteDatatype {
       active = true;
     }
     catch (HDF5Exception ex) {
-      ex.printStackTrace();
+      logger.error(ex);
     }
  
   }
@@ -303,7 +303,7 @@ class Hdf5QuoteDatatype {
           H5.H5Tclose(fileDatatypeHandle);
 
         } catch (HDF5Exception ex) {
-          ex.printStackTrace();
+          logger.error(ex);
           throw new EodDataSinkException("Failed to close file data type.");
         }
       }
@@ -314,7 +314,7 @@ class Hdf5QuoteDatatype {
           H5.H5Tclose(memoryDatatypeHandle);
 
         } catch (HDF5Exception ex) {
-          ex.printStackTrace();
+          logger.error(ex);
           throw new EodDataSinkException("Failed to close memory data type.");
         }
       }
@@ -324,7 +324,7 @@ class Hdf5QuoteDatatype {
         H5.H5Tclose(quoteFileDatatypeHandle);
 
       } catch (HDF5Exception ex) {
-        ex.printStackTrace();
+        logger.error(ex);
         throw new EodDataSinkException("Failed to close quote file datatype.");
       }
 
@@ -333,7 +333,7 @@ class Hdf5QuoteDatatype {
         H5.H5Tclose(quoteMemoryDatatypeHandle);
 
       } catch (HDF5Exception ex) {
-        ex.printStackTrace();
+        logger.error(ex);
         throw new EodDataSinkException("Failed to close quote memory datatype.");
       }
     }

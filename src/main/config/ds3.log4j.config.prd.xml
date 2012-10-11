@@ -33,7 +33,9 @@
   </logger>
   <root> 
     <priority value="debug" />
+    <!-- Turn console appender off in production 
     <appender-ref ref="CA" />
+     -->
     <appender-ref ref="dailyrollingfile" />
   </root>
   

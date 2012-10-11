@@ -85,6 +85,9 @@ class opdata implements H5L_iterate_t {
 
 class H5L_iter_callbackT implements H5L_iterate_cb {
 
+  private static final transient Logger logger = Logger
+      .getLogger(H5L_iter_callbackT.class);
+  
   private List<String> symbols = new Vector<String>();
 
   public int callback(int group, String name, H5L_info_t info,
@@ -149,7 +152,7 @@ class H5L_iter_callbackT implements H5L_iterate_cb {
         System.out.println("Unknown: " + name);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error(e);
     }
 
     return return_val;
@@ -279,7 +282,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
         try {
           createExchangeDataset(exchanges.length);
         } catch (HDF5Exception ex) {
-          ex.printStackTrace();
+          logger.error(ex);
           throw new EodDataSinkException(
               "Failed to create exchange dataset from scratch.");
         }
@@ -297,7 +300,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       try {
         createExchangeDataset(exchanges.length);
       } catch (HDF5Exception ex) {
-        ex.printStackTrace();
+        logger.error(ex);
         throw new EodDataSinkException(
             "Failed to create exchange dataset from scratch.");
       }
@@ -610,7 +613,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
           logger.info(messageBuffer.toString());
         }
       } catch (HDF5Exception ex) {
-        ex.printStackTrace();
+        logger.error(ex);
         EodDataSinkException e = new EodDataSinkException(
             "Failed to write to file dataset.");
         e.initCause(ex);
@@ -626,7 +629,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
           try {
             H5.H5Sclose(memoryDataspaceHandle);
           } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex);
           }
         }
 
@@ -634,7 +637,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
           try {
             H5.H5Sclose(fileDataspaceHandle);
           } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex);
           }
         }
 
@@ -658,8 +661,8 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
           dimensions, maxDimensions);
 
     } catch (HDF5Exception e) {
-      e.printStackTrace();
-      throw new EodDataSinkException(e.toString());
+      logger.error(e.toString());
+      throw new EodDataSinkException(e);
     }
 
     quoteFileDatatypeHandle = Hdf5QuoteDatatype.getFileDatatypeHandle();
@@ -671,8 +674,8 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       createProperties = H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE);
 
     } catch (HDF5Exception e) {
-      e.printStackTrace();
-      throw new EodDataSinkException(e.toString());
+      logger.error(e.toString());
+      throw new EodDataSinkException(e);
     }
 
     try {
@@ -682,8 +685,8 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
           QUOTEDATASET_CHUNK_DIMENSIONS);
 
     } catch (HDF5Exception e) {
-      e.printStackTrace();
-      throw new EodDataSinkException(e.toString());
+      logger.error(e.toString());
+      throw new EodDataSinkException(e);
     }
 
     if ((fileHandle >= 0) && (quoteDataspaceHandle >= 0)
@@ -695,7 +698,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
             HDF5Constants.H5P_DEFAULT, createProperties,
             HDF5Constants.H5P_DEFAULT);
       } catch (HDF5Exception e) {
-        e.printStackTrace();
+        logger.error(e);
       } finally {
 
         try {
@@ -703,8 +706,8 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
           H5.H5Sclose(quoteDataspaceHandle);
 
         } catch (HDF5Exception e) {
-          e.printStackTrace();
-          throw new EodDataSinkException(e.toString());
+          logger.error(e);
+          throw new EodDataSinkException(e);
         }
 
       }
@@ -790,7 +793,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
         H5.H5Dclose(quoteDatasetHandle);
         quoteDatasetHandle = -1;
       } catch (Exception ex) {
-        ex.printStackTrace();
+        logger.error(ex);
       }
     }
   }
@@ -837,7 +840,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
     try {
       Hdf5QuoteDatatype.close();
     } catch (EodDataSinkException e) {
-      e.printStackTrace();
+      logger.error(e);
     }
 
     if (fileHandle >= 0) {
@@ -936,10 +939,10 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       }
 
     } catch (HDF5LibraryException e) {
-      e.printStackTrace();
+      logger.error(e);
       throw new EodDataSinkException("Failed to read from the quote dataset");
     } catch (HDF5Exception e) {
-      e.printStackTrace();
+      logger.error(e);
       throw new EodDataSinkException("Failed to read from the quote dataset");
     }
 

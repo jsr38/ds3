@@ -143,7 +143,7 @@ class HdfObjectEodDataSink implements EodDataSink {
           createExchangeDataset(exchanges.length);
         }
         catch (HDF5Exception ex) {
-          ex.printStackTrace();
+          logger.error(ex);
           throw new EodDataSinkException("Failed to create exchange dataset from scratch.");
         }
       }
@@ -162,7 +162,7 @@ class HdfObjectEodDataSink implements EodDataSink {
         createExchangeDataset(exchanges.length);
       }
       catch (HDF5Exception ex) {
-        ex.printStackTrace();
+        logger.error(ex);
         throw new EodDataSinkException("Failed to create exchange dataset from scratch.");
       }
 
@@ -479,7 +479,7 @@ class HdfObjectEodDataSink implements EodDataSink {
         }
       }
       catch(HDF5Exception ex) {
-        ex.printStackTrace();
+        logger.error(ex);
         EodDataSinkException e = new EodDataSinkException("Failed to write to file dataset.");
         e.initCause(ex);
         throw e;
@@ -495,7 +495,7 @@ class HdfObjectEodDataSink implements EodDataSink {
             H5.H5Sclose(memoryDataspaceHandle);
           }
           catch(Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex);
           }
         }
 
@@ -504,7 +504,7 @@ class HdfObjectEodDataSink implements EodDataSink {
             H5.H5Sclose(fileDataspaceHandle);
           }
           catch(Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex);
           }
         }
 
@@ -513,7 +513,7 @@ class HdfObjectEodDataSink implements EodDataSink {
             H5.H5Dclose(quoteDatasetHandle);
           }
           catch(Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex);
           }
         }
 
@@ -620,7 +620,7 @@ class HdfObjectEodDataSink implements EodDataSink {
           createQuoteDataset(0, symbolGroupHandle);
         }
         catch (HDF5Exception ex) {
-          ex.printStackTrace();
+          logger.error(ex);
           throw new EodDataSinkException("Failed to create quote dataset from scratch.");
         }
       }
@@ -639,7 +639,7 @@ class HdfObjectEodDataSink implements EodDataSink {
         createQuoteDataset(0, symbolGroupHandle);
       }
       catch (HDF5Exception ex) {
-        ex.printStackTrace();
+        logger.error(ex);
         throw new EodDataSinkException("Failed to create quote dataset from scratch.");
       }
 

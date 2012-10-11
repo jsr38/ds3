@@ -140,7 +140,7 @@ final class RetrieveTestData {
     catch(Exception e) {
 
 	    logger.error(e.toString()); 
-	    e.printStackTrace();
+	    logger.error(e);
 
     }
 
@@ -159,7 +159,7 @@ final class RetrieveTestData {
       }
       catch (XMLStreamException xse) {
         logger.error(xse.toString());
-        xse.printStackTrace();
+        logger.error(xse);
       }
 
     }
@@ -177,12 +177,12 @@ final class RetrieveTestData {
     }
     catch (XMLStreamException xse) {
       logger.error(xse.toString());
-      xse.printStackTrace();
+      logger.error(xse);
     }
     catch(EodDataProviderException edpe) {
 
       logger.error(edpe.toString());
-      edpe.printStackTrace();
+      logger.error(edpe);
 
     }
     finally {
@@ -210,12 +210,12 @@ final class RetrieveTestData {
     }
     catch (XMLStreamException xse) {
       logger.error(xse.toString());
-      xse.printStackTrace();
+      logger.error(xse);
     }
     catch(EodDataProviderException edpe) {
 
       logger.error(edpe.toString());
-      edpe.printStackTrace();
+      logger.error(edpe);
 
     }
     finally {
@@ -251,12 +251,12 @@ final class RetrieveTestData {
     }
     catch (XMLStreamException xse) {
       logger.error(xse.toString());
-      xse.printStackTrace();
+      logger.error(xse);
     }
     catch(EodDataProviderException edpe) {
 
       logger.error(edpe.toString());
-      edpe.printStackTrace();
+      logger.error(edpe);
 
     }
     finally {

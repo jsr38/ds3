@@ -231,7 +231,7 @@ class Hdf5ExchangeDatatype {
 
     }
     catch (HDF5Exception ex) {
-      ex.printStackTrace();
+      logger.error(ex);
       throw new EodDataSinkException("Encountered problem while attempting to close exchange data types.");
     }
     

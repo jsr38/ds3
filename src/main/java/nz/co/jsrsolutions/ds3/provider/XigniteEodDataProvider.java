@@ -386,8 +386,7 @@ class XigniteEodDataProvider extends EodDataProviderBase implements
 
     } catch (ParseException e) {
         // TODO Auto-generated catch block
-        e.printStackTrace();
-        logger.error("Couldn't parse date from quote");
+        logger.error(e);
         EodDataProviderException edpe = new EodDataProviderException(
             "Unable to get symbol history");
         edpe.initCause(e);
