@@ -61,6 +61,10 @@ public class ReadWriteQuotesTask implements Callable<Long> {
     logMessageBuffer.append(_exchange);
     logMessageBuffer.append(" ] for [ ");
     logMessageBuffer.append(_symbol);
+    logMessageBuffer.append(" ] between [ ");
+    logMessageBuffer.append(_lower.getTime().toString());
+    logMessageBuffer.append(" ] and [ ");
+    logMessageBuffer.append(_upper.getTime().toString());
     logMessageBuffer.append(" ] ");
     logger.info(logMessageBuffer.toString());
 
@@ -70,7 +74,7 @@ public class ReadWriteQuotesTask implements Callable<Long> {
           _lower, _upper, DEFAULT_FREQUENCY);
 
       if (quotes == null || quotes.length == 0) {
-        logger.info("Quote array from provider was empty!");
+        //logger.info("Quote array from provider was empty!");
         return new Long(0);
       }
 
