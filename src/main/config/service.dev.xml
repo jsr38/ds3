@@ -5,7 +5,7 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 
-	<!--  Scheduling related beans -->
+	<!-- Scheduling related beans -->
 
 	<bean id="scheduler"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -231,25 +231,30 @@
 		</constructor-arg>
 	</bean>
 
-<!-- -->
+	<!-- -->
 
-<bean id="threadPoolExecutor" class="java.util.concurrent.ThreadPoolExecutor" init-method="prestartCoreThread"> 
-  <constructor-arg index="0" type="int" value="8"/><!--Minimum Thread--> 
-  <constructor-arg index="1" type="int" value="8"/> <!--Maximum Thread--> 
-  <constructor-arg index="2" type="long" value="1"/><!--Thread lifespan--> 
-  <constructor-arg index="3" type="java.util.concurrent.TimeUnit" ><!--Time Unit--> 
-    <bean class="java.util.concurrent.TimeUnit" factory-method="valueOf"> 
-      <constructor-arg> 
-	<value>HOURS</value> 
-      </constructor-arg> 
-    </bean> 
-  </constructor-arg> 
-  <constructor-arg index="4" type="java.util.concurrent.BlockingQueue"><!--workQueue--> 
-    <bean class="java.util.concurrent.LinkedBlockingQueue"/> 
-  </constructor-arg> 
-</bean>
+	<bean id="threadPoolExecutor" class="java.util.concurrent.ThreadPoolExecutor"
+		init-method="prestartCoreThread" destroy-method="shutdown">
+		<constructor-arg index="0" type="int" value="8" /><!--Minimum 
+			Thread -->
+		<constructor-arg index="1" type="int" value="8" /> <!--Maximum Thread -->
+		<constructor-arg index="2" type="long" value="1" /><!--Thread 
+			lifespan -->
+		<constructor-arg index="3" type="java.util.concurrent.TimeUnit"><!--Time 
+				Unit -->
+			<bean class="java.util.concurrent.TimeUnit" factory-method="valueOf">
+				<constructor-arg>
+					<value>HOURS</value>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+		<constructor-arg index="4"
+			type="java.util.concurrent.BlockingQueue"><!--workQueue -->
+			<bean class="java.util.concurrent.LinkedBlockingQueue" />
+		</constructor-arg>
+	</bean>
 
-	<!--  -->
+	<!-- -->
 
 	<bean id="controller" class="nz.co.jsrsolutions.ds3.DataScraper3Controller"
 		scope="singleton" lazy-init="false">
@@ -259,7 +264,7 @@
 		<constructor-arg ref="threadPoolExecutor" />
 	</bean>
 
-<!-- EOD provider -->
+	<!-- EOD provider -->
 	<bean id="eodDataProvider" class="nz.co.jsrsolutions.ds3.provider.EodDataEodDataProvider"
 		scope="prototype">
 		<constructor-arg name="url"
@@ -268,19 +273,16 @@
 		<constructor-arg name="password" value="frederick_38" />
 		<constructor-arg name="timeout" value="60000" />
 	</bean>
-<!-- Xignite provider -->
-<!--
- 	<bean id="eodDataProvider" class="nz.co.jsrsolutions.ds3.provider.XigniteEodDataProvider"
-		scope="singleton">
-		<constructor-arg name="url" value="http://www.xignite.com/xEnergy.asmx" />
-		<constructor-arg name="username" value="jsr1060" />
-		<constructor-arg name="password" value="frederick_38" />
-		<constructor-arg name="timeout" value="60000" />
-	</bean>
--->	
+	<!-- Xignite provider -->
+	<!-- <bean id="eodDataProvider" class="nz.co.jsrsolutions.ds3.provider.XigniteEodDataProvider" 
+		scope="singleton"> <constructor-arg name="url" value="http://www.xignite.com/xEnergy.asmx" 
+		/> <constructor-arg name="username" value="jsr1060" /> <constructor-arg name="password" 
+		value="frederick_38" /> <constructor-arg name="timeout" value="60000" /> 
+		</bean> -->
 	<bean id="eodDataSink" class="nz.co.jsrsolutions.ds3.sink.Hdf5EodDataSink"
 		scope="singleton" destroy-method="destroy">
-		<constructor-arg name="filename" value="/home/jsr/projects/jsr/eoddata.h5" />
+		<constructor-arg name="filename"
+			value="/home/jsr/projects/jsr/eoddata.h5" />
 	</bean>
 
 	<bean id="emailService" class="nz.co.jsrsolutions.util.EmailService"
