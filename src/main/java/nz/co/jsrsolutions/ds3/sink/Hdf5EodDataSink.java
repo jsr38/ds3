@@ -17,13 +17,16 @@
 package nz.co.jsrsolutions.ds3.sink;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Vector;
 
 import ncsa.hdf.hdf5lib.H5;
@@ -175,6 +178,8 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
 
   private final int fileHandle;
 
+  private int rootGroupHandle = -1;
+
   private int exchangeDatasetHandle = -1;
 
   private int exchangeDatatypeHandle = -1;
@@ -302,8 +307,14 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
     if (exchangeDatasetHandle >= 0) {
       // If we managed to create the exchange dataset OK then
       // create the groups.
+      
+      Set<String> exchangeSet = readExchanges();
+      
       try {
         for (EXCHANGE exchange : exchanges) {
+          if (exchangeSet.contains(exchange.getCode())) {
+            continue;
+          }
           int groupHandle = H5.H5Gcreate(fileHandle, exchange.getCode(),
               HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT,
               HDF5Constants.H5P_DEFAULT);
@@ -815,6 +826,14 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       }
     }
 
+    if (rootGroupHandle >= 0) {
+      try {
+        H5.H5Gclose(rootGroupHandle);
+      } catch (HDF5LibraryException ex) {
+        ex.printStackTrace();
+      }
+    }
+
     try {
       Hdf5QuoteDatatype.close();
     } catch (EodDataSinkException e) {
@@ -885,8 +904,8 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
         Hdf5QuoteDatatype[] quotes = Hdf5QuoteDatatype.createArray(readBuffer);
 
         Hdf5QuoteDatatype quote1 = quotes[0];
-        
-        //selects the final element
+
+        // selects the final element
         status = H5.H5Sselect_hyperslab(fileDataspaceHandle,
             HDF5Constants.H5S_SELECT_SET, new long[] { dimensions[0] - 1 },
             null, new long[] { 1 }, null);
@@ -934,35 +953,64 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
 
     String[] symbols = null;
 
-    if (exchangeGroupHandle == null) {
-      try {
+    try {
+      if (exchangeGroupHandle == null) {
         exchangeGroupHandle = H5.H5Gopen(fileHandle, exchange,
             HDF5Constants.H5P_DEFAULT);
         exchangeGroupHandleMap.put(exchange, exchangeGroupHandle);
-        final H5L_iterate_cb iter_cb = new H5L_iter_callbackT();
-        final opdata od = new opdata();
-        @SuppressWarnings("unused")
-        int status = H5.H5Literate(exchangeGroupHandle,
-            HDF5Constants.H5_INDEX_NAME, HDF5Constants.H5_ITER_NATIVE, 0L,
-            iter_cb, od);
-        symbols = ((H5L_iter_callbackT) iter_cb).getSymbols();
-        if (symbols == null || symbols.length <= 0) {
-          throw new EodDataSinkException(
-              "Couldn't find any symbols for this exchange.");
-        }
-      } catch (HDF5LibraryException lex) {
-        StringBuffer messageBuffer = new StringBuffer();
-        messageBuffer.append("Failed to iterate over exchange group for [ ");
-        messageBuffer.append(exchange);
-        messageBuffer.append(" ]");
-        EodDataSinkException e = new EodDataSinkException(
-            messageBuffer.toString());
-        e.initCause(lex);
-        throw e;
       }
+
+      final H5L_iterate_cb iter_cb = new H5L_iter_callbackT();
+      final opdata od = new opdata();
+      @SuppressWarnings("unused")
+      int status = H5.H5Literate(exchangeGroupHandle,
+          HDF5Constants.H5_INDEX_NAME, HDF5Constants.H5_ITER_NATIVE, 0L,
+          iter_cb, od);
+      symbols = ((H5L_iter_callbackT) iter_cb).getSymbols();
+      if (symbols == null || symbols.length <= 0) {
+        throw new EodDataSinkException(
+            "Couldn't find any symbols for this exchange.");
+      }
+    } catch (HDF5LibraryException lex) {
+      StringBuffer messageBuffer = new StringBuffer();
+      messageBuffer.append("Failed to iterate over exchanges  ");
+      messageBuffer.append(exchange);
+      messageBuffer.append(" ]");
+      EodDataSinkException e = new EodDataSinkException(
+          messageBuffer.toString());
+      e.initCause(lex);
+      throw e;
     }
 
     return symbols;
+  }
+
+  public Set<String> readExchanges() throws EodDataSinkException {
+
+    String[] exchanges = null;
+
+    try {
+      rootGroupHandle = H5.H5Gopen(fileHandle, "/", HDF5Constants.H5P_DEFAULT);
+
+      final H5L_iterate_cb iter_cb = new H5L_iter_callbackT();
+      final opdata od = new opdata();
+      @SuppressWarnings("unused")
+      int status = H5.H5Literate(rootGroupHandle, HDF5Constants.H5_INDEX_NAME,
+          HDF5Constants.H5_ITER_NATIVE, 0L, iter_cb, od);
+      exchanges = ((H5L_iter_callbackT) iter_cb).getSymbols();
+      if (exchanges == null || exchanges.length <= 0) {
+        throw new EodDataSinkException("Couldn't find any exchanges!");
+      }
+    } catch (HDF5LibraryException lex) {
+      StringBuffer messageBuffer = new StringBuffer();
+      messageBuffer.append("Failed to iterate over exchanges!");
+      EodDataSinkException e = new EodDataSinkException(
+          messageBuffer.toString());
+      e.initCause(lex);
+      throw e;
+    }
+
+    return new HashSet<String>(Arrays.asList(exchanges));
   }
 
   @Override
