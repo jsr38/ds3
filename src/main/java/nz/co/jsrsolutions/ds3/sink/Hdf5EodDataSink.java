@@ -998,9 +998,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       int status = H5.H5Literate(rootGroupHandle, HDF5Constants.H5_INDEX_NAME,
           HDF5Constants.H5_ITER_NATIVE, 0L, iter_cb, od);
       exchanges = ((H5L_iter_callbackT) iter_cb).getSymbols();
-      if (exchanges == null || exchanges.length <= 0) {
-        throw new EodDataSinkException("Couldn't find any exchanges!");
-      }
+      
     } catch (HDF5LibraryException lex) {
       StringBuffer messageBuffer = new StringBuffer();
       messageBuffer.append("Failed to iterate over exchanges!");
