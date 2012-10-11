@@ -113,7 +113,7 @@ class HdfObjectEodDataSink implements EodDataSink {
     }
     catch (HDF5LibraryException ex) {
 
-      ex.printStackTrace();
+      logger.error(ex);
       throw new EodDataSinkException(ex.toString());
 
     }
@@ -192,7 +192,7 @@ class HdfObjectEodDataSink implements EodDataSink {
         }
       }
       catch (HDF5LibraryException lex) {
-        lex.printStackTrace();
+        logger.error(lex);
         throw new EodDataSinkException("Failed to create group");
       }
 
@@ -219,7 +219,7 @@ class HdfObjectEodDataSink implements EodDataSink {
     }
     catch (HDF5LibraryException lex) {
     
-      lex.printStackTrace();
+      logger.error(lex);
       StringBuffer messageBuffer = new StringBuffer();
       messageBuffer.append("Failed to open existing exchange group [ ");
       messageBuffer.append(exchange);
@@ -269,7 +269,7 @@ class HdfObjectEodDataSink implements EodDataSink {
           }
         }
         catch (HDF5LibraryException ex) {
-          ex.printStackTrace();
+          logger.error(ex);
 
           StringBuffer messageBuffer = new StringBuffer();
           messageBuffer.append("Failed to create symbol group [ ");
@@ -289,7 +289,7 @@ class HdfObjectEodDataSink implements EodDataSink {
           int status = H5.H5Gclose(symbolGroupHandle);
         }
         catch (HDF5LibraryException lex) {
-          lex.printStackTrace();
+          logger.error(lex);
         }
       }
     }
@@ -300,7 +300,7 @@ class HdfObjectEodDataSink implements EodDataSink {
         int status = H5.H5Gclose(exchangeGroupHandle);
       }
       catch (HDF5LibraryException lex) {
-        lex.printStackTrace();
+        logger.error(lex);
       }
     }
 
@@ -362,6 +362,7 @@ class HdfObjectEodDataSink implements EodDataSink {
       throw new EodDataSinkException("Invalid quote vector.");
     }
 
+    @SuppressWarnings("unused")
     long nWrittenToDataset = 0;
     Hdf5QuoteDatatype quoteData = new Hdf5QuoteDatatype();
 
@@ -683,7 +684,7 @@ class HdfObjectEodDataSink implements EodDataSink {
         H5.H5Gclose((Integer)kvp.getValue());
       }
       catch (HDF5LibraryException ex) {
-        ex.printStackTrace();
+        logger.error(ex);
       }
     }
 
@@ -694,7 +695,7 @@ class HdfObjectEodDataSink implements EodDataSink {
         H5.H5Gclose((Integer)kvp.getValue());
       }
       catch (HDF5LibraryException ex) {
-        ex.printStackTrace();
+        logger.error(ex);
       }
     }
 
@@ -703,7 +704,7 @@ class HdfObjectEodDataSink implements EodDataSink {
         H5.H5Dclose(exchangeDatasetHandle);
       }
       catch (HDF5LibraryException ex) {
-        ex.printStackTrace();
+        logger.error(ex);
       }
     }
 
@@ -719,7 +720,7 @@ class HdfObjectEodDataSink implements EodDataSink {
 
       }
       catch (HDF5LibraryException ex) {
-        ex.printStackTrace();
+        logger.error(ex);
       }
     }
 
@@ -732,7 +733,7 @@ class HdfObjectEodDataSink implements EodDataSink {
       }
     }
     catch (HDF5LibraryException ex) {
-      ex.printStackTrace();
+      logger.error(ex);
     }
 
   }

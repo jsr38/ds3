@@ -26,7 +26,6 @@ import org.apache.log4j.Logger;
 
 class Hdf5ExchangeDatatype {
 
-  @SuppressWarnings("unused")
   private static final transient Logger logger = Logger.getLogger(Hdf5ExchangeDatatype.class);
 
   private static final int EXCHANGE_DATATYPE_SIZE = 137;
@@ -155,7 +154,7 @@ class Hdf5ExchangeDatatype {
 
     }
     catch (HDF5LibraryException ex) {
-      ex.printStackTrace();
+      logger.error(ex);
       throw new EodDataSinkException("Unable to create exchange datatype.");
     }
 

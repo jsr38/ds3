@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 
 class Hdf5QuoteDatatype {
 
-  @SuppressWarnings("unused")
   private static final transient Logger logger = Logger.getLogger(Hdf5QuoteDatatype.class);
 
   public static final int QUOTE_DATATYPE_SIZE = 48;

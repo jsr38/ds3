@@ -132,7 +132,7 @@ class H5L_iter_callbackT implements H5L_iterate_cb {
           nextod.recurs = od.recurs + 1;
           nextod.prev = od;
           nextod.addr = infobuf.addr;
-          H5L_iterate_cb iter_cb2 = new H5L_iter_callbackT();
+          //H5L_iterate_cb iter_cb2 = new H5L_iter_callbackT();
           // return_val = H5.H5Literate_by_name (group, name,
           // HDF5Constants.H5_INDEX_NAME,
           // HDF5Constants.H5_ITER_NATIVE, 0L, iter_cb2, nextod,
@@ -250,7 +250,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
 
     } catch (HDF5LibraryException ex) {
 
-      ex.printStackTrace();
+      logger.error(ex);
       throw new EodDataSinkException(ex.toString());
 
     }
@@ -334,7 +334,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
           int status = H5.H5Gclose(groupHandle);
         }
       } catch (HDF5LibraryException lex) {
-        lex.printStackTrace();
+        logger.error(lex);
         throw new EodDataSinkException("Failed to create group");
       }
 
@@ -362,7 +362,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
 
     } catch (HDF5LibraryException lex) {
 
-      lex.printStackTrace();
+      logger.error(lex);
       StringBuffer messageBuffer = new StringBuffer();
       messageBuffer.append("Failed to open existing exchange group [ ");
       messageBuffer.append(exchange);
@@ -409,7 +409,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
             logger.debug(messageBuffer.toString());
           }
         } catch (HDF5LibraryException ex) {
-          ex.printStackTrace();
+          logger.error(ex);
 
           StringBuffer messageBuffer = new StringBuffer();
           messageBuffer.append("Failed to create symbol group [ ");
@@ -428,7 +428,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
           @SuppressWarnings("unused")
           int status = H5.H5Gclose(symbolGroupHandle);
         } catch (HDF5LibraryException lex) {
-          lex.printStackTrace();
+          logger.error(lex);
         }
       }
     }
@@ -438,7 +438,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
         @SuppressWarnings("unused")
         int status = H5.H5Gclose(exchangeGroupHandle);
       } catch (HDF5LibraryException lex) {
-        lex.printStackTrace();
+        logger.error(lex);
       }
     }
 
@@ -807,7 +807,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       try {
         H5.H5Gclose((Integer) kvp.getValue());
       } catch (HDF5LibraryException ex) {
-        ex.printStackTrace();
+        logger.error(ex);
       }
     }
 
@@ -817,7 +817,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       try {
         H5.H5Gclose((Integer) kvp.getValue());
       } catch (HDF5LibraryException ex) {
-        ex.printStackTrace();
+        logger.error(ex);
       }
     }
 
@@ -825,7 +825,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       try {
         H5.H5Dclose(exchangeDatasetHandle);
       } catch (HDF5LibraryException ex) {
-        ex.printStackTrace();
+        logger.error(ex);
       }
     }
 
@@ -833,7 +833,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       try {
         H5.H5Gclose(rootGroupHandle);
       } catch (HDF5LibraryException ex) {
-        ex.printStackTrace();
+        logger.error(ex);
       }
     }
 
@@ -854,7 +854,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
         }
 
       } catch (HDF5LibraryException ex) {
-        ex.printStackTrace();
+        logger.error(ex);
       }
     }
 
@@ -865,7 +865,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
         logger.debug("Closed HDF5 library");
       }
     } catch (HDF5LibraryException ex) {
-      ex.printStackTrace();
+      logger.error(ex);
     }
 
   }

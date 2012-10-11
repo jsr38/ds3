@@ -56,6 +56,7 @@ public class GetExchangeSymbolQuotesCommand implements Command {
       throw new CommandException("Must supply --symbol [symbolcode]");
     }
 
+    @SuppressWarnings("unused")
     long nQuotesWritten = 0;
 
     final int availableMonths = eodDataProvider.getExchangeMonths(exchange);

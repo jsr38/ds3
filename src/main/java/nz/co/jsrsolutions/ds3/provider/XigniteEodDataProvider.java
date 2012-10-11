@@ -50,12 +50,16 @@ class XigniteEodDataProvider extends EodDataProviderBase implements
   private static final transient Logger logger = Logger
       .getLogger(XigniteEodDataProvider.class);
 
+  @SuppressWarnings("unused")
   private final String url;
 
+  @SuppressWarnings("unused")
   private final String username;
 
+  @SuppressWarnings("unused")
   private final String password;
 
+  @SuppressWarnings("unused")
   private final long timeout;
 
   private final transient HeaderE headerE;
@@ -93,15 +97,6 @@ class XigniteEodDataProvider extends EodDataProviderBase implements
       EodDataProviderException edpe = new EodDataProviderException(
           "Unable to construct XigniteEodDataProvider");
       edpe.initCause(afe);
-
-      throw edpe;
-
-    } catch (java.rmi.RemoteException re) {
-
-      logger.error(re.toString());
-      EodDataProviderException edpe = new EodDataProviderException(
-          "Unable to construct XigniteEodDataProvider");
-      edpe.initCause(re);
 
       throw edpe;
 
