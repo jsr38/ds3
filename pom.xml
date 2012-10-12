@@ -38,6 +38,12 @@
 			<version>1.2</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+			<version>1.6</version>
+			<scope>runtime</scope>
+		</dependency>
 
 		<!-- Axis2 dependencies -->
 
