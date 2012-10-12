@@ -730,6 +730,8 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
 
           H5.H5Sclose(quoteDataspaceHandle);
 
+          logger.info("Sucessfully created new quote dataset.");
+          
         } catch (HDF5Exception e) {
           logger.error(e);
           throw new EodDataSinkException(e);
@@ -741,8 +743,6 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       throw new EodDataSinkException(
           "Failed to create quote dataset from scratch.");
     }
-
-    logger.info("Sucessfully created new quote dataset.");
 
   }
 
@@ -906,13 +906,14 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
     if (!isOpen) {
       throw new EodDataSinkException("HDF5 File data sink closed!");
     }
-    
-    openQuoteDataset(exchange, symbol);
-    if (quoteDatasetHandle < 0) {
-      return null;
-    }
 
     try {
+      
+      openQuoteDataset(exchange, symbol);
+      if (quoteDatasetHandle < 0) {
+        return null;
+      }
+      
       int fileDataspaceHandle = H5.H5Dget_space(quoteDatasetHandle);
       long dimensions[] = new long[1];
       long maxDimensions[] = new long[1];
