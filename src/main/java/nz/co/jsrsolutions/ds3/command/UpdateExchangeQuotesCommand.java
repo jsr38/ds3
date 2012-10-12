@@ -16,7 +16,6 @@
 
 package nz.co.jsrsolutions.ds3.command;
 
-import java.lang.InterruptedException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -33,13 +32,18 @@ import nz.co.jsrsolutions.util.Range;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-public class UpdateExchangeQuotesCommand implements Command {
+public class UpdateExchangeQuotesCommand implements Command, ApplicationContextAware {
 
   private static final transient Logger logger = Logger
       .getLogger(UpdateExchangeQuotesCommand.class);
 
   private final ExecutorService _executorService;
+  
+  private ApplicationContext _appContext;
 
   public UpdateExchangeQuotesCommand(ExecutorService executorService) {
     _executorService = executorService;
@@ -49,8 +53,6 @@ public class UpdateExchangeQuotesCommand implements Command {
 
     logger.info("Executing: updateexchangequotes");
 
-    final EodDataProvider eodDataProvider = (EodDataProvider) context
-        .get(CommandContext.EODDATAPROVIDER_KEY);
     final EodDataSink eodDataSink = (EodDataSink) context
         .get(CommandContext.EODDATASINK_KEY);
     final EmailService emailService = (EmailService) context
@@ -63,7 +65,7 @@ public class UpdateExchangeQuotesCommand implements Command {
 
     long nQuotesWritten = 0;
 
-    final int availableMonths = eodDataProvider.getExchangeMonths(exchange);
+    final int availableMonths = ((EodDataProvider)_appContext.getBean("eodDataProvider")).getExchangeMonths(exchange);
     // final SYMBOL[] symbols = eodDataProvider.getSymbols(exchange);
     final String[] symbols = eodDataSink.readExchangeSymbols(exchange);
 
@@ -148,7 +150,7 @@ public class UpdateExchangeQuotesCommand implements Command {
 
         try {
           
-          futures.add(_executorService.submit(new ReadWriteQuotesTask(eodDataProvider,
+          futures.add(_executorService.submit(new ReadWriteQuotesTask((EodDataProvider)_appContext.getBean("eodDataProvider"),
               eodDataSink, exchange, symbol, requestRange.getLower(),
               requestRange.getUpper())));
  
@@ -187,5 +189,12 @@ public class UpdateExchangeQuotesCommand implements Command {
 
     return false;
 
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext appContext)
+      throws BeansException {
+    // TODO Auto-generated method stub
+    _appContext = appContext;
   }
 }

@@ -240,8 +240,7 @@
 		<constructor-arg index="1" type="int" value="8" /> <!--Maximum Thread -->
 		<constructor-arg index="2" type="long" value="1" /><!--Thread 
 			lifespan -->
-		<constructor-arg index="3" type="java.util.concurrent.TimeUnit"><!--Time 
-				Unit -->
+		<constructor-arg index="3" type="java.util.concurrent.TimeUnit"><!--Time Unit -->
 			<bean class="java.util.concurrent.TimeUnit" factory-method="valueOf">
 				<constructor-arg>
 					<value>HOURS</value>
@@ -265,7 +264,7 @@
 	</bean>
 
 	<!-- EOD provider -->
-	<bean id="eodDataProvider" class="nz.co.jsrsolutions.ds3.provider.EodDataEodDataProvider"
+	<bean id="eodDataProviderTarget" class="nz.co.jsrsolutions.ds3.provider.EodDataEodDataProvider"
 		scope="prototype">
 		<constructor-arg name="url"
 			value="http://ws.eoddata.com/data.asmx" />
@@ -273,6 +272,17 @@
 		<constructor-arg name="password" value="frederick_38" />
 		<constructor-arg name="timeout" value="60000" />
 	</bean>
+
+	<bean id="poolEodDataProviderSource" class="org.springframework.aop.target.CommonsPoolTargetSource">
+		<property name="targetBeanName" value="eodDataProviderTarget" />
+		<property name="maxSize" value="4" />
+	</bean>
+
+	<bean id="eodDataProvider" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="targetSource" ref="poolEodDataProviderSource" />
+		<!--    <property name="interceptorNames" value="myInterceptor" />  -->
+	</bean>
+
 	<!-- Xignite provider -->
 	<!-- <bean id="eodDataProvider" class="nz.co.jsrsolutions.ds3.provider.XigniteEodDataProvider" 
 		scope="singleton"> <constructor-arg name="url" value="http://www.xignite.com/xEnergy.asmx" 
