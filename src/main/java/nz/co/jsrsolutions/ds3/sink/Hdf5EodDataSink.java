@@ -699,7 +699,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       createProperties = H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE);
 
     } catch (HDF5Exception e) {
-      logger.error(e.toString());
+      logger.error(e);
       throw new EodDataSinkException(e);
     }
 
@@ -710,7 +710,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
           QUOTEDATASET_CHUNK_DIMENSIONS);
 
     } catch (HDF5Exception e) {
-      logger.error(e.toString());
+      logger.error(e);
       throw new EodDataSinkException(e);
     }
 
@@ -739,7 +739,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
 
     } else {
       throw new EodDataSinkException(
-          "Failed to create exchange dataset from scratch.");
+          "Failed to create quote dataset from scratch.");
     }
 
     logger.info("Sucessfully created new quote dataset.");

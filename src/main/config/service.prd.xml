@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+	<!-- Scheduling related beans -->
+
+	<bean id="scheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="eodCBOTTrigger" />
+				<ref bean="eodCFETrigger" />
+				<ref bean="eodCMETrigger" />
+				<ref bean="eodWCETrigger" />
+				<ref bean="eodNZXTrigger" />
+				<ref bean="eodLSETrigger" />
+			</list>
+		</property>
+		<property name="schedulerContextAsMap">
+			<map>
+				<entry key="eodDataProvider" value-ref="eodDataProvider" />
+				<entry key="eodDataSink" value-ref="eodDataSink" />
+				<entry key="emailService" value-ref="emailService" />
+			</map>
+		</property>
+		<property name="autoStartup">
+			<value>false</value>
+		</property>
+	</bean>
+
+	<!-- Triggers -->
+
+	<bean id="eodCBOTTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="updateCBOTJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 18 ? * MON-FRI</value>
+		</property>
+
+		<property name="timeZone">
+			<ref bean="timeZoneCDT" />
+		</property>
+	</bean>
+
+	<bean id="eodCFETrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="updateCFEJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 18 ? * MON-FRI</value>
+		</property>
+
+		<property name="timeZone">
+			<ref bean="timeZoneCDT" />
+		</property>
+	</bean>
+
+	<bean id="eodCMETrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="updateCMEJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 18 ? * MON-FRI</value>
+		</property>
+
+		<property name="timeZone">
+			<ref bean="timeZoneCDT" />
+		</property>
+	</bean>
+
+	<bean id="eodWCETrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="updateWCEJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 18 ? * MON-FRI</value>
+		</property>
+
+		<property name="timeZone">
+			<ref bean="timeZoneCDT" />
+		</property>
+	</bean>
+
+	<bean id="eodNZXTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="updateNZXJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 18 ? * MON-FRI</value>
+		</property>
+
+		<property name="timeZone">
+			<ref bean="timeZoneNZST" />
+		</property>
+	</bean>
+
+	<bean id="eodLSETrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="updateLSEJob" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 18 ? * MON-FRI</value>
+		</property>
+
+		<property name="timeZone">
+			<ref bean="timeZoneGMT" />
+		</property>
+	</bean>
+
+	<!-- JobDetails -->
+
+	<!-- Central Time -->
+	<bean name="updateCBOTJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="command" value="updateexchangequotes" />
+				<entry key="exchange" value="CBOT" />
+			</map>
+		</property>
+	</bean>
+
+	<bean name="updateCFEJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="command" value="updateexchangequotes" />
+				<entry key="exchange" value="CFE" />
+			</map>
+		</property>
+	</bean>
+
+	<bean name="updateCMEJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="command" value="updateexchangequotes" />
+				<entry key="exchange" value="CME" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- Eastern Time -->
+	<bean name="updateWCEJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="command" value="updateexchangequotes" />
+				<entry key="exchange" value="WCE" />
+			</map>
+		</property>
+	</bean>
+
+	<bean name="updateASXJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="command" value="updateexchangequotes" />
+				<entry key="exchange" value="ASX" />
+			</map>
+		</property>
+	</bean>
+
+	<bean name="updateNZXJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="command" value="updateexchangequotes" />
+				<entry key="exchange" value="NZX" />
+			</map>
+		</property>
+	</bean>
+
+	<bean name="updateLSEJob"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="command" value="updateexchangequotes" />
+				<entry key="exchange" value="LSE" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- Timezones -->
+
+	<bean id="timeZoneEST" class="java.util.TimeZone" factory-method="getTimeZone">
+		<constructor-arg>
+			<value>America/New_York</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="timeZoneCDT" class="java.util.TimeZone" factory-method="getTimeZone">
+		<constructor-arg>
+			<value>America/Chicago</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="timeZoneGMT" class="java.util.TimeZone" factory-method="getTimeZone">
+		<constructor-arg>
+			<value>UK/London</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="timeZoneNZST" class="java.util.TimeZone" factory-method="getTimeZone">
+		<constructor-arg>
+			<value>New_Zealand/Wellington</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- -->
+
+	<bean id="threadPoolExecutor" class="java.util.concurrent.ThreadPoolExecutor"
+		init-method="prestartCoreThread" destroy-method="shutdown">
+		<constructor-arg index="0" type="int" value="8" /><!--Minimum 
+			Thread -->
+		<constructor-arg index="1" type="int" value="8" /> <!--Maximum Thread -->
+		<constructor-arg index="2" type="long" value="1" /><!--Thread 
+			lifespan -->
+		<constructor-arg index="3" type="java.util.concurrent.TimeUnit"><!--Time 
+				Unit -->
+			<bean class="java.util.concurrent.TimeUnit" factory-method="valueOf">
+				<constructor-arg>
+					<value>HOURS</value>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+		<constructor-arg index="4"
+			type="java.util.concurrent.BlockingQueue"><!--workQueue -->
+			<bean class="java.util.concurrent.LinkedBlockingQueue" />
+		</constructor-arg>
+	</bean>
+
+	<!-- -->
+
+	<bean id="controller" class="nz.co.jsrsolutions.ds3.DataScraper3Controller"
+		scope="singleton" lazy-init="false">
+		<constructor-arg ref="eodDataProvider" />
+		<constructor-arg ref="eodDataSink" />
+		<constructor-arg ref="emailService" />
+		<constructor-arg ref="threadPoolExecutor" />
+	</bean>
+
+	<!-- EOD provider -->
+	<bean id="eodDataProvider" class="nz.co.jsrsolutions.ds3.provider.EodDataEodDataProvider"
+		scope="prototype">
+		<constructor-arg name="url"
+			value="http://ws.eoddata.com/data.asmx" />
+		<constructor-arg name="username" value="jsr1060" />
+		<constructor-arg name="password" value="frederick_38" />
+		<constructor-arg name="timeout" value="60000" />
+	</bean>
+	<!-- Xignite provider -->
+	<!-- <bean id="eodDataProvider" class="nz.co.jsrsolutions.ds3.provider.XigniteEodDataProvider" 
+		scope="singleton"> <constructor-arg name="url" value="http://www.xignite.com/xEnergy.asmx" 
+		/> <constructor-arg name="username" value="jsr1060" /> <constructor-arg name="password" 
+		value="frederick_38" /> <constructor-arg name="timeout" value="60000" /> 
+		</bean> -->
+	<bean id="eodDataSink" class="nz.co.jsrsolutions.ds3.sink.Hdf5EodDataSink"
+		scope="singleton" destroy-method="destroy">
+		<constructor-arg name="filename"
+			value="/home/jsr/projects/jsr/eoddata.h5" />
+	</bean>
+
+	<bean id="emailService" class="nz.co.jsrsolutions.util.EmailService"
+		scope="singleton">
+		<constructor-arg name="smtphost" value="localhost" />
+		<constructor-arg name="smtpport" value="25" />
+		<constructor-arg name="from" value="ds3@jsrsolutions.co.nz" />
+		<constructor-arg name="recipients" value="jsr@jsrsolutions.co.nz" />
+	</bean>
+
+	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
+		<property name="assembler" ref="assembler" />
+		<property name="namingStrategy" ref="namingStrategy" />
+		<property name="autodetect" value="true" />
+	</bean>
+
+	<bean id="jmxAttributeSource"
+		class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" />
+
+	<!-- will create management interface using annotation metadata -->
+	<bean id="assembler"
+		class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
+		<property name="attributeSource" ref="jmxAttributeSource" />
+	</bean>
+
+	<!-- will pick up the ObjectName from the annotation -->
+	<bean id="namingStrategy"
+		class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
+		<property name="attributeSource" ref="jmxAttributeSource" />
+	</bean>
+
+</beans>
