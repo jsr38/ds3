@@ -900,7 +900,7 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
     this.isOpen = false; 
   }
 
-  public Range<Calendar> readExchangeSymbolDateRange(String exchange,
+  public synchronized Range<Calendar> readExchangeSymbolDateRange(String exchange,
       String symbol) throws EodDataSinkException {
 
     if (!isOpen) {
