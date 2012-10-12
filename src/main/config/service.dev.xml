@@ -257,7 +257,7 @@
 	<!-- -->
 
 	<bean id="controller" class="nz.co.jsrsolutions.ds3.DataScraper3Controller"
-		scope="singleton" lazy-init="false">
+		scope="singleton" lazy-init="false" destroy-method="shutdown">
 		<constructor-arg ref="eodDataProvider" />
 		<constructor-arg ref="eodDataSink" />
 		<constructor-arg ref="emailService" />

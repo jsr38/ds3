@@ -210,8 +210,11 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
 
   private final HashMap<String, Integer> symbolGroupHandleMap = new HashMap<String, Integer>();
 
+  private boolean isOpen;
+  
   public Hdf5EodDataSink(String filename) throws EodDataSinkException {
 
+    this.isOpen = false;
     this.filename = filename;
 
     try {
@@ -260,6 +263,8 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       messageBuffer.append("Unable to open HDF5 file: ");
       messageBuffer.append(filename);
       throw new EodDataSinkException(messageBuffer.toString());
+    } else {
+      this.isOpen = true;
     }
 
   }
@@ -267,6 +272,10 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
   public synchronized void updateExchanges(EXCHANGE[] exchanges)
       throws EodDataSinkException {
 
+    if (!isOpen) {
+      throw new EodDataSinkException("HDF5 File data sink closed!");
+    }
+    
     try {
 
       exchangeDatasetHandle = H5.H5Dopen(fileHandle, "/"
@@ -348,6 +357,10 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
   public synchronized void updateExchangeSymbols(String exchange,
       SYMBOL[] symbols) throws EodDataSinkException {
 
+    if (!isOpen) {
+      throw new EodDataSinkException("HDF5 File data sink closed!");
+    }
+    
     int exchangeGroupHandle = -1;
     long createdSymbols = 0;
 
@@ -459,6 +472,10 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
   private synchronized void createExchangeDataset(long dimension)
       throws HDF5Exception, EodDataSinkException {
 
+    if (!isOpen) {
+      throw new EodDataSinkException("HDF5 File data sink closed!");
+    }
+    
     long dimensions[] = { dimension };
     long maxDimensions[] = { HDF5Constants.H5S_UNLIMITED };
     int exchangeDataspaceHandle = H5.H5Screate_simple(EXCHANGE_DATASET_RANK,
@@ -491,8 +508,16 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
   public synchronized void updateExchangeSymbolQuotes(String exchange,
       String symbol, QUOTE[] quotes) throws EodDataSinkException {
 
+    if (!isOpen) {
+      throw new EodDataSinkException("HDF5 File data sink closed!");
+    }
+    
     if (quotes == null) {
       throw new EodDataSinkException("Invalid quote vector.");
+    }
+    
+    if (quotes.length == 0) {
+      return;
     }
 
     final Range<Calendar> newRange = new Range<Calendar>(
@@ -800,6 +825,10 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
 
   public synchronized void close() {
 
+    if (!isOpen) {
+      return;
+    }
+    
     Iterator<Entry<String, Integer>> it = symbolGroupHandleMap.entrySet()
         .iterator();
     while (it.hasNext()) {
@@ -868,11 +897,16 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
       logger.error(ex);
     }
 
+    this.isOpen = false; 
   }
 
   public Range<Calendar> readExchangeSymbolDateRange(String exchange,
       String symbol) throws EodDataSinkException {
 
+    if (!isOpen) {
+      throw new EodDataSinkException("HDF5 File data sink closed!");
+    }
+    
     openQuoteDataset(exchange, symbol);
     if (quoteDatasetHandle < 0) {
       return null;
@@ -951,6 +985,10 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
   public String[] readExchangeSymbols(String exchange)
       throws EodDataSinkException {
 
+    if (!isOpen) {
+      throw new EodDataSinkException("HDF5 File data sink closed!");
+    }
+    
     Integer exchangeGroupHandle = (Integer) exchangeGroupHandleMap
         .get(exchange);
 
@@ -990,6 +1028,10 @@ public class Hdf5EodDataSink implements EodDataSink, DisposableBean {
 
   public Set<String> readExchanges() throws EodDataSinkException {
 
+    if (!isOpen) {
+      throw new EodDataSinkException("HDF5 File data sink closed!");
+    }
+    
     String[] exchanges = null;
 
     try {
