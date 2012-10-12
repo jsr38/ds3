@@ -24,6 +24,9 @@ import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
 import nz.co.jsrsolutions.util.Range;
 
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.log4j.Logger;
 
 
@@ -62,9 +65,14 @@ class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvi
     this.timeout = timeout;
 
     try {
-
+      
+      HttpMethodParams methodParams = new HttpMethodParams();
+      DefaultHttpMethodRetryHandler retryHandler = new DefaultHttpMethodRetryHandler(3, false);
+      methodParams.setParameter(HttpMethodParams.RETRY_HANDLER, retryHandler);
+      
       eodDataStub = new DataStub(url);
       eodDataStub._getServiceClient().getOptions().setTimeOutInMilliSeconds(timeout);
+      eodDataStub._getServiceClient().getOptions().setProperty(HTTPConstants.HTTP_METHOD_PARAMS, methodParams);
 
       DataStub.Login loginRequest = new DataStub.Login();
       loginRequest.setUsername(username);
