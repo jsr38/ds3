@@ -88,6 +88,11 @@ class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvi
           
       token = loginResponse.getToken();
 
+      if (token == null || token.isEmpty()) {
+        throw new EodDataProviderException("Failed to authenticate with EOD Data web service.");
+      }
+
+
       logger.info(loginResponse.getMessage());
       logger.info(token);
       logger.info(loginResponse.getDataFormat());
@@ -226,6 +231,11 @@ class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvi
       symbolListRequest.setExchange(exchange);
 
       DataStub.SymbolListResponse symbolListResponse = eodDataStub.symbolList(symbolListRequest);
+
+      if (symbolListResponse == null) {
+        return null;
+      }
+
       DataStub.SYMBOL[] symbolArray = symbolListResponse.getSymbolListResult().getSYMBOLS().getSYMBOL();
 
       for (DataStub.SYMBOL symbol : symbolArray) {

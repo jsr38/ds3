@@ -46,6 +46,8 @@ final class DataScraper3 {
     
     logger.info("Starting application [ ds3 ] ..."); 
 
+    ClassPathXmlApplicationContext context = null;
+
     try {
 
       CommandLineParser parser = new GnuParser();
@@ -59,7 +61,7 @@ final class DataScraper3 {
         environment.append(commandLine.getOptionValue(CommandLineOptions.ENVIRONMENT));
         environment.append(SPRING_CONFIG_SUFFIX);
 
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(environment.toString());
+        context = new ClassPathXmlApplicationContext(environment.toString());
         context.registerShutdownHook();
 
         if (commandLine.hasOption(CommandLineOptions.SCHEDULED)) {
@@ -76,16 +78,7 @@ final class DataScraper3 {
         else {
           DataScraper3Controller controller = context.getBean(CONTROLLER_BEAN_ID,
               DataScraper3Controller.class);
-          try {
-            controller.executeCommandLine(commandLine);
-          }
-          catch (DataScraper3Exception ds3e) {
-            logger.error(ds3e); 
-            logger.error(ds3e.getCause());
-          }
-          finally {
-            context.close();
-          }
+          controller.executeCommandLine(commandLine);
         }
         
       }
@@ -98,17 +91,23 @@ final class DataScraper3 {
 
 
     }
+    catch (DataScraper3Exception ds3e) {
+      logger.error("Failed to execute command", ds3e); 
+    }
     catch(ParseException pe) {
 
-      logger.error(pe); 
+      logger.error("Failed to parse command line", pe); 
 
     }
     catch(Exception e) {
 
-      logger.error(e); 
-      logger.error(e.getCause());
+      logger.error("Failed to execute command", e);
 
-
+    }
+    finally {
+      if (context != null) {
+        context.close();
+      }
     }
 
     logger.info("Exiting application [ ds3 ] ...");

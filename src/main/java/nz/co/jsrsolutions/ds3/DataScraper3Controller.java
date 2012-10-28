@@ -40,8 +40,6 @@ final public class DataScraper3Controller implements ApplicationContextAware {
   @SuppressWarnings("unused")
   private static final transient Logger logger = Logger
       .getLogger(DataScraper3Controller.class);
-
-//  private static final String THREADPOOL_BEAN_ID = new String("threadPoolExecutor");
   
   private EodDataProvider _eodDataProvider;
 
@@ -73,7 +71,7 @@ final public class DataScraper3Controller implements ApplicationContextAware {
     context.put(CommandContext.EODDATAPROVIDER_KEY, _eodDataProvider);
     context.put(CommandContext.EODDATASINK_KEY, _eodDataSink);
     context.put(CommandContext.EMAILSERVICE_KEY, _emailService);
-    //context.put(CommandContext.)
+
     // place optional argument values into the context
     if (commandLine.hasOption(CommandLineOptions.EXCHANGE)) {
       context.put(CommandContext.EXCHANGE_KEY,
@@ -86,9 +84,10 @@ final public class DataScraper3Controller implements ApplicationContextAware {
     }
 
     try {
-      // (ThreadPoolExecutor)_appContext.getBean(THREADPOOL_BEAN_ID)
-      Command command = CommandFactory.create(commandLine
-          .getOptionValue(CommandLineOptions.COMMAND), _executorService);
+
+      Command command = (Command)_appContext.getBean(commandLine
+                                                     .getOptionValue(CommandLineOptions.COMMAND));
+
       command.execute(context);
     } catch (Exception e) {
       throw new DataScraper3Exception(e);

@@ -1,38 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+			    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+			    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
+	<!-- Thread Pool -->
+
+	<bean id="threadPoolExecutor" class="java.util.concurrent.ThreadPoolExecutor"
+		init-method="prestartCoreThread" destroy-method="shutdown">
+		<constructor-arg index="0" type="int" value="8" /><!--Minimum 
+			Thread -->
+		<constructor-arg index="1" type="int" value="8" /> <!--Maximum Thread -->
+		<constructor-arg index="2" type="long" value="1" /><!--Thread 
+			lifespan -->
+		<constructor-arg index="3" type="java.util.concurrent.TimeUnit"><!--Time Unit -->
+			<bean class="java.util.concurrent.TimeUnit" factory-method="valueOf">
+				<constructor-arg>
+					<value>HOURS</value>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+		<constructor-arg index="4"
+			type="java.util.concurrent.BlockingQueue"><!--workQueue -->
+			<bean class="java.util.concurrent.LinkedBlockingQueue" />
+		</constructor-arg>
+	</bean>
 
 	<!-- Scheduling related beans -->
 
-	<bean id="scheduler"
-		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<list>
-				<ref bean="eodCBOTTrigger" />
-				<ref bean="eodCFETrigger" />
-				<ref bean="eodCMETrigger" />
-				<ref bean="eodWCETrigger" />
-				<ref bean="eodNZXTrigger" />
-				<ref bean="eodLSETrigger" />
-			</list>
-		</property>
-		<property name="schedulerContextAsMap">
-			<map>
-				<entry key="eodDataProvider" value-ref="eodDataProvider" />
-				<entry key="eodDataSink" value-ref="eodDataSink" />
-				<entry key="emailService" value-ref="emailService" />
-			</map>
-		</property>
-		<property name="autoStartup">
-			<value>false</value>
-		</property>
+	<!-- Timezones -->
+
+	<bean id="timeZoneEST" class="java.util.TimeZone" factory-method="getTimeZone">
+		<constructor-arg>
+			<value>America/New_York</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="timeZoneCDT" class="java.util.TimeZone" factory-method="getTimeZone">
+		<constructor-arg>
+			<value>America/Chicago</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="timeZoneGMT" class="java.util.TimeZone" factory-method="getTimeZone">
+		<constructor-arg>
+			<value>UK/London</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="timeZoneNZST" class="java.util.TimeZone" factory-method="getTimeZone">
+		<constructor-arg>
+			<value>New_Zealand/Wellington</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- Command beans   -->
+	<bean id="updateExchangesCommand" class="nz.co.jsrsolutions.ds3.command.UpdateExchangesCommand" scope="singleton">
+	</bean>
+
+	<bean id="updateExchangeSymbolsCommand" class="nz.co.jsrsolutions.ds3.command.UpdateExchangeSymbolsCommand" scope="singleton">
+	</bean>
+
+	<bean id="updateExchangeQuotesCommand" class="nz.co.jsrsolutions.ds3.command.UpdateExchangeQuotesCommand" scope="singleton">
+	  <constructor-arg name="executorService" ref="threadPoolExecutor" />
+	</bean>
+
+	<!-- Command Chains -->
+	<bean name="updateexchanges" class="org.apache.commons.chain.impl.ChainBase" scope="singleton">
+	  <constructor-arg>
+	    <util:list>
+	      <ref bean="updateExchangesCommand" />
+	    </util:list>
+	  </constructor-arg>
+	</bean>
+
+	<bean name="updateexchangesymbols" class="org.apache.commons.chain.impl.ChainBase" scope="singleton">
+	  <constructor-arg>
+	    <util:list>
+	      <ref bean="updateExchangeSymbolsCommand" />
+	    </util:list>
+	  </constructor-arg>
+	</bean>
+
+	<bean name="updateexchangequotes" class="org.apache.commons.chain.impl.ChainBase" scope="singleton">
+	  <constructor-arg>
+	    <util:list>
+	      <ref bean="updateExchangeSymbolsCommand" />
+	      <ref bean="updateExchangeQuotesCommand" />
+	    </util:list>
+	  </constructor-arg>
 	</bean>
 
 	<!-- Triggers -->
-
 	<bean id="eodCBOTTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
@@ -47,6 +108,7 @@
 		</property>
 	</bean>
 
+<!--
 	<bean id="eodCFETrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
@@ -116,7 +178,7 @@
 			<ref bean="timeZoneGMT" />
 		</property>
 	</bean>
-
+-->
 	<!-- JobDetails -->
 
 	<!-- Central Time -->
@@ -205,62 +267,31 @@
 		</property>
 	</bean>
 
-	<!-- Timezones -->
-
-	<bean id="timeZoneEST" class="java.util.TimeZone" factory-method="getTimeZone">
-		<constructor-arg>
-			<value>America/New_York</value>
-		</constructor-arg>
-	</bean>
-
-	<bean id="timeZoneCDT" class="java.util.TimeZone" factory-method="getTimeZone">
-		<constructor-arg>
-			<value>America/Chicago</value>
-		</constructor-arg>
-	</bean>
-
-	<bean id="timeZoneGMT" class="java.util.TimeZone" factory-method="getTimeZone">
-		<constructor-arg>
-			<value>UK/London</value>
-		</constructor-arg>
-	</bean>
-
-	<bean id="timeZoneNZST" class="java.util.TimeZone" factory-method="getTimeZone">
-		<constructor-arg>
-			<value>New_Zealand/Wellington</value>
-		</constructor-arg>
-	</bean>
-
-	<!-- -->
-
-	<bean id="threadPoolExecutor" class="java.util.concurrent.ThreadPoolExecutor"
-		init-method="prestartCoreThread" destroy-method="shutdown">
-		<constructor-arg index="0" type="int" value="8" /><!--Minimum 
-			Thread -->
-		<constructor-arg index="1" type="int" value="8" /> <!--Maximum Thread -->
-		<constructor-arg index="2" type="long" value="1" /><!--Thread 
-			lifespan -->
-		<constructor-arg index="3" type="java.util.concurrent.TimeUnit"><!--Time Unit -->
-			<bean class="java.util.concurrent.TimeUnit" factory-method="valueOf">
-				<constructor-arg>
-					<value>HOURS</value>
-				</constructor-arg>
-			</bean>
-		</constructor-arg>
-		<constructor-arg index="4"
-			type="java.util.concurrent.BlockingQueue"><!--workQueue -->
-			<bean class="java.util.concurrent.LinkedBlockingQueue" />
-		</constructor-arg>
-	</bean>
-
-	<!-- -->
-
-	<bean id="controller" class="nz.co.jsrsolutions.ds3.DataScraper3Controller"
-		scope="singleton" lazy-init="false">
-		<constructor-arg ref="eodDataProvider" />
-		<constructor-arg ref="eodDataSink" />
-		<constructor-arg ref="emailService" />
-		<constructor-arg ref="threadPoolExecutor" />
+	<!-- Scheduler -->
+	<bean id="scheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="eodCBOTTrigger" />
+				<!--
+				<ref bean="eodCFETrigger" />
+				<ref bean="eodCMETrigger" />
+				<ref bean="eodWCETrigger" />
+				<ref bean="eodNZXTrigger" />
+				<ref bean="eodLSETrigger" />
+-->
+			</list>
+		</property>
+		<property name="schedulerContextAsMap">
+			<map>
+				<entry key="eodDataProvider" value-ref="eodDataProvider" />
+				<entry key="eodDataSink" value-ref="eodDataSink" />
+				<entry key="emailService" value-ref="emailService" />
+			</map>
+		</property>
+		<property name="autoStartup">
+			<value>false</value>
+		</property>
 	</bean>
 
 	<!-- EOD provider -->
@@ -303,6 +334,7 @@
 		<constructor-arg name="recipients" value="jsr@jsrsolutions.co.nz" />
 	</bean>
 
+	<!-- JMX  -->
 	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
 		<property name="assembler" ref="assembler" />
 		<property name="namingStrategy" ref="namingStrategy" />
@@ -322,6 +354,16 @@
 	<bean id="namingStrategy"
 		class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
 		<property name="attributeSource" ref="jmxAttributeSource" />
+	</bean>
+
+	<!-- Controller -->
+
+	<bean id="controller" class="nz.co.jsrsolutions.ds3.DataScraper3Controller"
+		scope="singleton" lazy-init="false">
+		<constructor-arg ref="eodDataProvider" />
+		<constructor-arg ref="eodDataSink" />
+		<constructor-arg ref="emailService" />
+		<constructor-arg ref="threadPoolExecutor" />
 	</bean>
 
 </beans>

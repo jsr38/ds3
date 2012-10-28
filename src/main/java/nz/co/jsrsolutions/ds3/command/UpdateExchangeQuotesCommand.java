@@ -66,7 +66,7 @@ public class UpdateExchangeQuotesCommand implements Command, ApplicationContextA
     long nQuotesWritten = 0;
 
     final int availableMonths = ((EodDataProvider)_appContext.getBean("eodDataProvider")).getExchangeMonths(exchange);
-    // final SYMBOL[] symbols = eodDataProvider.getSymbols(exchange);
+
     final String[] symbols = eodDataSink.readExchangeSymbols(exchange);
 
     if (symbols == null) {
@@ -74,7 +74,7 @@ public class UpdateExchangeQuotesCommand implements Command, ApplicationContextA
       return false;
     }
 
-    Collection<Future<Long>> futures = new LinkedList<Future<Long>>();
+    final Collection<Future<Long>> futures = new LinkedList<Future<Long>>();
     
     for (String symbol : symbols) {
 
