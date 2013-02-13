@@ -1,0 +1,19 @@
+  291  wget http://zlib.net/zlib-1.2.7.tar.bz2
+  292  tar -jxvf zlib-1.2.7.tar.bz2 
+  293  cd zlib-1.2.7/
+  294  ls
+  295  ./configure --help
+  296  CFLAGS=-fPIC ./configure --prefix=/home/jsr/local/zlib-1.2.7 --64
+  297  make
+  298  make install
+  299  cd ../
+  300  cd hdf5-1.8.10-patch1/
+  301  ./configure --prefix /home/jsr/local/hdf5-1.8.10-patch1 --with-pic --with-zlib=/home/jsr/local/zlib-1.2.7/include,/home/jsr/local/zlib-1.2.7/lib
+  302  make clean
+  303  make
+  304  make install
+  305  cd ../hdf-java/
+  306  ls
+  307  history|grep config
+  308  ./configure --prefix=/home/jsr/local/hdf-java --with-hdf5=/home/jsr/local/hdf5-1.8.10-patch1/include,/home/jsr/local/hdf5-1.8.10-patch1/lib --with-jdk=/usr/lib/jvm/java-7-openjdk-amd64/include,/usr/lib/jvm/java-7-openjdk-amd64/lib --with-libz=/home/jsr/local/zlib-1.2.7/include,/home/jsr/local/zlib-1.2.7/lib
+  309  mkdir /home/jsr/local/hdf-java
