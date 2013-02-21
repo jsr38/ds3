@@ -67,7 +67,7 @@ public final class CommandFactory {
     }
     else if (type.compareTo(UPDATEEXCHANGEQUOTES_KEY) == 0) {
       
-      return new UpdateExchangeQuotesCommand(executorService);
+      return new UpdateExchangeQuotesCommand(executorService, null, null, null);
 
     }
     else if (type.compareTo(UPDATEEXCHANGESYMBOLQUOTES_KEY) == 0) {

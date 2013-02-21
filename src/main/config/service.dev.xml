@@ -65,6 +65,9 @@
 
 	<bean id="updateExchangeQuotesCommand" class="nz.co.jsrsolutions.ds3.command.UpdateExchangeQuotesCommand" scope="singleton">
 	  <constructor-arg name="executorService" ref="threadPoolExecutor" />
+	  <constructor-arg name="eodDataProvider" ref="eodDataProvider" />
+	  <constructor-arg name="eodDataSink" ref="eodDataSink" />
+	  <constructor-arg name="emailService" ref="emailService" />
 	</bean>
 
 	<!-- Command Chains -->
@@ -188,7 +191,7 @@
 			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
 		<property name="jobDataAsMap">
 			<map>
-				<entry key="command" value="updateexchangequotes" />
+			        <entry key="command" value-ref="updateexchangequotes" />
 				<entry key="exchange" value="CBOT" />
 			</map>
 		</property>
@@ -200,7 +203,7 @@
 			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
 		<property name="jobDataAsMap">
 			<map>
-				<entry key="command" value="updateexchangequotes" />
+				<entry key="command" value-ref="updateexchangequotes" />
 				<entry key="exchange" value="CFE" />
 			</map>
 		</property>
@@ -212,7 +215,7 @@
 			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
 		<property name="jobDataAsMap">
 			<map>
-				<entry key="command" value="updateexchangequotes" />
+				<entry key="command" value-ref="updateexchangequotes" />
 				<entry key="exchange" value="CME" />
 			</map>
 		</property>
@@ -225,7 +228,7 @@
 			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
 		<property name="jobDataAsMap">
 			<map>
-				<entry key="command" value="updateexchangequotes" />
+				<entry key="command" value-ref="updateexchangequotes" />
 				<entry key="exchange" value="WCE" />
 			</map>
 		</property>
@@ -237,7 +240,7 @@
 			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
 		<property name="jobDataAsMap">
 			<map>
-				<entry key="command" value="updateexchangequotes" />
+				<entry key="command" value-ref="updateexchangequotes" />
 				<entry key="exchange" value="ASX" />
 			</map>
 		</property>
@@ -249,7 +252,7 @@
 			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
 		<property name="jobDataAsMap">
 			<map>
-				<entry key="command" value="updateexchangequotes" />
+				<entry key="command" value-ref="updateexchangequotes" />
 				<entry key="exchange" value="NZX" />
 			</map>
 		</property>
@@ -261,7 +264,7 @@
 			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
 		<property name="jobDataAsMap">
 			<map>
-				<entry key="command" value="updateexchangequotes" />
+				<entry key="command" value-ref="updateexchangequotes" />
 				<entry key="exchange" value="LSE" />
 			</map>
 		</property>

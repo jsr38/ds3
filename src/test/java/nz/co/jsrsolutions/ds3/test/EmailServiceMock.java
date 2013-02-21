@@ -1,9 +1,9 @@
 /* -*- mode: java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * @(#)EmailService.java
+ * @(#)EmailServiceMock.java        
  *
- * Copyright (c) 2013 JSR Solutions Limited
+ * Copyright (c) 2012 JSR Solutions Limited
  * 4 Viridian Lane, Auckland, 0632.  New Zealand
  * All rights reserved.
  *
@@ -14,9 +14,19 @@
  * with JSR Solutions Limited.
  */
 
-package nz.co.jsrsolutions.util;
 
-public interface EmailService {
+package nz.co.jsrsolutions.ds3.test;
+
+import  nz.co.jsrsolutions.util.EmailService;
+
+public class EmailServiceMock implements EmailService {
+
+  public EmailServiceMock() {
+    
+  }
+
+  public void send(String subject, String message) {
+    return;
+  }  
   
-  public void send(String subject, String message);  
 }

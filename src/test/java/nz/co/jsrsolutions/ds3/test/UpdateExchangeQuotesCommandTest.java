@@ -24,6 +24,7 @@ import nz.co.jsrsolutions.ds3.sink.EodDataSink;
 import nz.co.jsrsolutions.ds3.command.CommandContext;
 import nz.co.jsrsolutions.ds3.command.UpdateExchangeQuotesCommand;
 import nz.co.jsrsolutions.ds3.provider.EodDataProvider;
+import nz.co.jsrsolutions.util.EmailService;
 
 import org.apache.commons.chain.Command;
 import org.junit.Before;
@@ -56,24 +57,26 @@ public class UpdateExchangeQuotesCommandTest {
       
       EodDataProvider eodDataProvider = new EodDataProviderMock(testData);
       EodDataSink eodDataSink = new EodDataSinkEmptyMock(testData);
+      EmailService emailService = new EmailServiceMock();
 
       CommandContext context = new CommandContext();
     
-      context.put(CommandContext.EODDATAPROVIDER_KEY, eodDataProvider);
-      context.put(CommandContext.EODDATASINK_KEY, eodDataSink);
+      //      context.put(CommandContext.EODDATAPROVIDER_KEY, eodDataProvider);
+      //      context.put(CommandContext.EODDATASINK_KEY, eodDataSink);
 
       context.put(CommandContext.EXCHANGE_KEY, testData.getTestExchange());
       context.put(CommandContext.SYMBOL_KEY, testData.getTestSymbol());
 
 
-      Command command = new UpdateExchangeQuotesCommand(Executors.newSingleThreadExecutor());
+      Command command = new UpdateExchangeQuotesCommand(Executors.newSingleThreadExecutor(), eodDataProvider, eodDataSink, emailService);
 
       command.execute(context);
 
     }
     catch (Throwable t) {
 
-      fail(t.getCause().getMessage());
+      t.printStackTrace();
+      fail(t.getCause().toString());
 
     }
 
@@ -91,22 +94,24 @@ public class UpdateExchangeQuotesCommandTest {
       
       EodDataProvider eodDataProvider = new EodDataProviderOneDayAvailableMock(testData);
       EodDataSink eodDataSink = new EodDataSinkFirstElementLessThanOneDayAfterFirstAvailable(testData);
+      EmailService emailService = new EmailServiceMock();
 
       CommandContext context = new CommandContext();
     
-      context.put(CommandContext.EODDATAPROVIDER_KEY, eodDataProvider);
-      context.put(CommandContext.EODDATASINK_KEY, eodDataSink);
+      //      context.put(CommandContext.EODDATAPROVIDER_KEY, eodDataProvider);
+      //      context.put(CommandContext.EODDATASINK_KEY, eodDataSink);
 
       context.put(CommandContext.EXCHANGE_KEY, testData.getTestExchange());
       context.put(CommandContext.SYMBOL_KEY, testData.getTestSymbol());
 
-      Command command = new UpdateExchangeQuotesCommand(Executors.newSingleThreadExecutor());
+      Command command = new UpdateExchangeQuotesCommand(Executors.newSingleThreadExecutor(), eodDataProvider, eodDataSink, emailService);
 
       command.execute(context);
 
     }
     catch (Throwable t) {
 
+      t.printStackTrace();
       fail(t.getCause().getMessage());
 
     }

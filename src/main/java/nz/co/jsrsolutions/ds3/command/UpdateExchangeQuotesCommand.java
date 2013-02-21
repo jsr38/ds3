@@ -45,18 +45,27 @@ public class UpdateExchangeQuotesCommand implements Command, ApplicationContextA
   
   private ApplicationContext _appContext;
 
-  public UpdateExchangeQuotesCommand(ExecutorService executorService) {
+  private EodDataSink _eodDataSink;
+
+  private EodDataProvider _eodDataProvider;
+
+  private EmailService _emailService;
+
+  public UpdateExchangeQuotesCommand(ExecutorService executorService,
+                                     EodDataProvider eodDataProvider,
+                                     EodDataSink eodDataSink,
+                                     EmailService emailService) {
     _executorService = executorService;
+    _eodDataSink = eodDataSink;
+    _eodDataProvider = eodDataProvider;
+    _emailService = emailService;
+    
   }
 
   public boolean execute(Context context) throws Exception {
 
     logger.info("Executing: updateexchangequotes");
 
-    final EodDataSink eodDataSink = (EodDataSink) context
-        .get(CommandContext.EODDATASINK_KEY);
-    final EmailService emailService = (EmailService) context
-        .get(CommandContext.EMAILSERVICE_KEY);
     final String exchange = (String) context.get(CommandContext.EXCHANGE_KEY);
 
     if (exchange == null) {
@@ -65,9 +74,9 @@ public class UpdateExchangeQuotesCommand implements Command, ApplicationContextA
 
     long nQuotesWritten = 0;
 
-    final int availableMonths = ((EodDataProvider)_appContext.getBean("eodDataProvider")).getExchangeMonths(exchange);
+    final int availableMonths = _eodDataProvider.getExchangeMonths(exchange);
 
-    final String[] symbols = eodDataSink.readExchangeSymbols(exchange);
+    final String[] symbols = _eodDataSink.readExchangeSymbols(exchange);
 
     if (symbols == null) {
       logger.info("No symbols associated with this exchange...");
@@ -87,7 +96,7 @@ public class UpdateExchangeQuotesCommand implements Command, ApplicationContextA
 
       final Calendar today = Calendar.getInstance();
 
-      final Range<Calendar> sinkRange = eodDataSink
+      final Range<Calendar> sinkRange = _eodDataSink
           .readExchangeSymbolDateRange(exchange, symbol);
 
       final ArrayList<Range<Calendar>> requestRangesList = new ArrayList<Range<Calendar>>(
@@ -150,8 +159,8 @@ public class UpdateExchangeQuotesCommand implements Command, ApplicationContextA
 
         try {
           
-          futures.add(_executorService.submit(new ReadWriteQuotesTask((EodDataProvider)_appContext.getBean("eodDataProvider"),
-              eodDataSink, exchange, symbol, requestRange.getLower(),
+          futures.add(_executorService.submit(new ReadWriteQuotesTask(_eodDataProvider,
+              _eodDataSink, exchange, symbol, requestRange.getLower(),
               requestRange.getUpper())));
  
         } catch (Exception e) {
@@ -172,7 +181,7 @@ public class UpdateExchangeQuotesCommand implements Command, ApplicationContextA
       }
     }
     
-    if (emailService != null) {
+    if (_emailService != null) {
       final StringBuffer subjectBuffer = new StringBuffer();
       subjectBuffer.append("Updated quotes on ");
       subjectBuffer.append(exchange);
@@ -184,7 +193,7 @@ public class UpdateExchangeQuotesCommand implements Command, ApplicationContextA
       messageBuffer.append(symbols.length);
       messageBuffer.append(" symbols ");
 
-      emailService.send(subjectBuffer.toString(), messageBuffer.toString());
+      _emailService.send(subjectBuffer.toString(), messageBuffer.toString());
     }
 
     return false;

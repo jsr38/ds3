@@ -3,7 +3,7 @@
 /*
  * @(#)QuartzJobBeanCommandProxy.java        
  *
- * Copyright (c) 2012 JSR Solutions Limited
+ * Copyright (c) 2012-2013 JSR Solutions Limited
  * 4 Viridian Lane, Auckland, 0632.  New Zealand
  * All rights reserved.
  *
@@ -29,7 +29,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 public class QuartzJobBeanCommandProxy extends QuartzJobBean {
 
-  private String command;
+  private Command command;
   
   private String exchange;
   
@@ -57,7 +57,7 @@ public class QuartzJobBeanCommandProxy extends QuartzJobBean {
     this.eodDataProvider = eodDataProvider;
   }
 
-  public void setCommand(String command) {
+  public void setCommand(Command command) {
     this.command = command;
   }
   
@@ -80,8 +80,8 @@ public class QuartzJobBeanCommandProxy extends QuartzJobBean {
     context.put(CommandContext.EXCHANGE_KEY, exchange);
 
     try {
-      Command cmd = CommandFactory.create(command, _executorService);
-      cmd.execute(context);
+      //      Command cmd = CommandFactory.create(command, _executorService);
+      command.execute(context);
     }
     catch (Exception e) {
       throw new JobExecutionException(e);
