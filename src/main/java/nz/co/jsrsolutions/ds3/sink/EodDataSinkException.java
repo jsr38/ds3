@@ -16,33 +16,31 @@
 
 package nz.co.jsrsolutions.ds3.sink;
 
-
 import java.lang.String;
 
 public class EodDataSinkException extends Exception {
-  /**
+	/**
    * 
    */
-  private static final long serialVersionUID = 2538235337093051298L;
-  
-  private String mistake;
+	private static final long serialVersionUID = 2538235337093051298L;
 
-  public EodDataSinkException() {
-    super();
-    mistake = "unknown";
-  }
-  
-  public EodDataSinkException(String err) {
-    super(err);
-    mistake = err;
-  }
-  
-  public EodDataSinkException(Throwable cause) {
-    super(cause);
-  }  
-  
-  public String getError() {
-    return mistake;
-  }
+	private String mistake;
+
+	public EodDataSinkException() {
+		super();
+		mistake = "unknown";
+	}
+
+	public EodDataSinkException(String err) {
+		super(err);
+		mistake = err;
+	}
+
+	public EodDataSinkException(Throwable cause) {
+		super(cause);
+	}
+
+	public String getError() {
+		return mistake;
+	}
 }
-  

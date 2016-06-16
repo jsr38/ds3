@@ -15,17 +15,18 @@
  */
 
 
-package nz.co.jsrsolutions.ds3.test;
+package nz.co.jsrsolutions.ds3.sink.test;
 
 import java.util.Calendar;
 
 import nz.co.jsrsolutions.ds3.DataStub.QUOTE;
 import nz.co.jsrsolutions.ds3.sink.EodDataSinkException;
+import nz.co.jsrsolutions.ds3.test.UnitTestData;
 import nz.co.jsrsolutions.util.Range;
 
 public class EodDataSinkEmptyMock extends EodDataSinkMock {
 
-  EodDataSinkEmptyMock(UnitTestData testData) throws EodDataSinkException {
+  public EodDataSinkEmptyMock(UnitTestData testData) throws EodDataSinkException {
     super(testData);
     
   }

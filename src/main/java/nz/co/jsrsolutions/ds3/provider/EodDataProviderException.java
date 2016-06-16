@@ -16,30 +16,32 @@
 
 package nz.co.jsrsolutions.ds3.provider;
 
-
 import java.lang.String;
 
 public class EodDataProviderException extends Exception {
 
-  /**
+	/**
    * 
    */
-  private static final long serialVersionUID = -8326565082971956329L;
-  
-  private String mistake;
+	private static final long serialVersionUID = -8326565082971956329L;
 
-  public EodDataProviderException() {
-    super();
-    mistake = "unknown";
-  }
-  
-  public EodDataProviderException(String err) {
-    super(err);
-    mistake = err;
-  }
-  
-  public String getError() {
-    return mistake;
-  }
+	private String mistake;
+
+	public EodDataProviderException() {
+		super();
+		mistake = "unknown";
+	}
+
+	public EodDataProviderException(String err) {
+		super(err);
+		mistake = err;
+	}
+
+	public EodDataProviderException(Throwable cause) {
+		super(cause);
+	}
+
+	public String getError() {
+		return mistake;
+	}
 }
-  

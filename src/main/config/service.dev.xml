@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
 			    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 			    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
@@ -56,132 +55,78 @@
 		</constructor-arg>
 	</bean>
 
-	<!-- Command beans   -->
-	<bean id="updateExchangesCommand" class="nz.co.jsrsolutions.ds3.command.UpdateExchangesCommand" scope="singleton">
+	<!-- Command beans -->
+	<bean id="updateExchangesCommand" class="nz.co.jsrsolutions.ds3.command.UpdateExchangesCommand"
+		scope="singleton">
 	</bean>
 
-	<bean id="updateExchangeSymbolsCommand" class="nz.co.jsrsolutions.ds3.command.UpdateExchangeSymbolsCommand" scope="singleton">
+	<bean id="updateExchangeSymbolsCommand"
+		class="nz.co.jsrsolutions.ds3.command.UpdateExchangeSymbolsCommand"
+		scope="singleton">
 	</bean>
 
-	<bean id="updateExchangeQuotesCommand" class="nz.co.jsrsolutions.ds3.command.UpdateExchangeQuotesCommand" scope="singleton">
-	  <constructor-arg name="executorService" ref="threadPoolExecutor" />
-	  <constructor-arg name="eodDataProvider" ref="eodDataProvider" />
-	  <constructor-arg name="eodDataSink" ref="eodDataSink" />
-	  <constructor-arg name="emailService" ref="emailService" />
+	<bean id="updateExchangeQuotesCommand"
+		class="nz.co.jsrsolutions.ds3.command.UpdateExchangeQuotesCommand"
+		scope="singleton">
+		<constructor-arg name="executorService" ref="threadPoolExecutor" />
+		<constructor-arg name="eodDataProvider" ref="eodDataProvider" />
+		<constructor-arg name="eodDataSink" ref="eodDataSink" />
+		<constructor-arg name="emailService" ref="emailService" />
 	</bean>
 
 	<!-- Command Chains -->
-	<bean name="updateexchanges" class="org.apache.commons.chain.impl.ChainBase" scope="singleton">
-	  <constructor-arg>
-	    <util:list>
-	      <ref bean="updateExchangesCommand" />
-	    </util:list>
-	  </constructor-arg>
+	<bean name="updateexchanges" class="org.apache.commons.chain.impl.ChainBase"
+		scope="singleton">
+		<constructor-arg>
+			<util:list>
+				<ref bean="updateExchangesCommand" />
+			</util:list>
+		</constructor-arg>
 	</bean>
 
-	<bean name="updateexchangesymbols" class="org.apache.commons.chain.impl.ChainBase" scope="singleton">
-	  <constructor-arg>
-	    <util:list>
-	      <ref bean="updateExchangeSymbolsCommand" />
-	    </util:list>
-	  </constructor-arg>
+	<bean name="updateexchangesymbols" class="org.apache.commons.chain.impl.ChainBase"
+		scope="singleton">
+		<constructor-arg>
+			<util:list>
+				<ref bean="updateExchangeSymbolsCommand" />
+			</util:list>
+		</constructor-arg>
 	</bean>
 
-	<bean name="updateexchangequotes" class="org.apache.commons.chain.impl.ChainBase" scope="singleton">
-	  <constructor-arg>
-	    <util:list>
-	      <ref bean="updateExchangeSymbolsCommand" />
-	      <ref bean="updateExchangeQuotesCommand" />
-	    </util:list>
-	  </constructor-arg>
+	<bean name="updateexchangequotes" class="org.apache.commons.chain.impl.ChainBase"
+		scope="singleton">
+		<constructor-arg>
+			<util:list>
+				<ref bean="updateExchangeSymbolsCommand" />
+				<ref bean="updateExchangeQuotesCommand" />
+			</util:list>
+		</constructor-arg>
 	</bean>
 
 	<!-- Triggers -->
-	<bean id="eodCBOTTrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="updateCBOTJob" />
-		</property>
-		<property name="cronExpression">
-			<value>0 0 18 ? * MON-FRI</value>
-		</property>
-
-		<property name="timeZone">
-			<ref bean="timeZoneCDT" />
-		</property>
-	</bean>
-
-<!--
-	<bean id="eodCFETrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="updateCFEJob" />
-		</property>
-		<property name="cronExpression">
-			<value>0 0 18 ? * MON-FRI</value>
-		</property>
-
-		<property name="timeZone">
-			<ref bean="timeZoneCDT" />
-		</property>
-	</bean>
-
-	<bean id="eodCMETrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="updateCMEJob" />
-		</property>
-		<property name="cronExpression">
-			<value>0 0 18 ? * MON-FRI</value>
-		</property>
-
-		<property name="timeZone">
-			<ref bean="timeZoneCDT" />
-		</property>
-	</bean>
-
-	<bean id="eodWCETrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="updateWCEJob" />
-		</property>
-		<property name="cronExpression">
-			<value>0 0 18 ? * MON-FRI</value>
-		</property>
-
-		<property name="timeZone">
-			<ref bean="timeZoneCDT" />
-		</property>
-	</bean>
-
-	<bean id="eodNZXTrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="updateNZXJob" />
-		</property>
-		<property name="cronExpression">
-			<value>0 0 18 ? * MON-FRI</value>
-		</property>
-
-		<property name="timeZone">
-			<ref bean="timeZoneNZST" />
-		</property>
-	</bean>
-
-	<bean id="eodLSETrigger"
-		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail">
-			<ref bean="updateLSEJob" />
-		</property>
-		<property name="cronExpression">
-			<value>0 0 18 ? * MON-FRI</value>
-		</property>
-
-		<property name="timeZone">
-			<ref bean="timeZoneGMT" />
-		</property>
-	</bean>
--->
+	<!-- <bean id="eodCBOTTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"> 
+		<property name="jobDetail"> <ref bean="updateCBOTJob" /> </property> <property 
+		name="cronExpression"> <value>0 0 18 ? * MON-FRI</value> </property> <property 
+		name="timeZone"> <ref bean="timeZoneCDT" /> </property> </bean> -->
+	<!-- <bean id="eodCFETrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"> 
+		<property name="jobDetail"> <ref bean="updateCFEJob" /> </property> <property 
+		name="cronExpression"> <value>0 0 18 ? * MON-FRI</value> </property> <property 
+		name="timeZone"> <ref bean="timeZoneCDT" /> </property> </bean> <bean id="eodCMETrigger" 
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"> <property 
+		name="jobDetail"> <ref bean="updateCMEJob" /> </property> <property name="cronExpression"> 
+		<value>0 0 18 ? * MON-FRI</value> </property> <property name="timeZone"> 
+		<ref bean="timeZoneCDT" /> </property> </bean> <bean id="eodWCETrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"> 
+		<property name="jobDetail"> <ref bean="updateWCEJob" /> </property> <property 
+		name="cronExpression"> <value>0 0 18 ? * MON-FRI</value> </property> <property 
+		name="timeZone"> <ref bean="timeZoneCDT" /> </property> </bean> <bean id="eodNZXTrigger" 
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"> <property 
+		name="jobDetail"> <ref bean="updateNZXJob" /> </property> <property name="cronExpression"> 
+		<value>0 0 18 ? * MON-FRI</value> </property> <property name="timeZone"> 
+		<ref bean="timeZoneNZST" /> </property> </bean> <bean id="eodLSETrigger" 
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"> <property 
+		name="jobDetail"> <ref bean="updateLSEJob" /> </property> <property name="cronExpression"> 
+		<value>0 0 18 ? * MON-FRI</value> </property> <property name="timeZone"> 
+		<ref bean="timeZoneGMT" /> </property> </bean> -->
 	<!-- JobDetails -->
 
 	<!-- Central Time -->
@@ -191,7 +136,7 @@
 			value="nz.co.jsrsolutions.ds3.command.QuartzJobBeanCommandProxy" />
 		<property name="jobDataAsMap">
 			<map>
-			        <entry key="command" value-ref="updateexchangequotes" />
+				<entry key="command" value-ref="updateexchangequotes" />
 				<entry key="exchange" value="CBOT" />
 			</map>
 		</property>
@@ -276,13 +221,8 @@
 		<property name="triggers">
 			<list>
 				<ref bean="eodCBOTTrigger" />
-				<!--
-				<ref bean="eodCFETrigger" />
-				<ref bean="eodCMETrigger" />
-				<ref bean="eodWCETrigger" />
-				<ref bean="eodNZXTrigger" />
-				<ref bean="eodLSETrigger" />
--->
+				<!-- <ref bean="eodCFETrigger" /> <ref bean="eodCMETrigger" /> <ref bean="eodWCETrigger" 
+					/> <ref bean="eodNZXTrigger" /> <ref bean="eodLSETrigger" /> -->
 			</list>
 		</property>
 		<property name="schedulerContextAsMap">
@@ -298,13 +238,34 @@
 	</bean>
 
 	<!-- EOD provider -->
-	<bean id="eodDataProviderTarget" class="nz.co.jsrsolutions.ds3.provider.EodDataEodDataProvider"
+	<!-- <bean id="eodDataProviderTarget" class="nz.co.jsrsolutions.ds3.provider.EodDataEodDataProvider" 
+		scope="prototype"> <constructor-arg name="url" value="http://ws.eoddata.com/data.asmx" 
+		/> <constructor-arg name="username" value="jsr1060" /> <constructor-arg name="password" 
+		value="frederick_38" /> <constructor-arg name="timeout" value="60000" /> 
+		</bean> -->
+
+	<!-- CME Data provider -->
+	<bean id="nymexFuturesDescriptor"
+		class="nz.co.jsrsolutions.ds3.provider.CMEEodDataProviderExchangeDescriptor"
+		scope="singleton">
+		<constructor-arg name="exchange" value="NYMEX-Futures" />
+		<constructor-arg name="filename" value="nymex_future.csv" />
+	</bean>
+
+	<bean id="comexFuturesDescriptor"
+		class="nz.co.jsrsolutions.ds3.provider.CMEEodDataProviderExchangeDescriptor"
+		scope="singleton">
+		<constructor-arg name="exchange" value="COMEX-Futures" />
+		<constructor-arg name="filename" value="comex_future.csv" />
+	</bean>
+
+	<bean id="eodDataProviderTarget" class="nz.co.jsrsolutions.ds3.provider.CMEEodDataProvider"
 		scope="prototype">
-		<constructor-arg name="url"
-			value="http://ws.eoddata.com/data.asmx" />
-		<constructor-arg name="username" value="jsr1060" />
-		<constructor-arg name="password" value="frederick_38" />
-		<constructor-arg name="timeout" value="60000" />
+		<constructor-arg name="hostname"
+			value="ftp.cmegroup.com" />
+		<constructor-arg name="basePath"
+			value="/pub/settle/" />
+		<constructor-arg name="descriptors" ref="cmeExchangeDescriptors" />
 	</bean>
 
 	<bean id="poolEodDataProviderSource" class="org.springframework.aop.target.CommonsPoolTargetSource">
@@ -314,7 +275,7 @@
 
 	<bean id="eodDataProvider" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="targetSource" ref="poolEodDataProviderSource" />
-		<!--    <property name="interceptorNames" value="myInterceptor" />  -->
+		<!-- <property name="interceptorNames" value="myInterceptor" /> -->
 	</bean>
 
 	<!-- Xignite provider -->
@@ -337,7 +298,7 @@
 		<constructor-arg name="recipients" value="jsr@jsrsolutions.co.nz" />
 	</bean>
 
-	<!-- JMX  -->
+	<!-- JMX -->
 	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
 		<property name="assembler" ref="assembler" />
 		<property name="namingStrategy" ref="namingStrategy" />

@@ -14,7 +14,7 @@
  * with JSR Solutions Limited.
  */
 
-package nz.co.jsrsolutions.ds3.test;
+package nz.co.jsrsolutions.ds3.sink.test;
 
 import nz.co.jsrsolutions.ds3.sink.EodDataSink;
 

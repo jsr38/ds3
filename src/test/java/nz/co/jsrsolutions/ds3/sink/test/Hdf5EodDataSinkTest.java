@@ -14,7 +14,7 @@
  * with JSR Solutions Limited.
  */
 
-package nz.co.jsrsolutions.ds3.test;
+package nz.co.jsrsolutions.ds3.sink.test;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -30,6 +30,7 @@ import nz.co.jsrsolutions.ds3.DataStub.SYMBOL;
 import nz.co.jsrsolutions.ds3.sink.EodDataSinkException;
 import nz.co.jsrsolutions.ds3.sink.Hdf5EodDataSink;
 import nz.co.jsrsolutions.ds3.sink.EodDataSink;
+import nz.co.jsrsolutions.ds3.test.UnitTestData;
 import nz.co.jsrsolutions.util.Range;
 
 import org.junit.After;

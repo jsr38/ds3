@@ -119,7 +119,7 @@ class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvi
   }
 
 
-  public EXCHANGE[] getExchanges() throws EodDataProviderException {
+  public synchronized EXCHANGE[] getExchanges() throws EodDataProviderException {
 
     try {
 
@@ -173,7 +173,7 @@ class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvi
       
   }
 
-  public int getExchangeMonths(String exchange) throws EodDataProviderException {
+  public synchronized int getExchangeMonths(String exchange) throws EodDataProviderException {
 
     try {
 
@@ -217,7 +217,7 @@ class EodDataEodDataProvider extends EodDataProviderBase implements EodDataProvi
   }
 
 
-  public SYMBOL[] getSymbols(String exchange) throws EodDataProviderException {
+  public synchronized SYMBOL[] getSymbols(String exchange) throws EodDataProviderException {
 
     try {
 

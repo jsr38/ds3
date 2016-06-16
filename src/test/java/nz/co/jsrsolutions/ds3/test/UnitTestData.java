@@ -84,7 +84,7 @@ public class UnitTestData {
 
   private static final transient Logger logger = Logger.getLogger(UnitTestData.class);
   
-  UnitTestData() {
+  public UnitTestData() {
 
     deserialiseTestData();
 
@@ -94,7 +94,8 @@ public class UnitTestData {
 
     try {
 
-      InputStream testDataStream = UnitTestData.class.getClassLoader().getResourceAsStream(TESTDATA_FILENAME);
+			InputStream testDataStream = UnitTestData.class.getClassLoader()
+					.getResourceAsStream(TESTDATA_FILENAME);
       XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(testDataStream);
     
       while(reader.next() != XMLStreamReader.END_DOCUMENT) {
